@@ -4,6 +4,8 @@ import { userFromToken } from '../auth/sessions.js';
 
 const ABANDON_MS = 60_000;
 const UCI = /^[a-h][1-8][a-h][1-8][qrbn]?$/;
+/* Actions that change nothing the players can see, so no state is sent back. */
+const QUIET = new Set(['hint']);
 
 function send(ws, msg) {
   if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(msg));
@@ -91,6 +93,7 @@ const actions = {
   chat(ws, msg, room) {
     room.addChat(ws.color, msg.text);
   },
+  hint: (ws, msg, room) => room.noteHint(ws.color),
   leave: (ws) => detach(ws),
 };
 
@@ -110,7 +113,7 @@ export function attachSocketServer(server) {
       if (needsSeat && (!room || ws.color === 'spectator')) return send(ws, { t: 'error', message: 'You are not seated in a game.' });
       try {
         handler(ws, msg, room);
-        if (needsSeat) broadcast(room);
+        if (needsSeat && !QUIET.has(msg.t)) broadcast(room);
       } catch (e) {
         send(ws, { t: 'error', message: e.message });
         if (room) send(ws, { t: 'state', state: { ...room.stateFor(ws.color), canClaim: canClaim(room, ws.color) } });

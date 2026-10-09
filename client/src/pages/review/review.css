@@ -58,6 +58,38 @@
 .eval-dot.mark-blunder { fill: var(--tone-worst); }
 .eval-legend { margin: 6px 0 10px; }
 
+.eval-chart-wrap { --phase-opening: #4fd1c5; --phase-middlegame: #8fb4ff; --phase-endgame: #ffc940; }
+.eval-phase.phase-opening { fill: color-mix(in srgb, var(--phase-opening) 7%, transparent); }
+.eval-phase.phase-middlegame { fill: color-mix(in srgb, var(--phase-middlegame) 7%, transparent); }
+.eval-phase.phase-endgame { fill: color-mix(in srgb, var(--phase-endgame) 8%, transparent); }
+.eval-phase-divider { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.6; }
+.eval-phases { display: flex; gap: 2px; margin-top: 4px; }
+.eval-phase-label {
+  min-width: 18px;
+  padding: 3px 4px;
+  border: 0;
+  border-top: 3px solid var(--phase);
+  border-radius: 0 0 6px 6px;
+  background: color-mix(in srgb, var(--phase) 10%, transparent);
+  color: var(--phase);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.eval-phase-label.phase-opening { --phase: var(--phase-opening); }
+.eval-phase-label.phase-middlegame { --phase: var(--phase-middlegame); }
+.eval-phase-label.phase-endgame { --phase: var(--phase-endgame); }
+
+.opponent-review { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.opponent-review-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.move-comment.theirs { border-left-style: dashed; }
+.move-comment .whose { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
 /* Commentary */
 .move-comment { border-left: 4px solid var(--tone); }
 .move-comment-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }

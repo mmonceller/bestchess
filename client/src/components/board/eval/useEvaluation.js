@@ -24,6 +24,7 @@ function finalEval(fen) {
 /*
  * Engine evaluation of `fen` from White's side, refreshed after every move:
  * `white` is White's share of the bar (0..1) and `label` reads like "+1.3" or "M3".
+ * `fen` names the position the numbers belong to (the previous one until the engine answers).
  */
 export function useEvaluation(fen, enabled = true) {
   const [evaluation, setEvaluation] = useState({ white: 0.5, label: '0.0' });
@@ -31,7 +32,7 @@ export function useEvaluation(fen, enabled = true) {
   useEffect(() => {
     if (!enabled || !fen) return undefined;
     const done = finalEval(fen);
-    if (done) { setEvaluation(done); return undefined; }
+    if (done) { setEvaluation({ ...done, fen, over: true }); return undefined; }
     let alive = true;
     const whiteToMove = fen.split(' ')[1] === 'w';
     evalEngine.evaluate(fen, EVAL_MS)
@@ -40,11 +41,11 @@ export function useEvaluation(fen, enabled = true) {
         const sign = whiteToMove ? 1 : -1;
         if (res.mate != null) {
           const mate = res.mate * sign;
-          setEvaluation({ white: mate > 0 ? 1 : 0, label: `M${Math.abs(mate)}`, mate });
+          setEvaluation({ white: mate > 0 ? 1 : 0, label: `M${Math.abs(mate)}`, mate, fen });
           return;
         }
         const cp = res.score * sign;
-        setEvaluation({ white: 0.5 + 0.5 * winningChances(cp), label: formatCp(cp), cp });
+        setEvaluation({ white: 0.5 + 0.5 * winningChances(cp), label: formatCp(cp), cp, fen });
       })
       .catch(() => {});
     return () => { alive = false; };

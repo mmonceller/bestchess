@@ -1,6 +1,7 @@
 import { tierInfo } from '../../training/skill/tiers.js';
 import { getLevel } from '../../engine/levels.js';
 import SkillBadge from '../../components/skill/SkillBadge.jsx';
+import { HINT_LIMIT_PERCENT } from '../../review/hintUsage.js';
 
 /* Explains the recommended bot level, or how many games are left before one can be suggested. */
 export default function SkillNote({ skill, recommended, chosen }) {
@@ -9,7 +10,7 @@ export default function SkillNote({ skill, recommended, chosen }) {
     const left = Math.max(0, (skill?.needed ?? 5) - (skill?.games ?? 0));
     return (
       <div className="skill-note muted small">
-        Play {left} more game{left === 1 ? '' : 's'} to get your skill badge and a recommended difficulty.
+        Play {left} more game{left === 1 ? '' : 's'} using {skill?.hintLimit ?? HINT_LIMIT_PERCENT}% or less hints to get your skill badge and a recommended difficulty.
       </div>
     );
   }

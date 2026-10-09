@@ -1,0 +1,20 @@
+.danger-notice, .comment-note.danger {
+  --danger: #ff5d6c;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, transparent);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+.danger-notice.level-threat, .comment-note.danger.level-threat { --danger: #ffa94d; }
+.danger-notice.level-losing, .comment-note.danger.level-losing { --danger: #ffb547; }
+.danger-notice > .icon, .comment-note.danger > .icon { flex: none; margin-top: 2px; color: var(--danger); }
+.danger-notice b { color: var(--danger); }
+.danger-notice p { margin: 2px 0 0; font-size: 0.9rem; }
+.danger-notice.level-mated { animation: danger-pulse 1.6s ease-in-out 2; }
+@keyframes danger-pulse {
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 25%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .danger-notice.level-mated { animation: none; } }

@@ -7,9 +7,11 @@ const MIN_SHARE = 0.04;
  * Thin "who's winning" meter beside the board. The bottom part belongs to the side at the
  * bottom of the board (the player) and grows as they get better; the top part belongs to
  * the opponent. Each part takes its square colour from the current board theme.
+ * Pass `evaluation` (from useEvaluation) when the page already evaluates the position.
  */
-export default function EvalBar({ fen, orientation = 'white', playerColor = null }) {
-  const { white, label, mate } = useEvaluation(fen);
+export default function EvalBar({ fen, orientation = 'white', playerColor = null, evaluation = null }) {
+  const own = useEvaluation(fen, !evaluation);
+  const { white, label, mate } = evaluation || own;
   const bottomIsWhite = orientation === 'white';
   const [bottomName, topName] = sideNames(bottomIsWhite ? 'w' : 'b', playerColor);
   const raw = bottomIsWhite ? white : 1 - white;

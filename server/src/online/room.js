@@ -32,6 +32,7 @@ export class Room {
     this.lastMove = null;
     this.recorded = false;
     this.recordIds = { w: null, b: null };
+    this.hintPlies = { w: new Set(), b: new Set() };
     const ms = this.options.minutes * 60_000;
     this.clocks = { w: ms, b: ms };
     this.turnStartedAt = null;
@@ -115,6 +116,12 @@ export class Room {
     return move;
   }
 
+  /* Remembers that `color` asked for a hint on the move they are about to play. */
+  noteHint(color) {
+    if (this.status !== 'playing' || !this.options.allowHints || this.chess.turn() !== color) return;
+    this.hintPlies[color].add(this.chess.history().length);
+  }
+
   checkFlag() {
     if (this.status !== 'playing' || !this.hasClock()) return false;
     const c = this.chess.turn();
@@ -195,6 +202,7 @@ export class Room {
       rematch: this.rematch,
       chat: this.chat.slice(-30),
       gameId: this.recordIds[you] || null,
+      hintPlies: this.hintPlies[you] ? [...this.hintPlies[you]] : [],
     };
   }
 }

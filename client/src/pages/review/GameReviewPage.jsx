@@ -6,14 +6,17 @@ import Move from '../../components/notation/Move.jsx';
 import Icon from '../../components/icons/Icon.jsx';
 import { kingSquare } from '../../components/board/pieces.js';
 import { formatDate } from '../../utils/format.js';
+import HintUsage from '../../components/game/HintUsage.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
 import EvalBar from '../../components/board/eval/EvalBar.jsx';
 import { useLessonMemory } from '../../training/hints/useLessonMemory.js';
 import { replayPgn } from '../../review/analyzeGame.js';
+import { gamePhases } from '../../chess/phase.js';
 import { useGameReview } from './useGameReview.js';
 import ReviewSummary from './components/ReviewSummary.jsx';
 import MoveComment from './components/MoveComment.jsx';
+import OpponentReview from './components/OpponentReview.jsx';
 import '../../components/game/game.css';
 import './review.css';
 
@@ -30,21 +33,32 @@ function SaveNote({ state }) {
   return null;
 }
 
-export default function GameReviewPage({ gameId, autoStart }) {
+export default function GameReviewPage({ gameId, autoStart, initialPly = null }) {
   const { user } = useAuth();
   const { settings } = useSettings();
-  const { game, error, review, progress, saveState, start } = useGameReview(gameId, autoStart);
+  const { game, error, review, progress, opponentProgress, saveState, start, reviewOpponent } = useGameReview(gameId, autoStart);
   const lessonFor = useLessonMemory();
   const [ply, setPly] = useState(-1);
   const [flipped, setFlipped] = useState(false);
   const [showBetter, setShowBetter] = useState(false);
+  const [showOpponent, setShowOpponent] = useState(false);
 
   const replay = useMemo(() => (game ? replayPgn(game.pgn) : null), [game]);
-  const byPly = useMemo(() => new Map((review?.moves || []).map((m) => [m.ply, m])), [review]);
-  const marks = useMemo(() => Object.fromEntries((review?.moves || []).map((m) => [m.ply, m.kind])), [review]);
+  const phases = useMemo(() => (replay ? gamePhases(replay.fens.slice(1)) : null), [replay]);
+  const reviewed = useMemo(
+    () => [...(review?.moves || []), ...(showOpponent ? review?.opponent?.moves || [] : [])],
+    [review, showOpponent],
+  );
+  const byPly = useMemo(() => new Map(reviewed.map((m) => [m.ply, m])), [reviewed]);
+  const marks = useMemo(() => Object.fromEntries(reviewed.map((m) => [m.ply, m.kind])), [reviewed]);
+  const hinted = useMemo(() => new Set(game?.hintPlies || []), [game]);
   const last = replay ? replay.moves.length - 1 : -1;
 
-  useEffect(() => { if (replay && !autoStart) setPly(replay.moves.length - 1); }, [replay, autoStart]);
+  useEffect(() => {
+    if (!replay || autoStart) return;
+    const lastPly = replay.moves.length - 1;
+    setPly(Number.isInteger(initialPly) && initialPly >= 0 && initialPly <= lastPly ? initialPly : lastPly);
+  }, [replay, autoStart, initialPly]);
   useEffect(() => { setShowBetter(false); }, [ply]);
 
   useEffect(() => {
@@ -85,6 +99,12 @@ export default function GameReviewPage({ gameId, autoStart }) {
     if (next) setPly(next.ply);
   };
   const playerMoves = replay.moves.filter((m) => m.color === game.color).length;
+  const colorOfPly = (p) => (p % 2 ? 'b' : 'w');
+  const toggleOpponent = () => {
+    if (!review.opponent) { setShowOpponent(true); reviewOpponent(); return; }
+    setShowOpponent((v) => !v);
+  };
+  const opponent = { shown: showOpponent, progress: opponentProgress, onToggle: toggleOpponent };
 
   return (
     <div className="game-layout review-page fade-in">
@@ -116,6 +136,7 @@ export default function GameReviewPage({ gameId, autoStart }) {
             <span className={`result-pill ${game.result}`}>{RESULT_LABEL[game.result] || ''}</span>
             <span className="muted small">vs {game.opponent}{game.date ? ` · ${formatDate(game.date)}` : ''}{game.reason ? ` · ${game.reason}` : ''}</span>
           </div>
+          <HintUsage game={game} />
           <SaveNote state={saveState} />
         </div>
 
@@ -141,7 +162,9 @@ export default function GameReviewPage({ gameId, autoStart }) {
           </div>
         )}
 
-        {review && ply < 0 && <ReviewSummary review={review} currentPly={ply} onSelect={setPly} onNextMistake={nextSlip} />}
+        {review && ply < 0 && (
+          <ReviewSummary review={review} currentPly={ply} onSelect={setPly} onNextMistake={nextSlip} phases={phases} opponent={opponent} />
+        )}
 
         {review && item && (
           <MoveComment
@@ -151,7 +174,11 @@ export default function GameReviewPage({ gameId, autoStart }) {
             showBetter={showBetter}
             onToggleBetter={() => setShowBetter((v) => !v)}
             lesson={lessonFor({ tags: item.tags, piece: item.piece, san: item.bestLine?.[0] || item.san })}
+            theirs={colorOfPly(item.ply) !== game.color}
           />
+        )}
+        {move && hinted.has(ply) && (
+          <p className="hint-usage small" style={{ margin: 0 }}><Icon name="hint" size={15} /> <span>You asked for a hint before this move.</span></p>
         )}
 
         {review && move && !item && (
@@ -161,6 +188,7 @@ export default function GameReviewPage({ gameId, autoStart }) {
               <b><Move san={move.san} prefix={moveNo(ply).trim()} ctx={{ color: move.color, from: move.from, captured: move.captured }} /></b>.
               {move.color !== game.color && ply < last && ' Step forward to see how you answered.'}
             </p>
+            {move.color !== game.color && <OpponentReview review={review} {...opponent} />}
           </div>
         )}
 

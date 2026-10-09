@@ -1,0 +1,79 @@
+.skill-breakdown-modal { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 32px); display: flex; flex-direction: column; gap: 12px; }
+.sb-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.sb-head h2 { margin: 0 0 6px; }
+.sb-tabs { align-self: flex-start; max-width: 100%; }
+.sb-tabs button { display: inline-flex; align-items: center; gap: 6px; }
+.sb-tab-short { display: none; }
+@media (max-width: 520px) { .sb-tab-long { display: none; } .sb-tab-short { display: inline; } }
+.sb-body { overflow-y: auto; min-height: 120px; padding-right: 2px; }
+
+/* Points */
+.sb-formula { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: var(--bg-2); }
+.sb-formula-main { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.sb-formula-main b { font-size: 1.8rem; line-height: 1; }
+.sb-rules { display: flex; flex-wrap: wrap; gap: 6px; }
+.sb-rule { padding: 2px 9px; border-radius: 99px; background: var(--panel-2); }
+.sb-rule.win b { color: var(--good); }
+.sb-rule.loss b { color: var(--bad); }
+.sb-rule.draw b { color: var(--muted); }
+
+.sb-game-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.sb-game {
+  display: grid;
+  grid-template-columns: auto 1fr minmax(110px, 34%);
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg-2);
+  border: 1px solid transparent;
+  color: inherit;
+  text-decoration: none;
+}
+.sb-game:hover { border-color: var(--line); }
+.sb-game .result-pill { min-width: 46px; text-align: center; }
+.sb-game-main { display: flex; flex-direction: column; min-width: 0; }
+.sb-game-main b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-value { color: var(--text); }
+.sb-best { color: #ffc940; font-weight: 700; }
+.sb-delta { display: flex; align-items: center; gap: 8px; }
+.sb-delta-track { position: relative; flex: 1; height: 8px; border-radius: 99px; background: var(--panel-2); }
+.sb-delta-track::after { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--muted); opacity: 0.5; }
+.sb-delta-bar { position: absolute; top: 0; bottom: 0; border-radius: 99px; }
+.sb-delta-bar.up { left: 50%; background: var(--good); }
+.sb-delta-bar.down { right: 50%; background: var(--bad); }
+.sb-delta-num { min-width: 38px; text-align: right; font-weight: 800; font-size: 0.85rem; }
+.sb-delta-num.up { color: var(--good); }
+.sb-delta-num.down { color: var(--bad); }
+.sb-footnote { display: flex; align-items: flex-start; gap: 6px; margin: 10px 0 0; }
+.sb-excluded { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.sb-excluded h4 { margin: 0 0 6px; font-size: 0.85rem; color: #ffa94d; }
+.sb-excluded ul { margin: 0; padding-left: 18px; }
+@media (max-width: 520px) {
+  .sb-game { grid-template-columns: auto 1fr; }
+  .sb-delta { grid-column: 1 / -1; }
+}
+
+/* Patterns */
+.sb-patterns > p { margin: 0 0 10px; }
+.sb-pattern-cols { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 620px) { .sb-pattern-cols { grid-template-columns: 1fr 1fr; } }
+.sb-col-title { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 0.95rem; }
+.sb-col-title.strong { color: var(--good); }
+.sb-col-title.weak { color: #ffa94d; }
+.sb-pattern-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.sb-pattern { --p: var(--good); display: flex; gap: 10px; padding: 10px; border-radius: 12px; background: var(--bg-2); }
+.sb-pattern.weak { --p: #ffa94d; }
+.sb-pattern-icon { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: var(--p); background: color-mix(in srgb, var(--p) 14%, transparent); }
+.sb-pattern-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.sb-meter { height: 5px; border-radius: 99px; background: var(--panel-2); overflow: hidden; margin: 2px 0; }
+.sb-meter span { display: block; height: 100%; background: var(--p); }
+.sb-pattern-links { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.sb-pattern-links a { display: inline-flex; align-items: center; gap: 4px; }
+.sb-empty { display: flex; gap: 12px; align-items: flex-start; color: var(--muted); }
+.sb-empty p { margin: 0; }
+
+/* Clickable badge on the skill card */
+.skill-badge-btn { padding: 0; border: 0; background: none; cursor: pointer; border-radius: 99px; font: inherit; }
+.skill-badge-btn:hover .skill-badge { filter: brightness(1.15); }
+.skill-badge-btn:focus-visible { outline: 2px solid var(--tier); outline-offset: 2px; }

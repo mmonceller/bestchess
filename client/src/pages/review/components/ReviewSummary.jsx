@@ -1,6 +1,7 @@
 import Icon from '../../../components/icons/Icon.jsx';
 import { KINDS, KIND_ORDER } from '../../../review/classify.js';
 import EvalChart from './EvalChart.jsx';
+import OpponentReview from './OpponentReview.jsx';
 
 function verdict(acc) {
   if (acc == null) return '';
@@ -11,8 +12,11 @@ function verdict(acc) {
   return 'A tough game. Each mistake below is a lesson for next time.';
 }
 
-/* Accuracy, a count of each kind of move, and the game's ups and downs. */
-export default function ReviewSummary({ review, currentPly, onSelect, onNextMistake }) {
+/*
+ * Accuracy, a count of each kind of move, and the game's ups and downs, plus the optional
+ * review of the opponent's moves (`opponent` = { shown, progress, onToggle }).
+ */
+export default function ReviewSummary({ review, currentPly, onSelect, onNextMistake, phases, opponent }) {
   const { accuracy, counts } = review.summary;
   const mistakes = (counts.inaccuracy || 0) + (counts.mistake || 0) + (counts.blunder || 0);
   return (
@@ -30,13 +34,14 @@ export default function ReviewSummary({ review, currentPly, onSelect, onNextMist
           </span>
         ))}
       </div>
-      <EvalChart moves={review.moves} currentPly={currentPly} onSelect={onSelect} />
+      <EvalChart moves={review.moves} currentPly={currentPly} onSelect={onSelect} phases={phases} />
       <div className="muted small eval-legend">Above the line: you were better. Below: your opponent was.</div>
       {mistakes > 0 && (
         <button className="btn block icon-text" onClick={onNextMistake}>
           <Icon name="target" size={18} /> Go to my next slip
         </button>
       )}
+      {opponent && <OpponentReview review={review} {...opponent} />}
     </div>
   );
 }

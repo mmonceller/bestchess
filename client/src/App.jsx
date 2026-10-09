@@ -28,7 +28,14 @@ function Page({ route }) {
     case 'profile': return <ProfilePage />;
     case 'review':
     case 'replay':
-      return <GameReviewPage gameId={param} autoStart={route.query.get('start') === '1'} key={`${param || 'local'}-${route.query.get('start')}`} />;
+      return (
+        <GameReviewPage
+          gameId={param}
+          autoStart={route.query.get('start') === '1'}
+          initialPly={route.query.has('ply') ? Number(route.query.get('ply')) : null}
+          key={`${param || 'local'}-${route.query.get('start')}-${route.query.get('ply')}`}
+        />
+      );
     case 'login': return <AuthPage next={route.query.get('next')} />;
     default: return <HomePage />;
   }

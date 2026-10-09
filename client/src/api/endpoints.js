@@ -14,6 +14,10 @@ export const gamesApi = {
   saveReview: (id, review) => api(`/games/${id}/review`, { method: 'PUT', body: { review } }),
 };
 
+export const skillApi = {
+  breakdown: () => api('/skill/breakdown'),
+};
+
 export const progressApi = {
   get: () => api('/progress'),
   complete: (lessonId, stars, answers) => api(`/progress/${lessonId}`, { method: 'PUT', body: { stars, answers } }),

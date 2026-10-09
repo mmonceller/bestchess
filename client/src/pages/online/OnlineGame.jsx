@@ -15,6 +15,8 @@ import { useHint } from '../../hooks/useHint.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
 import EvalBar from '../../components/board/eval/EvalBar.jsx';
+import { useEvaluation } from '../../components/board/eval/useEvaluation.js';
+import DangerNotice from '../../components/game/DangerNotice.jsx';
 import { useLessonMemory } from '../../training/hints/useLessonMemory.js';
 import { kingSquare } from '../../components/board/pieces.js';
 import { materialInfo } from '../../chess/material.js';
@@ -44,6 +46,9 @@ export default function OnlineGame({ code }) {
   const fen = optimistic?.fen || state?.fen || new Chess().fen();
   const chess = useMemo(() => new Chess(fen), [fen]);
   const getMoves = useCallback((sq) => chess.moves({ square: sq, verbose: true }), [chess]);
+  /* A live engine meter is only fair in games that allow AI help. */
+  const showMeter = Boolean(settings.evalBar && state && (state.options.allowHints || state.status === 'over'));
+  const evaluation = useEvaluation(fen, showMeter);
 
   if (error?.code === 'not-found') {
     return (
@@ -68,8 +73,6 @@ export default function OnlineGame({ code }) {
   const material = materialInfo(fen);
   const lastMove = optimistic?.lastMove || state.lastMove;
   const checkSquare = chess.inCheck() ? kingSquare(fen, chess.turn()) : null;
-  /* A live engine meter is only fair in games that allow AI help. */
-  const showMeter = settings.evalBar && (state.options.allowHints || state.status === 'over');
 
   function onMove(m) {
     if (!myTurn) return;
@@ -115,6 +118,8 @@ export default function OnlineGame({ code }) {
       reason,
       mode: 'online',
       date: Date.now(),
+      moves: state.history.length,
+      hintPlies: state.hintPlies || [],
     });
     navigate(state.gameId ? `/review/${state.gameId}?start=1` : '/review?start=1');
   }
@@ -136,7 +141,7 @@ export default function OnlineGame({ code }) {
           lastMove={lastMove}
           checkSquare={checkSquare}
           arrows={hint.hint ? [hint.hint.arrow] : undefined}
-          sideBar={showMeter ? <EvalBar fen={fen} orientation={orientation} playerColor={seated ? you : null} /> : null}
+          sideBar={showMeter ? <EvalBar fen={fen} orientation={orientation} playerColor={seated ? you : null} evaluation={evaluation} /> : null}
         />
         {seatBar(topColor === 'w' ? 'b' : 'w')}
       </div>
@@ -181,7 +186,7 @@ export default function OnlineGame({ code }) {
           <div className="card">
             <div className="controls">
               {state.options.allowHints && (
-                <button className="btn primary" disabled={!myTurn || hint.loading} onClick={() => hint.request(state.fen, [], 1000)}><Icon name="hint" size={18} /> Hint</button>
+                <button className="btn primary" disabled={!myTurn || hint.loading} onClick={() => { online.hint(); hint.request(state.fen, [], 1000); }}><Icon name="hint" size={18} /> Hint</button>
               )}
               <button className="btn" onClick={online.offerDraw} disabled={iOfferedDraw || state.history.length < 2}>
                 <Icon name="draw" size={18} /> {iOfferedDraw ? 'Draw offered' : 'Offer a draw'}
@@ -192,6 +197,7 @@ export default function OnlineGame({ code }) {
           </div>
         )}
 
+        {showMeter && seated && playing && <DangerNotice fen={fen} evaluation={evaluation} playerColor={you} />}
         <HintCard hint={hint.hint} loading={hint.loading} onClose={hint.clear} lesson={lessonFor(hint.hint)} reviewLink={false} />
 
         <div className="card">

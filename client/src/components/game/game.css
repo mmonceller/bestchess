@@ -139,6 +139,23 @@ span.mv { cursor: help; }
 .hint-lesson-from b { color: var(--text); }
 .hint-lesson-link { display: inline-flex; align-items: center; gap: 5px; color: var(--coach); font-weight: 700; text-decoration: none; }
 .hint-lesson-link:hover { text-decoration: underline; }
+.hint-lesson.collapsible { display: block; padding: 0; }
+.hint-lesson.collapsible > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 12px;
+}
+.hint-lesson.collapsible > summary::-webkit-details-marker { display: none; }
+.hint-lesson.collapsible > summary:hover { background: color-mix(in srgb, var(--coach) 8%, transparent); }
+.hint-lesson.collapsible > summary:focus-visible { outline: 2px solid var(--coach); outline-offset: 2px; }
+.hint-lesson.collapsible > summary .hint-lesson-from { flex: 1; min-width: 0; }
+.hint-lesson-chevron { flex: none; color: var(--coach); transition: transform 0.2s ease; }
+.hint-lesson.collapsible[open] .hint-lesson-chevron { transform: rotate(90deg); }
+.hint-lesson.collapsible > .hint-lesson-body { padding: 0 12px 10px 48px; }
 
 .feedback {
   border-radius: 12px;
@@ -154,6 +171,33 @@ span.mv { cursor: help; }
 .result-pill.win { background: rgba(60, 207, 122, 0.2); color: var(--good); }
 .result-pill.loss { background: rgba(255, 93, 108, 0.18); color: var(--bad); }
 .result-pill.draw { background: var(--panel-2); color: var(--muted); }
+
+.hint-left {
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.hint-usage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #8fb4ff;
+  background: rgba(143, 180, 255, 0.14);
+}
+.hint-usage-pill.over { color: #ffa94d; background: rgba(255, 169, 77, 0.16); }
+.hint-usage { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 0.86rem; color: #8fb4ff; }
+.hint-usage > span { color: var(--text); }
+.hint-usage > svg { flex: none; margin-top: 2px; }
+.hint-usage.over { color: #ffa94d; }
+.hint-usage-note { color: #ffa94d; }
 .replay-controls { display: flex; gap: 6px; justify-content: center; }
 .replay-controls .btn { flex: 1; max-width: 80px; }
 

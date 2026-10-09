@@ -12,7 +12,7 @@ export default function PlayComputerPage() {
       <ComputerSetup
         saved={saved}
         onStart={(c) => { clearSavedGame(); setConfig({ ...c, key: Date.now() }); }}
-        onResume={() => setConfig({ color: saved.color, level: saved.level, pgn: saved.pgn, key: Date.now() })}
+        onResume={() => setConfig({ color: saved.color, level: saved.level, pgn: saved.pgn, hints: saved.hints, key: Date.now() })}
       />
     );
   }
@@ -22,8 +22,9 @@ export default function PlayComputerPage() {
       color={config.color}
       level={config.level}
       initialPgn={config.pgn}
+      initialHints={config.hints}
       onNewGame={() => { clearSavedGame(); setConfig(null); }}
-      onRematch={() => { clearSavedGame(); setConfig({ ...config, pgn: null, key: Date.now() }); }}
+      onRematch={() => { clearSavedGame(); setConfig({ ...config, pgn: null, hints: null, key: Date.now() }); }}
     />
   );
 }

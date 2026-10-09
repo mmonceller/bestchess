@@ -38,6 +38,7 @@ function persistResult(room) {
       reason: room.result.reason,
       pgn,
       moves,
+      hintPlies: [...room.hintPlies[c]],
       ratingChange: ratings[c],
       opponentRating: ratingBefore[c === 'w' ? 'b' : 'w'],
     })?.id || null;

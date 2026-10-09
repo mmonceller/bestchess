@@ -98,4 +98,5 @@ export const online = {
   rematch: () => send({ t: 'rematch' }),
   claim: () => send({ t: 'claim' }),
   chat: (text) => send({ t: 'chat', text }),
+  hint: () => send({ t: 'hint' }),
 };

@@ -8,9 +8,12 @@ import Notice from '../../components/game/Notice.jsx';
 import Icon from '../../components/icons/Icon.jsx';
 import { useChessGame } from '../../hooks/useChessGame.js';
 import { useHint } from '../../hooks/useHint.js';
+import { useHintLog } from '../../hooks/useHintLog.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
 import EvalBar from '../../components/board/eval/EvalBar.jsx';
+import { useEvaluation } from '../../components/board/eval/useEvaluation.js';
+import DangerNotice from '../../components/game/DangerNotice.jsx';
 import { useLessonMemory } from '../../training/hints/useLessonMemory.js';
 import { engine } from '../../engine/engineClient.js';
 import { getLevel } from '../../engine/levels.js';
@@ -28,12 +31,15 @@ import './computer.css';
 
 const COACH_KEY = 'bc.coachMode';
 
-export default function ComputerGame({ color, level, initialPgn, onNewGame, onRematch }) {
+export default function ComputerGame({ color, level, initialPgn, initialHints, onNewGame, onRematch }) {
   const game = useChessGame(undefined, initialPgn);
   const { user, refresh } = useAuth();
   const { settings } = useSettings();
   const lvl = getLevel(level);
   const hint = useHint();
+  const hintLog = useHintLog(initialHints);
+  const hintsLeft = lvl.hintLimit ? Math.max(0, lvl.hintLimit - hintLog.count) : null;
+  const evaluation = useEvaluation(game.fen, settings.evalBar);
   const lessonFor = useLessonMemory();
   const [orientation, setOrientation] = useState(color === 'w' ? 'white' : 'black');
   const [thinking, setThinking] = useState(false);
@@ -78,8 +84,8 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
     c.setHeader('Event', 'BestChess vs Computer');
     c.setHeader('White', color === 'w' ? user?.username || 'You' : `${lvl.name} (Lv ${lvl.id})`);
     c.setHeader('Black', color === 'b' ? user?.username || 'You' : `${lvl.name} (Lv ${lvl.id})`);
-    if (game.history.length) saveGame({ pgn: c.pgn(), color, level });
-  }, [game.fen, over]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (game.history.length) saveGame({ pgn: c.pgn(), color, level, hints: hintLog.plies() });
+  }, [game.fen, over, hintLog.count]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!over || savedRef.current) return;
@@ -99,13 +105,17 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
       reason: result.reason,
       pgn: c.pgn(),
       moves: game.history.length,
+      hintPlies: hintLog.plies(game.history.length),
       level,
     }).then((d) => { setSavedId(d.game?.id || null); setSaveState('saved'); refresh(); }).catch(() => setSaveState('error'));
   }, [over]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function openReview() {
     const outcome = result.winner === null ? 'draw' : result.winner === color ? 'win' : 'loss';
-    stashGame({ pgn: game.chess.pgn(), color, opponent: `${lvl.name} (Lv ${lvl.id})`, result: outcome, reason: result.reason, mode: 'computer', date: Date.now() });
+    stashGame({
+      pgn: game.chess.pgn(), color, opponent: `${lvl.name} (Lv ${lvl.id})`, result: outcome, reason: result.reason, mode: 'computer', date: Date.now(),
+      moves: game.history.length, hintPlies: hintLog.plies(game.history.length),
+    });
     navigate(savedId ? `/review/${savedId}?start=1` : '/review?start=1');
   }
   const reviewButton = (
@@ -170,7 +180,7 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
           lastMove={game.lastMove}
           checkSquare={game.checkSquare}
           arrows={hint.hint ? [hint.hint.arrow] : undefined}
-          sideBar={settings.evalBar ? <EvalBar fen={game.fen} orientation={orientation} playerColor={color} /> : null}
+          sideBar={settings.evalBar ? <EvalBar fen={game.fen} orientation={orientation} playerColor={color} evaluation={evaluation} /> : null}
         />
         {bar(topColor === 'w' ? 'b' : 'w')}
       </div>
@@ -178,8 +188,13 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
       <aside className="side-panel">
         <div className="card">
           <div className="controls">
-            <button className="btn primary" onClick={() => hint.request(game.fen, game.positionsBefore)} disabled={over || thinking || game.turn !== color || hint.loading}>
-              <Icon name="hint" size={18} /> Hint
+            <button
+              className="btn primary"
+              onClick={() => { hintLog.note(game.history.length); hint.request(game.fen, game.positionsBefore); }}
+              disabled={over || thinking || game.turn !== color || hint.loading || hintsLeft === 0}
+              title={hintsLeft != null ? `${lvl.name} allows ${lvl.hintLimit} hints per game` : undefined}
+            >
+              <Icon name="hint" size={18} /> Hint{hintsLeft != null && <span className="hint-left">{hintsLeft} left</span>}
             </button>
             <button className="btn" onClick={takeBack} disabled={!userMoves || Boolean(resigned)}><Icon name="undo" size={18} /> Undo</button>
             <button className="btn" onClick={() => setOrientation((o) => (o === 'white' ? 'black' : 'white'))}><Icon name="flip" size={18} /> Flip</button>
@@ -192,7 +207,9 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
           </div>
         </div>
 
+        {settings.evalBar && !over && <DangerNotice fen={game.fen} evaluation={evaluation} playerColor={color} />}
         <HintCard hint={hint.hint} loading={hint.loading} onClose={hint.clear} lesson={lessonFor(hint.hint)} />
+        {hintsLeft === 0 && !over && <Notice tone="ok" icon="hint">You've used all {lvl.hintLimit} hints for this game. {lvl.name} is a real test, so the rest is up to you!</Notice>}
         {feedback && <Notice tone={feedback.tone} icon={feedback.icon} className="fade-in">{feedback.text}</Notice>}
         {feedback?.bestHint && <LessonReminder lesson={lessonFor(feedback.bestHint)} />}
 

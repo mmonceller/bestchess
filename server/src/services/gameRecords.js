@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { db, save, findUserById } from '../db/store.js';
+import { sanitizeHintPlies } from './skill/hintUsage.js';
 
 const MAX_GAMES_PER_USER = 300;
 
@@ -7,17 +8,20 @@ const MAX_GAMES_PER_USER = 300;
 export function recordGame(userId, game) {
   const user = findUserById(userId);
   if (!user) return null;
+  const color = game.color === 'b' ? 'b' : 'w';
+  const moves = Number(game.moves) || 0;
   const record = {
     id: crypto.randomUUID(),
     userId,
     mode: game.mode,
     opponent: String(game.opponent || 'Unknown').slice(0, 40),
-    color: game.color === 'b' ? 'b' : 'w',
+    color,
     result: ['win', 'loss', 'draw'].includes(game.result) ? game.result : 'draw',
     reason: String(game.reason || '').slice(0, 40),
     level: game.level ?? null,
     pgn: String(game.pgn || '').slice(0, 20000),
-    moves: Number(game.moves) || 0,
+    moves,
+    hintPlies: sanitizeHintPlies(game.hintPlies, moves, color),
     ratingChange: game.ratingChange ?? null,
     opponentRating: Number.isFinite(game.opponentRating) ? game.opponentRating : null,
     date: Date.now(),

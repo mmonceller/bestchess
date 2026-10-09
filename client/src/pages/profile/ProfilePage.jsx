@@ -14,6 +14,8 @@ import { formatDate } from '../../utils/format.js';
 import { navigate } from '../../router/router.js';
 import UserEmblem from '../../components/skill/UserEmblem.jsx';
 import SkillCard from './SkillCard.jsx';
+import ProfileStats from './ProfileStats.jsx';
+import HintUsage from '../../components/game/HintUsage.jsx';
 import ActiveGamesCard from '../../components/online/ActiveGamesCard.jsx';
 import '../../components/game/game.css';
 import './profile.css';
@@ -44,9 +46,6 @@ export default function ProfilePage() {
     );
   }
 
-  const { wins, losses, draws } = user.stats;
-  const total = wins + losses + draws;
-  const winRate = total ? Math.round((wins / total) * 100) : 0;
   const stars = Object.values(progress).reduce((n, p) => n + (p.stars || 0), 0);
   const { unlocked: masterUnlocked } = evaluateMastery({ progress, trainer, games });
   const tracks = TRACKS.filter((t) => !t.gated || masterUnlocked);
@@ -70,17 +69,7 @@ export default function ProfilePage() {
       <ActiveGamesCard />
       <SkillCard skill={user.skill} />
 
-      <div className="stat-grid">
-        <div className="stat card"><b>{user.rating}</b><span>Online rating</span></div>
-        <div className="stat card"><b>{total}</b><span>Games played</span></div>
-        <div className="stat card"><b>{winRate}%</b><span>Win rate</span></div>
-        <div className="stat card"><b>{wins}/{draws}/{losses}</b><span>W / D / L</span></div>
-        <div className="stat card"><b>{done}/{lessons.length}</b><span>Lessons done</span></div>
-        <div className="stat card"><b className="icon-text">{stars} <Icon name="star" size={18} className="star-gold" /></b><span>Training stars</span></div>
-        <div className="stat card"><b>{trainer?.rating ?? '–'}</b><span>Puzzle rating</span></div>
-        <div className="stat card"><b>{trainer?.solved ?? 0}</b><span>Puzzles solved</span></div>
-        <div className="stat card"><b>{trainer?.bestStreak ?? 0}</b><span>Best puzzle streak</span></div>
-      </div>
+      <ProfileStats user={user} trainer={trainer} lessonsDone={done} lessonsTotal={lessons.length} stars={stars} />
 
       <div className="profile-grid">
         <section className="card">
@@ -104,6 +93,7 @@ export default function ProfilePage() {
                   <b>vs {g.opponent}</b>
                   <span className="muted small">{formatDate(g.date)} · {Math.ceil(g.moves / 2)} moves · {g.reason}</span>
                 </div>
+                <HintUsage game={g} compact />
                 {g.reviewed && <span className="review-acc" title="Reviewed: your accuracy"><Icon name="target" size={14} />{g.accuracy ?? '–'}%</span>}
                 {g.ratingChange != null && <span className={`delta ${g.ratingChange >= 0 ? 'up' : 'down'}`}>{g.ratingChange >= 0 ? '+' : ''}{g.ratingChange}</span>}
                 <span className={`result-pill ${g.result}`}>{RESULT_LABEL[g.result]}</span>
