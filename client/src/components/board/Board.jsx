@@ -33,6 +33,7 @@ function Board({
   onSquareClick,
   showCoords,
   sideBar,
+  moveMs,
 }) {
   const { settings } = useSettings();
   const coords = showCoords ?? settings.showCoords;
@@ -163,6 +164,7 @@ function Board({
     <div
       ref={boardRef}
       className={`board${movableColor || onSquareClick ? ' interactive' : ''}`}
+      style={moveMs ? { '--move-ms': `${moveMs}ms` } : undefined}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

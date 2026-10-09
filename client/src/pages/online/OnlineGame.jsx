@@ -25,6 +25,10 @@ import { playMoveSound } from '../../utils/sound.js';
 import { getGuestName } from './guestName.js';
 import { stashGame } from '../../review/pendingReview.js';
 import { navigate } from '../../router/router.js';
+import BrowsingNotice from '../../components/game/replay/BrowsingNotice.jsx';
+import { useHistoryView } from '../../components/game/replay/useHistoryView.js';
+
+const NO_MOVES = [];
 import '../../components/game/game.css';
 
 export default function OnlineGame({ code }) {
@@ -49,6 +53,7 @@ export default function OnlineGame({ code }) {
   /* A live engine meter is only fair in games that allow AI help. */
   const showMeter = Boolean(settings.evalBar && state && (state.options.allowHints || state.status === 'over'));
   const evaluation = useEvaluation(fen, showMeter);
+  const view = useHistoryView(state?.history || NO_MOVES);
 
   if (error?.code === 'not-found') {
     return (
@@ -133,14 +138,15 @@ export default function OnlineGame({ code }) {
       <div className="board-column">
         {seatBar(topColor)}
         <Board
-          fen={fen}
+          fen={view.browsing ? view.fen : fen}
           orientation={orientation}
-          movableColor={myTurn ? you : null}
+          movableColor={myTurn && !view.browsing ? you : null}
           getMoves={getMoves}
           onMove={onMove}
-          lastMove={lastMove}
-          checkSquare={checkSquare}
-          arrows={hint.hint ? [hint.hint.arrow] : undefined}
+          lastMove={view.browsing ? view.lastMove : lastMove}
+          checkSquare={view.browsing ? view.check : checkSquare}
+          arrows={hint.hint && !view.browsing ? [hint.hint.arrow] : undefined}
+          moveMs={view.moveMs}
           sideBar={showMeter ? <EvalBar fen={fen} orientation={orientation} playerColor={seated ? you : null} evaluation={evaluation} /> : null}
         />
         {seatBar(topColor === 'w' ? 'b' : 'w')}
@@ -202,7 +208,10 @@ export default function OnlineGame({ code }) {
 
         <div className="card">
           <div className="row"><h3 style={{ margin: 0 }}>Moves</h3><span className="spacer" /><span className="badge">Code {code}</span></div>
-          <div style={{ marginTop: 8 }}><MoveList moves={state.history} /></div>
+          <div style={{ marginTop: 8 }}>
+            {view.browsing && <BrowsingNotice ply={view.goal} onBack={view.backToGame} />}
+            <MoveList moves={state.history} current={view.goal} onSelect={view.select} />
+          </div>
         </div>
 
         {state.white && state.black && <ChatBox messages={state.chat} canSend={seated} you={you} />}

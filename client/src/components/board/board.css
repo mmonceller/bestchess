@@ -112,7 +112,7 @@
 /* Move animation: --dx/--dy are how many squares away (on screen) the piece came from. */
 .piece.sliding {
   z-index: 6;
-  animation: pieceSlide 0.24s cubic-bezier(0.25, 0.8, 0.35, 1) backwards;
+  animation: pieceSlide var(--move-ms, 240ms) cubic-bezier(0.25, 0.8, 0.35, 1) backwards;
 }
 @keyframes pieceSlide {
   from { transform: translate(calc(var(--dx) * 12.5cqw), calc(var(--dy) * 12.5cqw)); }
@@ -125,7 +125,7 @@
   display: grid;
   place-items: center;
   pointer-events: none;
-  animation: captureFade 0.22s ease 0.14s forwards;
+  animation: captureFade calc(var(--move-ms, 240ms) * 0.9) ease calc(var(--move-ms, 240ms) * 0.55) forwards;
 }
 @keyframes captureFade { to { opacity: 0; transform: scale(0.55); } }
 @media (prefers-reduced-motion: reduce) {

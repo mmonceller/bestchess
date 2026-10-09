@@ -1,0 +1,14 @@
+.browsing-notice {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.browsing-notice .icon { color: var(--accent-2); flex: none; }
+.browsing-notice span { flex: 1; min-width: 140px; }

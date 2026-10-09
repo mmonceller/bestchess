@@ -24,6 +24,8 @@ import { playMoveSound, sounds } from '../../utils/sound.js';
 import { saveGame, clearSavedGame } from './savedGame.js';
 import { moveFeedback } from './moveFeedback.js';
 import LessonReminder from '../../components/game/LessonReminder.jsx';
+import BrowsingNotice from '../../components/game/replay/BrowsingNotice.jsx';
+import { useHistoryView } from '../../components/game/replay/useHistoryView.js';
 import { stashGame } from '../../review/pendingReview.js';
 import { navigate } from '../../router/router.js';
 import '../../components/game/game.css';
@@ -52,6 +54,8 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
   const [confirmResign, setConfirmResign] = useState(false);
   const token = useRef(0);
   const savedRef = useRef(false);
+  const sanList = game.history.map((h) => h.san);
+  const view = useHistoryView(sanList);
 
   const result = resigned || (game.status.over ? { winner: game.status.winner, reason: game.status.reason } : null);
   const over = Boolean(result);
@@ -160,7 +164,6 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
   const me = color;
   const them = color === 'w' ? 'b' : 'w';
   const adv = (c) => Math.max(0, c === 'w' ? material.balance : -material.balance);
-  const sanList = game.history.map((h) => h.san);
   const res = result && resultText(result.winner, result.reason, color);
   const topColor = orientation === 'white' ? 'b' : 'w';
   const bar = (c) => (c === me
@@ -172,14 +175,15 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
       <div className="board-column">
         {bar(topColor)}
         <Board
-          fen={game.fen}
+          fen={view.browsing ? view.fen : game.fen}
           orientation={orientation}
-          movableColor={!over && !thinking && game.turn === color ? color : null}
+          movableColor={!view.browsing && !over && !thinking && game.turn === color ? color : null}
           getMoves={game.getMoves}
           onMove={onMove}
-          lastMove={game.lastMove}
-          checkSquare={game.checkSquare}
-          arrows={hint.hint ? [hint.hint.arrow] : undefined}
+          lastMove={view.browsing ? view.lastMove : game.lastMove}
+          checkSquare={view.browsing ? view.check : game.checkSquare}
+          arrows={hint.hint && !view.browsing ? [hint.hint.arrow] : undefined}
+          moveMs={view.moveMs}
           sideBar={settings.evalBar ? <EvalBar fen={game.fen} orientation={orientation} playerColor={color} evaluation={evaluation} /> : null}
         />
         {bar(topColor === 'w' ? 'b' : 'w')}
@@ -215,7 +219,8 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
 
         <div className="card">
           <h3>Moves</h3>
-          <MoveList moves={sanList} />
+          {view.browsing && <BrowsingNotice ply={view.goal} onBack={view.backToGame} />}
+          <MoveList moves={sanList} current={view.goal} onSelect={view.select} />
         </div>
 
         <div className="controls">

@@ -1,7 +1,7 @@
 import { FILES } from '../pieces.js';
 
-/* Beyond this many pieces moving at once (e.g. jumping to the start), the board just redraws. */
-const MAX_SLIDES = 4;
+/* Beyond this many pieces moving at once (e.g. a new game set up), the board just redraws. */
+const MAX_SLIDES = 16;
 
 const same = (a, b) => a && b && a.type === b.type && a.color === b.color;
 

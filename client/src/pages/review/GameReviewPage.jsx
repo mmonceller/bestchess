@@ -14,6 +14,7 @@ import { useLessonMemory } from '../../training/hints/useLessonMemory.js';
 import { replayPgn } from '../../review/analyzeGame.js';
 import { gamePhases } from '../../chess/phase.js';
 import { useGameReview } from './useGameReview.js';
+import { useSteppedPly } from '../../components/game/replay/useSteppedPly.js';
 import ReviewSummary from './components/ReviewSummary.jsx';
 import MoveComment from './components/MoveComment.jsx';
 import OpponentReview from './components/OpponentReview.jsx';
@@ -42,6 +43,7 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
   const [flipped, setFlipped] = useState(false);
   const [showBetter, setShowBetter] = useState(false);
   const [showOpponent, setShowOpponent] = useState(false);
+  const { shown, moveMs, jump } = useSteppedPly(ply);
 
   const replay = useMemo(() => (game ? replayPgn(game.pgn) : null), [game]);
   const phases = useMemo(() => (replay ? gamePhases(replay.fens.slice(1)) : null), [replay]);
@@ -57,8 +59,10 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
   useEffect(() => {
     if (!replay || autoStart) return;
     const lastPly = replay.moves.length - 1;
-    setPly(Number.isInteger(initialPly) && initialPly >= 0 && initialPly <= lastPly ? initialPly : lastPly);
-  }, [replay, autoStart, initialPly]);
+    const startPly = Number.isInteger(initialPly) && initialPly >= 0 && initialPly <= lastPly ? initialPly : lastPly;
+    setPly(startPly);
+    jump(startPly);
+  }, [replay, autoStart, initialPly, jump]);
   useEffect(() => { setShowBetter(false); }, [ply]);
 
   useEffect(() => {
@@ -76,8 +80,10 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
 
   const item = byPly.get(ply);
   const move = replay.moves[ply];
-  const better = showBetter && item?.best;
-  const fen = better ? replay.fens[ply] : replay.fens[ply + 1];
+  const settled = shown === ply;
+  const boardMove = replay.moves[shown];
+  const better = settled && showBetter && item?.best;
+  const fen = better ? replay.fens[ply] : replay.fens[shown + 1];
   const c = new Chess(fen);
   const check = c.inCheck() ? kingSquare(fen, c.turn()) : null;
   const base = game.color === 'b' ? 'black' : 'white';
@@ -89,7 +95,7 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
       { from: item.uci.slice(0, 2), to: item.uci.slice(2, 4), color: 'orange' },
       { from: item.best.slice(0, 2), to: item.best.slice(2, 4), color: 'green' },
     ];
-  } else if (item?.reply) {
+  } else if (settled && item?.reply) {
     arrows = [{ from: item.reply.slice(0, 2), to: item.reply.slice(2, 4), color: 'red' }];
   }
 
@@ -112,9 +118,10 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
         <Board
           fen={fen}
           orientation={orientation}
-          lastMove={!better && move ? { from: move.from, to: move.to } : null}
+          lastMove={!better && boardMove ? { from: boardMove.from, to: boardMove.to } : null}
           checkSquare={check}
           arrows={arrows}
+          moveMs={moveMs}
           sideBar={settings.evalBar ? <EvalBar fen={fen} orientation={orientation} playerColor={game.color} /> : null}
         />
         <div className="replay-controls">
