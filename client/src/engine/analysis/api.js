@@ -67,16 +67,24 @@ export function analyse(fen, { timeMs = 1200, history = [] } = {}) {
   };
 }
 
+/* A preferred move (e.g. the one a hint suggested) stays the reference unless another move beats it by more than this. */
+const PREFERRED_MARGIN = 30;
+
 /*
  * Grades a candidate move by comparing it against every root move searched at the same depth.
  * Returns centipawn loss (0 = engine's choice) so lessons can accept any "good enough" move.
+ * `preferred` is a move already recommended to the player in this position, so the grade
+ * never contradicts it: playing it scores as best, and it is named as the better move.
  */
-export function gradeMove(fen, uci, { timeMs = 1200, maxDepth = 6 } = {}) {
+export function gradeMove(fen, uci, { timeMs = 1200, maxDepth = 6, preferred = null } = {}) {
   const pos = new Position(fen);
   const res = searcher.search(pos, { timeMs, maxDepth, multi: true });
   const entry = res.rootScores.find((r) => pos.moveToUci(r.move) === uci);
-  const best = res.rootScores[0];
+  let best = res.rootScores[0];
   if (!entry || !best) return { legal: false };
+  const pref = preferred && res.rootScores.find((r) => pos.moveToUci(r.move) === preferred);
+  if (pref && uci === preferred) best = entry;
+  else if (pref && best.score - pref.score <= PREFERRED_MARGIN) best = pref;
   let loss = Math.max(0, best.score - entry.score);
   if (best.score > MATE_BOUND && entry.score > MATE_BOUND) loss = Math.min(loss, 10);
   const bestUci = pos.moveToUci(best.move);

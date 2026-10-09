@@ -126,10 +126,11 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
     const mv = game.move(m);
     if (!mv) return;
     playMoveSound(mv);
+    const suggested = hint.hint?.fen === before ? hint.hint.uci : null;
     hint.clear();
     setFeedback(null);
     if (coachMode) {
-      engine.grade(before, toUci(mv), 700)
+      engine.grade(before, toUci(mv), 700, suggested)
         .then((g) => { if (g.legal) setFeedback(classify(g, before)); })
         .catch(() => {});
     }

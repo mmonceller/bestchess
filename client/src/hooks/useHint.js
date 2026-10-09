@@ -18,6 +18,7 @@ export function useHint() {
       if (id !== reqId.current || !res.best) return null;
       const line = uciLineToSan(Chess, fen, res.pv.slice(0, 5));
       const h = {
+        fen,
         uci: res.best,
         san: line[0],
         line,

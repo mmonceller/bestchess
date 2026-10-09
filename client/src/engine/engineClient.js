@@ -31,7 +31,7 @@ function call(type, payload) {
 export const engine = {
   move: (fen, level, history = []) => call('move', { fen, level, history }),
   analyse: (fen, { timeMs = 1200, history = [] } = {}) => call('analyse', { fen, timeMs, history }),
-  grade: (fen, uci, timeMs = 1200) => call('grade', { fen, uci, timeMs }),
+  grade: (fen, uci, timeMs = 1200, preferred = null) => call('grade', { fen, uci, timeMs, preferred }),
   review: (fen, uci, timeMs = 900) => call('review', { fen, uci, timeMs }),
   evaluate: (fen, timeMs = 600) => call('evaluate', { fen, timeMs }),
   cancel() {

@@ -3,7 +3,7 @@ import { chooseMove, analyse, gradeMove, reviewMove, evaluatePosition } from '..
 const handlers = {
   move: ({ fen, level, history }) => chooseMove(fen, level, history),
   analyse: ({ fen, timeMs, history }) => analyse(fen, { timeMs, history }),
-  grade: ({ fen, uci, timeMs }) => gradeMove(fen, uci, { timeMs }),
+  grade: ({ fen, uci, timeMs, preferred }) => gradeMove(fen, uci, { timeMs, preferred }),
   review: ({ fen, uci, timeMs }) => reviewMove(fen, uci, { timeMs }),
   evaluate: ({ fen, timeMs }) => evaluatePosition(fen, { timeMs }),
 };
