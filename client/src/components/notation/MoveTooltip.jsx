@@ -1,6 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './notation.css';
+
+const GAP = 8;
+const EDGE = 8;
+
+/* The outermost element carrying the tip, so a move inside a move-list button anchors to the button. */
+function anchorOf(target) {
+  let el = target.closest?.('[data-move-tip]') || null;
+  while (el?.parentElement?.closest('[data-move-tip]')) el = el.parentElement.closest('[data-move-tip]');
+  return el;
+}
+
+/*
+ * Above the anchor if it fits, otherwise below; never on top of it. Horizontally centred on
+ * the anchor and kept inside the window.
+ */
+function place(anchor, tipBox) {
+  const fitsAbove = anchor.top - GAP - tipBox.height >= EDGE;
+  const top = fitsAbove ? anchor.top - GAP - tipBox.height : anchor.bottom + GAP;
+  const centre = anchor.left + anchor.width / 2;
+  const left = Math.max(EDGE, Math.min(window.innerWidth - EDGE - tipBox.width, centre - tipBox.width / 2));
+  return { top, left };
+}
 
 /*
  * One tooltip for every move on the page: anything with `data-move-tip` shows its description
@@ -8,17 +30,18 @@ import './notation.css';
  */
 export default function MoveTooltip() {
   const [tip, setTip] = useState(null);
+  const [pos, setPos] = useState(null);
   const current = useRef(null);
+  const box = useRef(null);
 
   useEffect(() => {
     const show = (el) => {
       if (current.current === el) return;
       current.current = el;
-      if (!el) { setTip(null); return; }
-      const r = el.getBoundingClientRect();
-      setTip({ text: el.dataset.moveTip, x: r.left + r.width / 2, top: r.top, bottom: r.bottom });
+      setPos(null);
+      setTip(el ? { text: el.dataset.moveTip, rect: el.getBoundingClientRect() } : null);
     };
-    const fromEvent = (e) => show(e.target.closest?.('[data-move-tip]') || null);
+    const fromEvent = (e) => show(anchorOf(e.target));
     const hide = () => show(null);
     document.addEventListener('pointerover', fromEvent);
     document.addEventListener('pointerdown', fromEvent);
@@ -36,15 +59,22 @@ export default function MoveTooltip() {
     };
   }, []);
 
+  useLayoutEffect(() => {
+    if (tip && box.current) setPos(place(tip.rect, box.current.getBoundingClientRect()));
+  }, [tip]);
+
   if (!tip?.text) return null;
-  const below = tip.top < 70;
-  const half = Math.min(140, window.innerWidth / 2 - 8);
-  const x = Math.max(half + 8, Math.min(window.innerWidth - half - 8, tip.x));
   return createPortal(
     <div
-      className={`move-tooltip${below ? ' below' : ''}`}
+      ref={box}
+      className="move-tooltip"
       role="tooltip"
-      style={{ left: x, top: below ? tip.bottom + 8 : tip.top - 8, maxWidth: half * 2 }}
+      style={{
+        left: pos?.left ?? 0,
+        top: pos?.top ?? 0,
+        maxWidth: Math.min(280, window.innerWidth - EDGE * 2),
+        visibility: pos ? 'visible' : 'hidden',
+      }}
     >
       {tip.text}
     </div>,

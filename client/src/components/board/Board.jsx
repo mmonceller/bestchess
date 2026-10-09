@@ -2,6 +2,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { GLYPH, FILES, parseFen } from './pieces.js';
 import Arrows from './Arrows.jsx';
 import PromotionPicker from './PromotionPicker.jsx';
+import { BoardFrame } from './Coordinates.jsx';
 import Icon from '../icons/Icon.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
 import './board.css';
@@ -128,8 +129,6 @@ function Board({
       if (highlights?.[sq]) cls.push(`hl-${highlights[sq]}`);
       squares.push(
         <div key={sq} className={cls.join(' ')} data-square={sq}>
-          {coords && col === 0 && <span className="coord rank">{sq[1]}</span>}
-          {coords && row === 7 && <span className="coord file">{sq[0]}</span>}
           {piece && (
             <span className={`piece ${piece.color === 'w' ? 'white' : 'black'}${ghost && drag.current?.from === sq ? ' dragging' : ''}`}>
               {GLYPH[piece.type]}
@@ -142,36 +141,39 @@ function Board({
     }
   }
 
+  const board = (
+    <div
+      ref={boardRef}
+      className={`board${movableColor || onSquareClick ? ' interactive' : ''}`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerCancel}
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      {squares}
+      <Arrows arrows={arrows} flipped={flipped} />
+      {ghost && (
+        <span
+          className={`piece ghost ${ghost.piece.color === 'w' ? 'white' : 'black'}`}
+          style={{ width: ghost.size, height: ghost.size, transform: `translate(${ghost.x - ghost.size / 2}px, ${ghost.y - ghost.size / 2}px)` }}
+        >
+          {GLYPH[ghost.piece.type]}
+        </span>
+      )}
+      {promo && (
+        <PromotionPicker
+          color={promo.color}
+          onPick={(t) => { onMove?.({ from: promo.from, to: promo.to, promotion: t }); setPromo(null); }}
+          onCancel={() => setPromo(null)}
+        />
+      )}
+    </div>
+  );
+
   return (
     <div className={`board-wrap${sideBar ? ' has-side' : ''}`}>
-      {sideBar}
-      <div
-        ref={boardRef}
-        className={`board${movableColor || onSquareClick ? ' interactive' : ''}`}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerCancel}
-        onContextMenu={(e) => e.preventDefault()}
-      >
-        {squares}
-        <Arrows arrows={arrows} flipped={flipped} />
-        {ghost && (
-          <span
-            className={`piece ghost ${ghost.piece.color === 'w' ? 'white' : 'black'}`}
-            style={{ width: ghost.size, height: ghost.size, transform: `translate(${ghost.x - ghost.size / 2}px, ${ghost.y - ghost.size / 2}px)` }}
-          >
-            {GLYPH[ghost.piece.type]}
-          </span>
-        )}
-        {promo && (
-          <PromotionPicker
-            color={promo.color}
-            onPick={(t) => { onMove?.({ from: promo.from, to: promo.to, promotion: t }); setPromo(null); }}
-            onCancel={() => setPromo(null)}
-          />
-        )}
-      </div>
+      {coords ? <BoardFrame flipped={flipped} side={sideBar}>{board}</BoardFrame> : <>{board}{sideBar}</>}
     </div>
   );
 }
