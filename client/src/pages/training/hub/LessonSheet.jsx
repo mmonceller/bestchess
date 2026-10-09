@@ -44,9 +44,26 @@ export default function LessonSheet({ lesson, progress, onClose }) {
             <Stars value={p.stars} />
           </div>
         )}
-        <a className="btn primary block icon-text" href={`#/training/${lesson.id}`}>
-          <Icon name={p ? 'retry' : 'play'} size={18} /> {p ? 'Play again' : 'Start lesson'}
-        </a>
+        {p && lesson.bonus.length > 0 && (
+          <div className="sheet-best">
+            <span className="muted small icon-text"><Icon name="gem" size={14} /> Bonus round</span>
+            {p.bonusStars ? <Stars value={p.bonusStars} /> : <span className="chip">New: {lesson.bonus.length} extra steps</span>}
+          </div>
+        )}
+        {p ? (
+          <div className="sheet-actions">
+            <a className="btn primary block icon-text" href={`#/training/${lesson.id}`}>
+              <Icon name="book" size={18} /> Review answers &amp; bonus round
+            </a>
+            <a className="btn ghost block icon-text" href={`#/training/${lesson.id}?start=fresh`}>
+              <Icon name="retry" size={18} /> Replay from scratch
+            </a>
+          </div>
+        ) : (
+          <a className="btn primary block icon-text" href={`#/training/${lesson.id}`}>
+            <Icon name="play" size={18} /> Start lesson
+          </a>
+        )}
       </div>
     </Modal>
   );

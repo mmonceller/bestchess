@@ -12,7 +12,7 @@ const VERDICT = {
   1: 'You finished it — well done! Try it again later to earn all 3 stars.',
 };
 
-export default function LessonComplete({ lesson, coach, result, nextLesson, onRetry }) {
+export default function LessonComplete({ lesson, coach, result, nextLesson, onRetry, onBonus }) {
   const { user } = useAuth();
   useEffect(() => { sounds.end(); }, []);
   return (
@@ -37,6 +37,16 @@ export default function LessonComplete({ lesson, coach, result, nextLesson, onRe
             <Icon name="warning" size={14} /> You're learning as a guest — this progress disappears when you leave.{' '}
             <a className="link" href="#/login?next=/training">Log in to keep it</a>
           </p>
+        )}
+        {onBonus && (
+          <div className="bonus-banner">
+            <Icon name="gem" size={20} />
+            <div>
+              <b>Bonus round unlocked</b>
+              <span className="muted small">{lesson.bonus.length} extra steps with deeper knowledge and harder questions. Play it now or any time you come back.</span>
+            </div>
+            <button className="btn small icon-text" onClick={onBonus}>Play <Icon name="arrowRight" size={16} /></button>
+          </div>
         )}
         <div className="row complete-actions">
           {nextLesson && (

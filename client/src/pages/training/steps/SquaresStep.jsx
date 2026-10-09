@@ -8,7 +8,7 @@ import { sounds } from '../../../utils/sound.js';
 const EMPTY = '8/8/8/8/8/8/8/8 w - - 0 1';
 
 /* Coordinate game: tap each named square in turn. */
-export default function SquaresStep({ step, coach, onNext, onMistake, onHint }) {
+export default function SquaresStep({ step, coach, onNext, onMistake, onHint, onAnswer }) {
   const [index, setIndex] = useState(0);
   const [found, setFound] = useState([]);
   const [wrong, setWrong] = useState(null);
@@ -25,6 +25,7 @@ export default function SquaresStep({ step, coach, onNext, onMistake, onHint }) 
       setFound((f) => [...f, sq]);
       setIndex(index + 1);
       setFeedback(index + 1 >= step.squares.length ? fb('good', step.success) : null);
+      if (index + 1 >= step.squares.length) onAnswer?.({ misses: [...missed.current] });
       return;
     }
     if (!missed.current.has(target)) { missed.current.add(target); onMistake(); }

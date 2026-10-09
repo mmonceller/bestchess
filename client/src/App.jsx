@@ -17,7 +17,10 @@ function Page({ route }) {
   switch (section) {
     case 'computer': return <PlayComputerPage />;
     case 'online': return <OnlinePage code={param} key={param || 'lobby'} />;
-    case 'training': return param ? <LessonPlayer lessonId={param} key={param} /> : <TrainingHub />;
+    case 'training': {
+      const start = route.query.get('start');
+      return param ? <LessonPlayer lessonId={param} start={start} key={`${param}-${start || ''}`} /> : <TrainingHub />;
+    }
     case 'puzzles': return <PatternTrainer />;
     case 'profile': return <ProfilePage />;
     case 'review':

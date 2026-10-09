@@ -38,6 +38,7 @@ export default function LessonPath({ lessons, progress, nextId, color, onOpen })
             <button className="node-btn" onClick={() => onOpen(l)} aria-label={`${l.title} with ${coach.name}`}>
               <CoachAvatar coach={coach} size={56} />
               {p && <span className="node-check"><Icon name="check" size={14} /></span>}
+              {p && !p.bonusStars && l.bonus.length > 0 && <span className="node-bonus" title="Bonus round available"><Icon name="gem" size={13} /></span>}
             </button>
             <div className="node-label">
               <b>{l.title}</b>

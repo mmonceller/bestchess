@@ -5,10 +5,12 @@ import { gradeMove } from '../client/src/engine/analysis/api.js';
 import { Position } from '../client/src/engine/core/position.js';
 import { minMovesToCollect } from '../client/src/training/pieceMoves.js';
 import { TAG_LESSONS, PIECE_LESSONS } from '../client/src/training/hints/lessonLinks.js';
+import { BONUS } from '../client/src/training/lessons/bonus/index.js';
 
 /*
  * Verifies every lesson: legal positions, legal lines, engine-approved student moves
- * (unless the step is a `teach` step about rules), and optimal par for star hunts.
+ * (unless the step is a `teach` step about rules, or a `tablebase` step verified by
+ * scripts/checkEndgames.js), and optimal par for star hunts.
  */
 const SQUARE = /^[a-h][1-8]$/;
 const PLACEMENT = /^([pnbrqkPNBRQK1-8]{1,8}\/){7}[pnbrqkPNBRQK1-8]{1,8} [wb] /;
@@ -42,7 +44,12 @@ for (const lesson of LESSONS) {
   if (!trackIds.has(lesson.track)) fail(lesson, '-', `unknown track ${lesson.track}`);
   if (!coachIds.has(lesson.coach)) fail(lesson, '-', `unknown coach ${lesson.coach}`);
 
-  lesson.steps.forEach((step, i) => {
+  if (!lesson.bonus.length) console.log(`  (no bonus round for ${lesson.id})`);
+  const allSteps = [
+    ...lesson.steps.map((step, i) => [step, i]),
+    ...lesson.bonus.map((step, i) => [step, `bonus ${i}`]),
+  ];
+  allSteps.forEach(([step, i]) => {
     let game = null;
     if (step.fen) {
       if (!PLACEMENT.test(step.fen)) { fail(lesson, i, `bad fen ${step.fen}`); return; }
@@ -72,24 +79,27 @@ for (const lesson of LESSONS) {
       }
       case 'move': {
         const line = step.line;
+        const studentFens = [];
         for (let k = 0; k < line.length; k++) {
           const fen = game.fen();
           if (k % 2 === 0) {
+            studentFens.push(fen);
             const options = step.accept?.[k] || [line[k]];
             if (!options.includes(line[k])) fail(lesson, i, `line move ${line[k]} not in accept list`);
             for (const uci of options) {
               const g = gradeMove(fen, uci, { timeMs: 1500 });
               if (!g.legal) { fail(lesson, i, `illegal student move ${uci}`); continue; }
               const ok = g.loss <= MAX_STUDENT_LOSS;
-              const mark = ok ? '✓' : step.teach ? '~' : '✗';
-              console.log(`    ${mark} #${i} ply ${k} ${uci} loss=${g.loss} (engine best ${g.best})`);
-              if (!ok && !step.teach) errors++;
-            }
-            for (const uci of Object.keys(step.wrong || {})) {
-              if (!new Position(fen).uciToMove(uci)) fail(lesson, i, `wrong-move ${uci} is illegal`);
+              const excused = step.teach || step.tablebase;
+              const mark = ok ? '✓' : excused ? '~' : '✗';
+              console.log(`    ${mark} #${i} ply ${k} ${uci} loss=${g.loss} (engine best ${g.best})${!ok && step.tablebase ? ' — tablebase-checked' : ''}`);
+              if (!ok && !excused) errors++;
             }
           }
           try { game.move(toMove(line[k])); } catch { fail(lesson, i, `illegal line move ${line[k]}`); break; }
+        }
+        for (const uci of Object.keys(step.wrong || {})) {
+          if (!studentFens.some((f) => new Position(f).uciToMove(uci))) fail(lesson, i, `wrong-move ${uci} is illegal`);
         }
         break;
       }
@@ -129,6 +139,9 @@ for (const lesson of LESSONS) {
 }
 
 const lessonIds = new Set(LESSONS.map((l) => l.id));
+for (const id of Object.keys(BONUS)) {
+  if (!lessonIds.has(id)) { errors++; console.log(`  ✗ bonus round for unknown lesson ${id}`); }
+}
 for (const [tag, links] of [...Object.entries(TAG_LESSONS), ...Object.entries(PIECE_LESSONS).map(([k, l]) => [k, [l]])]) {
   for (const l of links) {
     if (!lessonIds.has(l.lesson)) { errors++; console.log(`  ✗ hint link "${tag}" points to unknown lesson ${l.lesson}`); }

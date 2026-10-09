@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Board from '../../../components/board/Board.jsx';
 import Icon from '../../../components/icons/Icon.jsx';
 import StepLayout from '../components/StepLayout.jsx';
@@ -7,16 +7,19 @@ import { GlossText } from '../components/Glossary.jsx';
 import { orientationFor, pick, toArrows, toHighlights } from '../stepUtils.js';
 import { sounds } from '../../../utils/sound.js';
 
-export default function QuizStep({ step, coach, onNext, onMistake }) {
+export default function QuizStep({ step, coach, onNext, onMistake, onAnswer }) {
   const [tried, setTried] = useState({});
   const [solved, setSolved] = useState(false);
   const [reaction, setReaction] = useState('');
+  const picks = useRef([]);
 
   function choose(i) {
     if (solved || tried[i]) return;
     setTried((t) => ({ ...t, [i]: true }));
+    picks.current.push(i);
     if (step.options[i].correct) {
       setSolved(true);
+      onAnswer?.({ picks: picks.current });
       setReaction(pick(coach.praise));
       sounds.good();
     } else {

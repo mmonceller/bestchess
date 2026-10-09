@@ -1,23 +1,26 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Board from '../../../components/board/Board.jsx';
 import StepLayout, { Feedback } from '../components/StepLayout.jsx';
 import { ContinueButton, HintButton, HintNotice } from '../components/StepButtons.jsx';
 import { fb, orientationFor, pick } from '../stepUtils.js';
 import { sounds } from '../../../utils/sound.js';
 
-export default function FindStep({ step, coach, onNext, onMistake, onHint }) {
+export default function FindStep({ step, coach, onNext, onMistake, onHint, onAnswer }) {
   const [found, setFound] = useState([]);
   const [wrong, setWrong] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [hinted, setHinted] = useState(false);
+  const picks = useRef([]);
   const solved = found.length === step.targets.length;
 
   function click(sq) {
     if (solved || found.includes(sq)) return;
+    picks.current.push(sq);
     if (step.targets.includes(sq)) {
       const next = [...found, sq];
       setFound(next);
       sounds.good();
+      if (next.length === step.targets.length) onAnswer?.({ picks: picks.current });
       setFeedback(next.length === step.targets.length
         ? fb('good', step.success)
         : fb('good', `Yes! ${step.targets.length - next.length} more to go.`));

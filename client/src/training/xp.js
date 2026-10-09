@@ -1,8 +1,9 @@
 /* Experience points and player levels shared by lessons and the pattern trainer. */
 export const lessonXp = (stars) => (stars ? 20 + stars * 10 : 0);
+export const bonusXp = (stars) => (stars ? 10 + stars * 5 : 0);
 
 export const totalXp = (progress, trainer) =>
-  Object.values(progress || {}).reduce((n, p) => n + lessonXp(p.stars || 0), 0) + (trainer?.xp || 0);
+  Object.values(progress || {}).reduce((n, p) => n + lessonXp(p.stars || 0) + bonusXp(p.bonusStars || 0), 0) + (trainer?.xp || 0);
 
 const xpForLevel = (n) => 50 * n * (n - 1);
 

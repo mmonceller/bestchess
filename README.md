@@ -28,6 +28,12 @@ BestChess is a browser-based chess app for players of every level. You can play 
   - **Foundations**: simple habits that stop mistakes and win free pieces.
   - **Club Player**: plans, thinking routines and clean technique.
   - **Level Up**: endgames, pawn structures and match psychology.
+  - **Strategy Lab**: reading a position through its imbalances, bishops against knights, open files for rooks, weak pawns and holes, space, long-term against short-term advantages, and passed pawns.
+  - **Endgame School**: king races and Réti's trick, zugzwang and triangulation, fortresses (wrong bishop, opposite-coloured bishops), queen against a pawn, rook endgame rules, and the big endgame ideas.
+- **Master Class**, a final track that appears once every other lesson is finished and unlocks when the player has a Pattern Trainer rating of 1150 or more, has solved 30 puzzles and has won 3 games against the Club Player bot or stronger (or online). Its lessons cover calculation, in-between moves, prophylaxis, endgame technique, tournament play, the tree of variations, why strong players blunder, quiet moves and time trouble, and building a plan.
+- The Strategy Lab and the later Master Class lessons draw on ideas from Jeremy Silman's *How to Reassess Your Chess* and Alexander Kotov's *Think Like a Grandmaster*, and the Endgame School on Mark Dvoretsky's *Endgame Manual*, all explained in our own words.
+- `npm run check:endgames` checks every endgame exercise (7 pieces or fewer) against the online Lichess tablebase, so the "only move" puzzles are exactly right.
+- Revisiting a finished lesson never replaces it. The player can review every step with the answers they gave (picks, wrong tries, moves and routes), try any step again without affecting their score, and then play a bonus round with extra knowledge and harder questions. Bonus rounds have their own stars and XP.
 - Interactive lesson steps: collect-the-stars piece games, a square-naming game, quizzes, find-the-move challenges and short practice rounds.
 - Seven coaches with different teaching styles, from Pip for first-timers to Professor Lin for step-by-step technique.
 - Tappable glossary: chess terms in lessons can be tapped to show a short definition.

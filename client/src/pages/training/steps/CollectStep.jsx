@@ -19,9 +19,10 @@ const initial = (step) => ({
   enemies: step.enemies || {},
   moves: 0,
   last: null,
+  path: [step.start],
 });
 
-export default function CollectStep({ step, coach, onNext, onMistake, onHint }) {
+export default function CollectStep({ step, coach, onNext, onMistake, onHint, onAnswer }) {
   const [s, setS] = useState(() => initial(step));
   const [feedback, setFeedback] = useState(null);
   const [hinted, setHinted] = useState(false);
@@ -52,13 +53,14 @@ export default function CollectStep({ step, coach, onNext, onMistake, onHint }) 
     delete enemies[to];
     const stars = s.stars.filter((x) => x !== to);
     const promoted = s.type === 'p' && to[1] === '8';
-    const next = { sq: to, type: promoted ? 'q' : s.type, stars, enemies, moves: s.moves + 1, last: { from, to } };
+    const next = { sq: to, type: promoted ? 'q' : s.type, stars, enemies, moves: s.moves + 1, last: { from, to }, path: [...s.path, to] };
     setS(next);
     playMoveSound({ captured: captured ? 'x' : undefined });
 
     const finished = stars.length === 0 && Object.keys(enemies).length === 0;
     if (finished) {
       sounds.good();
+      onAnswer?.({ moves: next.moves, path: next.path });
       if (next.moves > step.par) {
         if (!penalized) { setPenalized(true); onMistake(); }
         setFeedback(fb('ok', `All collected in ${next.moves} moves! It can be done in ${step.par} — try again for a perfect score, or continue.`));

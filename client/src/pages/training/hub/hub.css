@@ -101,10 +101,12 @@ button.link { background: none; border: 0; padding: 0; cursor: pointer; font: in
 .worlds { display: flex; flex-direction: column; align-items: center; }
 .world-tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 8px;
   width: 100%;
 }
+.world-tab.gated:not(.active) .world-icon { color: #ff5c8a; }
+.sheet-actions { display: flex; flex-direction: column; gap: 8px; }
 .world-tab {
   position: relative;
   display: flex;
@@ -213,6 +215,21 @@ button.link { background: none; border: 0; padding: 0; cursor: pointer; font: in
   color: #0b2316;
   box-shadow: 0 0 0 3px var(--bg);
 }
+.node-bonus {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #ff5c8a;
+  color: #fff;
+  box-shadow: 0 0 0 3px var(--bg);
+  animation: bonus-glow 2.4s ease-in-out infinite;
+}
+@keyframes bonus-glow { 50% { box-shadow: 0 0 0 3px var(--bg), 0 0 12px 2px rgba(255, 92, 138, 0.6); } }
 .node-tag {
   position: absolute;
   top: -30px;

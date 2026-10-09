@@ -8,6 +8,7 @@ import Stars from '../training/components/Stars.jsx';
 import Icon from '../../components/icons/Icon.jsx';
 import CoachAvatar from '../../components/icons/CoachAvatar.jsx';
 import { useTrainer } from '../../training/trainerStore.js';
+import { evaluateMastery } from '../../training/mastery/criteria.js';
 import { levelInfo, totalXp } from '../../training/xp.js';
 import { formatDate } from '../../utils/format.js';
 import { navigate } from '../../router/router.js';
@@ -44,7 +45,10 @@ export default function ProfilePage() {
   const total = wins + losses + draws;
   const winRate = total ? Math.round((wins / total) * 100) : 0;
   const stars = Object.values(progress).reduce((n, p) => n + (p.stars || 0), 0);
-  const done = LESSONS.filter((l) => progress[l.id]).length;
+  const { unlocked: masterUnlocked } = evaluateMastery({ progress, trainer, games });
+  const tracks = TRACKS.filter((t) => !t.gated || masterUnlocked);
+  const lessons = LESSONS.filter((l) => tracks.some((t) => t.id === l.track));
+  const done = lessons.filter((l) => progress[l.id]).length;
   const level = levelInfo(totalXp(progress, trainer));
   const shown = (games || []).filter((g) => filter === 'all' || g.mode === filter);
 
@@ -65,7 +69,7 @@ export default function ProfilePage() {
         <div className="stat card"><b>{total}</b><span>Games played</span></div>
         <div className="stat card"><b>{winRate}%</b><span>Win rate</span></div>
         <div className="stat card"><b>{wins}/{draws}/{losses}</b><span>W / D / L</span></div>
-        <div className="stat card"><b>{done}/{LESSONS.length}</b><span>Lessons done</span></div>
+        <div className="stat card"><b>{done}/{lessons.length}</b><span>Lessons done</span></div>
         <div className="stat card"><b className="icon-text">{stars} <Icon name="star" size={18} className="star-gold" /></b><span>Training stars</span></div>
         <div className="stat card"><b>{trainer?.rating ?? '–'}</b><span>Puzzle rating</span></div>
         <div className="stat card"><b>{trainer?.solved ?? 0}</b><span>Puzzles solved</span></div>
@@ -104,7 +108,7 @@ export default function ProfilePage() {
 
         <section className="card">
           <h2>Training lessons</h2>
-          {TRACKS.map((t) => (
+          {tracks.map((t) => (
             <div key={t.id} className="track-progress">
               <div className="muted small icon-text track-label"><Icon name={t.icon} size={16} /> {t.name}</div>
               {LESSONS.filter((l) => l.track === t.id).map((l) => (

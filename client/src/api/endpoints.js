@@ -16,7 +16,8 @@ export const gamesApi = {
 
 export const progressApi = {
   get: () => api('/progress'),
-  complete: (lessonId, stars) => api(`/progress/${lessonId}`, { method: 'PUT', body: { stars } }),
+  complete: (lessonId, stars, answers) => api(`/progress/${lessonId}`, { method: 'PUT', body: { stars, answers } }),
+  completeBonus: (lessonId, stars, answers) => api(`/progress/${lessonId}/bonus`, { method: 'PUT', body: { stars, answers } }),
   merge: (progress) => api('/progress/merge', { method: 'POST', body: { progress } }),
 };
 

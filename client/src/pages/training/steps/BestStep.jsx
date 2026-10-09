@@ -12,7 +12,7 @@ import { fb, orientationFor, pick } from '../stepUtils.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
 
 /* Engine-graded step: any move within `maxLoss` centipawns of the best move is accepted. */
-export default function BestStep({ step, coach, onNext, onMistake, onHint }) {
+export default function BestStep({ step, coach, onNext, onMistake, onHint, onAnswer }) {
   const game = useChessGame(step.fen);
   const [grading, setGrading] = useState(false);
   const [solved, setSolved] = useState(false);
@@ -21,6 +21,7 @@ export default function BestStep({ step, coach, onNext, onMistake, onHint }) {
   const [hintLevel, setHintLevel] = useState(0);
   const [bestUci, setBestUci] = useState(null);
   const alive = useRef(true);
+  const tries = useRef([]);
   const studentColor = step.fen.split(' ')[1];
 
   useEffect(() => {
@@ -48,8 +49,10 @@ export default function BestStep({ step, coach, onNext, onMistake, onHint }) {
     setGrading(false);
     setBestUci(g.best);
     const bestSan = uciLineToSan(Chess, step.fen, [g.best])[0];
+    tries.current.push(toUci(mv));
     if (g.loss <= step.maxLoss) {
       setSolved(true);
+      onAnswer?.({ tries: tries.current, best: g.best });
       sounds.good();
       const extra = g.best === toUci(mv)
         ? ' That was the very best move!'

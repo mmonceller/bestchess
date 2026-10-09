@@ -1,0 +1,93 @@
+/* ---------- Revisiting a finished lesson ---------- */
+.revisit-intro {
+  max-width: 560px;
+  margin: 20px auto;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.revisit-intro h1 { margin: 8px 0 0; }
+.revisit-intro h3 { margin: 0 0 6px; }
+.revisit-intro .coach-bubble { text-align: left; width: 100%; margin-top: 8px; }
+.revisit-close { position: absolute; top: 12px; left: 12px; }
+.revisit-stats { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; margin: 6px 0; }
+.revisit-stats > div { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.revisit-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 10px; }
+
+.bonus-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, #ff5c8a 50%, var(--line));
+  background: linear-gradient(120deg, color-mix(in srgb, #ff5c8a 16%, var(--panel)), var(--panel) 70%);
+  color: #ff8fb0;
+}
+.bonus-banner > div { flex: 1; display: flex; flex-direction: column; gap: 2px; color: var(--text); }
+.bonus-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ff8fb0;
+  background: color-mix(in srgb, #ff5c8a 16%, transparent);
+}
+
+/* Progress segments: reviewed steps are muted, bonus steps get their own colour. */
+.step-progress span.review.done,
+.step-progress span.review.current { background: color-mix(in srgb, var(--coach) 55%, var(--panel-2)); }
+.step-progress span.bonus { background: color-mix(in srgb, #ff5c8a 18%, var(--panel-2)); }
+.step-progress span.bonus.done { background: #ff5c8a; }
+.step-progress span.bonus.current { background: linear-gradient(90deg, #ff5c8a, var(--panel-2)); }
+.lesson-player.bonus-run .lesson-title b::after {
+  content: 'BONUS';
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  color: #0f0f14;
+  background: #ff5c8a;
+  vertical-align: middle;
+}
+
+/* Review cards */
+.quiz-options.review .quiz-option { animation: none; }
+.quiz-options.review .quiz-option:hover { border-color: var(--line); }
+.quiz-options.review .quiz-option.right:hover { border-color: var(--good); }
+.quiz-options.review .quiz-option.wrong:hover { border-color: var(--bad); }
+.quiz-pick.static { cursor: default; align-items: center; }
+.quiz-option.unpicked { opacity: 0.75; }
+.pick-tag {
+  margin-left: auto;
+  flex: none;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--panel-2);
+  color: var(--muted);
+}
+.answer-line { display: block; font-weight: 600; }
+.answer-detail { display: block; margin-top: 6px; font-size: 0.9rem; line-height: 1.5; }
+.try-list { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.try-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.try-chip.ok { background: rgba(60, 207, 122, 0.16); color: var(--good); }
+.try-chip.miss { background: rgba(255, 93, 108, 0.14); color: var(--bad); }

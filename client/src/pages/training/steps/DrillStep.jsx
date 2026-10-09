@@ -20,7 +20,7 @@ const pieceMaterial = (fen, color) => Object.values(parseFen(fen))
 const GOAL_TEXT = { mate: 'Checkmate', promote: 'Promote', hold: 'Hold the draw' };
 
 /* Play the position out against the engine until the goal is reached or the move budget runs out. */
-export default function DrillStep({ step, coach, onNext, onMistake, onHint }) {
+export default function DrillStep({ step, coach, onNext, onMistake, onHint, onAnswer }) {
   const game = useChessGame(step.fen);
   const hint = useHint();
   const me = step.fen.split(' ')[1];
@@ -29,12 +29,14 @@ export default function DrillStep({ step, coach, onNext, onMistake, onHint }) {
   const [thinking, setThinking] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const token = useRef(0);
+  const fails = useRef(0);
   const myMoves = game.history.filter((h) => h.color === me).length;
 
   useEffect(() => () => { token.current++; }, []);
 
   function fail(reason) {
     setState('failed');
+    fails.current++;
     onMistake();
     sounds.bad();
     setFeedback(fb('bad', `${reason} ${pick(coach.oops)}`));
@@ -42,6 +44,7 @@ export default function DrillStep({ step, coach, onNext, onMistake, onHint }) {
 
   function succeed() {
     setState('won');
+    onAnswer?.({ moves: game.chess.history(), fails: fails.current });
     sounds.end();
     setFeedback(fb('good', step.success));
   }

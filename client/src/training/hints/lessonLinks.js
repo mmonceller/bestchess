@@ -60,14 +60,21 @@ export const TAG_LESSONS = {
     { lesson: 'f-golden-rules', say: 'Golden rule: get your knights and bishops off the back row.' },
   ],
   passedPawn: [
+    { lesson: 's-passed-pawns', say: 'A passed pawn is a baby queen. Push it with support from your pieces and king.' },
     { lesson: 'f-pawns', say: 'No enemy pawn can stop this one. Every step brings it closer to becoming a queen.' },
   ],
   activeKing: [
     { lesson: 'i-key-squares', when: (t) => t.includes('pawnEndgame'), say: 'In pawn endings, march the king to the key squares in front of your pawn.' },
+    { lesson: 'e-zugzwang', when: (t) => t.includes('pawnEndgame'), say: 'In pawn endings, make sure your opponent is the one who runs out of good moves.' },
+    { lesson: 'e-big-rules', say: 'With few pieces left, the king is a fighter. Bring it toward the middle.' },
     { lesson: 'f-queen-king', say: 'With few pieces left, the king becomes a fighter. Bring it forward.' },
   ],
   openFile: [
+    { lesson: 's-rooks', say: 'Roads for rooks: take the open file, then aim for the 7th rank.' },
     { lesson: 'i-worst-piece', say: 'Fix your worst piece: a rook needs an open file to do its job.' },
+  ],
+  space: [
+    { lesson: 's-space', say: 'Gaining space gives your pieces room and cramps your opponent — just watch the squares your pawns leave behind.' },
   ],
   improve: [
     { lesson: 'i-worst-piece', say: 'Fix your worst piece: when nothing urgent is happening, improve the piece doing the least.' },
@@ -78,6 +85,7 @@ export const TAG_LESSONS = {
   rookEndgame: [
     { lesson: 'a-lucena', when: (t) => t.includes('materialUp'), say: 'Rook endings: build Lucena\'s bridge so your king can shelter while the pawn promotes.' },
     { lesson: 'a-philidor', when: (t) => t.includes('materialDown'), say: 'Rook endings: build Philidor\'s third-row wall to keep the enemy king out and hold the draw.' },
+    { lesson: 'e-rook-rules', say: 'Rook endings: keep your rook active, put it behind passed pawns, and cut the enemy king off.' },
   ],
   losing: [
     { lesson: 'a-practical', say: 'When you are behind, make it messy. Give your opponent problems to solve.' },

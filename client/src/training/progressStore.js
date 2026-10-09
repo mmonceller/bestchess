@@ -16,6 +16,13 @@ export async function mergeGuestProgress() {
   guestStorage.remove(KEY);
 }
 
+function writeGuest(lessonId, change) {
+  const local = readGuest();
+  local[lessonId] = change(local[lessonId]);
+  guestStorage.write(KEY, local);
+  return local;
+}
+
 export function useProgress() {
   const { user } = useAuth();
   const [progress, setProgress] = useState(() => (user ? {} : readGuest()));
@@ -30,25 +37,41 @@ export function useProgress() {
       .finally(() => setLoading(false));
   }, [user]);
 
-  const complete = useCallback(async (lessonId, stars) => {
+  /* Saves a full run of the lesson, including the answers given in it. */
+  const complete = useCallback(async (lessonId, stars, answers) => {
     if (user) {
       try {
-        const d = await progressApi.complete(lessonId, stars);
+        const d = await progressApi.complete(lessonId, stars, answers);
         setProgress(d.progress);
         return;
       } catch { /* fall back to the session copy */ }
     }
-    const local = readGuest();
-    const prev = local[lessonId];
-    local[lessonId] = {
+    setProgress(writeGuest(lessonId, (prev) => ({
+      ...prev,
       stars: Math.max(stars, prev?.stars || 0),
       attempts: (prev?.attempts || 0) + 1,
       firstCompletedAt: prev?.firstCompletedAt || Date.now(),
       lastCompletedAt: Date.now(),
-    };
-    guestStorage.write(KEY, local);
-    setProgress(local);
+      answers: answers || prev?.answers,
+    })));
   }, [user]);
 
-  return { progress, loading, complete };
+  /* Saves the bonus round without touching the original lesson answers. */
+  const completeBonus = useCallback(async (lessonId, stars, answers) => {
+    if (user) {
+      try {
+        const d = await progressApi.completeBonus(lessonId, stars, answers);
+        setProgress(d.progress);
+        return;
+      } catch { /* fall back to the session copy */ }
+    }
+    setProgress(writeGuest(lessonId, (prev) => ({
+      ...prev,
+      bonusStars: Math.max(stars, prev?.bonusStars || 0),
+      bonusCompletedAt: prev?.bonusCompletedAt || Date.now(),
+      bonusAnswers: answers || prev?.bonusAnswers,
+    })));
+  }, [user]);
+
+  return { progress, loading, complete, completeBonus };
 }

@@ -10,7 +10,7 @@ import { fb, orientationFor, pick, toHighlights } from '../stepUtils.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
 
 /* Student must find the scripted move(s); odd entries in `line` are auto-played replies. */
-export default function MoveStep({ step, coach, onNext, onMistake, onHint }) {
+export default function MoveStep({ step, coach, onNext, onMistake, onHint, onAnswer }) {
   const game = useChessGame(step.fen);
   const [ply, setPly] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -20,6 +20,7 @@ export default function MoveStep({ step, coach, onNext, onMistake, onHint }) {
   const [timeLeft, setTimeLeft] = useState(step.timeLimit || null);
   const timedOut = useRef(false);
   const timers = useRef([]);
+  const tries = useRef([]);
   const studentColor = step.fen.split(' ')[1];
 
   const later = (fn, ms) => timers.current.push(setTimeout(fn, ms));
@@ -46,6 +47,7 @@ export default function MoveStep({ step, coach, onNext, onMistake, onHint }) {
 
   function finish() {
     setSolved(true);
+    onAnswer?.({ tries: tries.current });
     sounds.good();
     setFeedback(fb('good', `${step.success || pick(coach.praise)}`));
   }
@@ -55,6 +57,7 @@ export default function MoveStep({ step, coach, onNext, onMistake, onHint }) {
     const mv = game.move(m);
     if (!mv) return;
     const uci = toUci(mv);
+    tries.current.push(uci);
     const expected = step.accept?.[ply] || [step.line[ply]];
     if (expected.includes(uci)) {
       playMoveSound(mv);
