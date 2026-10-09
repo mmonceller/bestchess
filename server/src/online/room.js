@@ -31,6 +31,7 @@ export class Room {
     this.rematch = { w: false, b: false };
     this.lastMove = null;
     this.recorded = false;
+    this.recordIds = { w: null, b: null };
     const ms = this.options.minutes * 60_000;
     this.clocks = { w: ms, b: ms };
     this.turnStartedAt = null;
@@ -183,6 +184,7 @@ export class Room {
       drawOffer: this.drawOffer,
       rematch: this.rematch,
       chat: this.chat.slice(-30),
+      gameId: this.recordIds[you] || null,
     };
   }
 }

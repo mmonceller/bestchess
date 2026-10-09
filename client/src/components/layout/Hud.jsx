@@ -12,7 +12,8 @@ const SECTION_TITLE = {
   training: 'Learn Chess',
   puzzles: 'Pattern Trainer',
   profile: 'My Profile',
-  replay: 'Game Replay',
+  review: 'Game Review',
+  replay: 'Game Review',
   login: 'Account',
 };
 

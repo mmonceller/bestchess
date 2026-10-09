@@ -14,6 +14,7 @@ const storage = await initStore();
 
 const app = express();
 app.disable('x-powered-by');
+app.use('/api/games', express.json({ limit: '400kb' }));
 app.use(express.json({ limit: '100kb' }));
 
 app.use('/api/auth', authRoutes);

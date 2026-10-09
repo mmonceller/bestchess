@@ -1,9 +1,10 @@
-import { chooseMove, analyse, gradeMove, evaluatePosition } from '../analysis/api.js';
+import { chooseMove, analyse, gradeMove, reviewMove, evaluatePosition } from '../analysis/api.js';
 
 const handlers = {
   move: ({ fen, level, history }) => chooseMove(fen, level, history),
   analyse: ({ fen, timeMs, history }) => analyse(fen, { timeMs, history }),
   grade: ({ fen, uci, timeMs }) => gradeMove(fen, uci, { timeMs }),
+  review: ({ fen, uci, timeMs }) => reviewMove(fen, uci, { timeMs }),
   evaluate: ({ fen, timeMs }) => evaluatePosition(fen, { timeMs }),
 };
 

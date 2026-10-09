@@ -41,10 +41,7 @@
 .track-label { margin: 6px 0 4px; }
 .game-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .game-main b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.result-pill { padding: 3px 10px; border-radius: 99px; font-weight: 800; font-size: 0.78rem; }
-.result-pill.win { background: rgba(60, 207, 122, 0.2); color: var(--good); }
-.result-pill.loss { background: rgba(255, 93, 108, 0.18); color: var(--bad); }
-.result-pill.draw { background: var(--panel-2); color: var(--muted); }
+.review-acc { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: var(--accent-2); }
 .delta { font-weight: 700; font-size: 0.85rem; }
 .delta.up { color: var(--good); }
 .delta.down { color: var(--bad); }
@@ -61,6 +58,3 @@
   margin-top: 5px;
 }
 .lesson-row-title { flex: 1; font-size: 0.92rem; }
-
-.replay-controls { display: flex; gap: 6px; justify-content: center; }
-.replay-controls .btn { flex: 1; max-width: 80px; }

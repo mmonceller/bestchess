@@ -89,6 +89,13 @@
 .mv:not(:disabled):hover { background: var(--panel-2); }
 .mv:disabled { color: var(--text); }
 .mv.current { background: rgba(124, 92, 255, 0.3); }
+.mv-mark { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 5px; vertical-align: 1px; }
+.mv-mark.mark-best { background: #3ccf7a; }
+.mv-mark.mark-excellent, .mv-mark.mark-good { background: #4fd1c5; }
+.mv-mark.mark-forced { background: #9aa3b5; }
+.mv-mark.mark-inaccuracy { background: #ffb547; }
+.mv-mark.mark-mistake { background: #ff8a4c; }
+.mv-mark.mark-blunder { background: #ff5d6c; }
 
 .controls { display: flex; flex-wrap: wrap; gap: 8px; }
 .controls .btn { flex: 1 1 auto; }
@@ -140,5 +147,12 @@
 .feedback.good { border-color: rgba(60, 207, 122, 0.5); background: rgba(60, 207, 122, 0.1); }
 .feedback.ok { border-color: rgba(255, 181, 71, 0.5); background: rgba(255, 181, 71, 0.1); }
 .feedback.bad { border-color: rgba(255, 93, 108, 0.5); background: rgba(255, 93, 108, 0.1); }
+
+.result-pill { padding: 3px 10px; border-radius: 99px; font-weight: 800; font-size: 0.78rem; }
+.result-pill.win { background: rgba(60, 207, 122, 0.2); color: var(--good); }
+.result-pill.loss { background: rgba(255, 93, 108, 0.18); color: var(--bad); }
+.result-pill.draw { background: var(--panel-2); color: var(--muted); }
+.replay-controls { display: flex; gap: 6px; justify-content: center; }
+.replay-controls .btn { flex: 1; max-width: 80px; }
 
 .result-big { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }

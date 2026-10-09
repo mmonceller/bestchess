@@ -19,6 +19,8 @@ import { materialInfo } from '../../chess/material.js';
 import { resultText } from '../../chess/status.js';
 import { playMoveSound } from '../../utils/sound.js';
 import { getGuestName } from './guestName.js';
+import { stashGame } from '../../review/pendingReview.js';
+import { navigate } from '../../router/router.js';
 import '../../components/game/game.css';
 
 export default function OnlineGame({ code }) {
@@ -96,6 +98,25 @@ export default function OnlineGame({ code }) {
   const opponentOfferedDraw = playing && seated && state.drawOffer === them;
   const iOfferedDraw = playing && seated && state.drawOffer === you;
 
+  function openReview() {
+    const { winner, reason } = state.result;
+    const opp = them === 'w' ? state.white : state.black;
+    stashGame({
+      pgn: state.pgn,
+      color: you,
+      opponent: opp?.name || 'Opponent',
+      result: winner === null ? 'draw' : winner === you ? 'win' : 'loss',
+      reason,
+      mode: 'online',
+      date: Date.now(),
+    });
+    navigate(state.gameId ? `/review/${state.gameId}?start=1` : '/review?start=1');
+  }
+  const canReview = seated && state.status === 'over' && state.history.length > 1;
+  const reviewButton = canReview && (
+    <button className="btn good icon-text" onClick={openReview}><Icon name="target" size={18} /> Game review</button>
+  );
+
   return (
     <div className="game-layout fade-in">
       <div className="board-column">
@@ -139,9 +160,12 @@ export default function OnlineGame({ code }) {
             <div className="result-big">{res.title}</div>
             <p className="muted">{res.detail}</p>
             {seated && (
-              <button className="btn primary" onClick={online.rematch} disabled={state.rematch?.[you]}>
-                {state.rematch?.[you] ? 'Waiting for opponent…' : state.rematch?.[them] ? 'Accept rematch' : 'Rematch'}
-              </button>
+              <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
+                {reviewButton}
+                <button className="btn primary" onClick={online.rematch} disabled={state.rematch?.[you]}>
+                  {state.rematch?.[you] ? 'Waiting for opponent…' : state.rematch?.[them] ? 'Accept rematch' : 'Rematch'}
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -188,7 +212,8 @@ export default function OnlineGame({ code }) {
             <div className="result-big">{res.title}</div>
             <p className="muted">{res.detail}</p>
             {!user && <p className="small muted">Log in next time to save games and earn a rating.</p>}
-            <div className="row" style={{ justifyContent: 'center', marginTop: 10 }}>
+            <div className="row" style={{ justifyContent: 'center', marginTop: 10, flexWrap: 'wrap' }}>
+              {reviewButton}
               <button className="btn primary" onClick={() => { online.rematch(); setDismissedResult(true); }}>Rematch</button>
               <button className="btn" onClick={() => setDismissedResult(true)}>Close</button>
             </div>

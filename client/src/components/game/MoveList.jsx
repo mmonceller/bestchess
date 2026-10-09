@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-/* SAN move list in numbered pairs. `current` highlights a ply (0-based); onSelect makes it clickable. */
-export default function MoveList({ moves, current = moves.length - 1, onSelect }) {
+/*
+ * SAN move list in numbered pairs. `current` highlights a ply (0-based); onSelect makes it clickable.
+ * `marks` optionally maps a ply to a review grade, shown as a coloured dot.
+ */
+export default function MoveList({ moves, current = moves.length - 1, onSelect, marks }) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current?.querySelector('.mv.current');
@@ -24,6 +27,7 @@ export default function MoveList({ moves, current = moves.length - 1, onSelect }
             disabled={!onSelect}
           >
             {moves[ply]}
+            {marks?.[ply] && <span className={`mv-mark mark-${marks[ply]}`} title={marks[ply]} />}
           </button>
         ) : <span key={ply} />))}
       </div>,

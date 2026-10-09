@@ -9,7 +9,7 @@ const TrainingHub = lazy(() => import('./pages/training/TrainingHub.jsx'));
 const LessonPlayer = lazy(() => import('./pages/training/LessonPlayer.jsx'));
 const PatternTrainer = lazy(() => import('./pages/training/patterns/PatternTrainer.jsx'));
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage.jsx'));
-const GameReplay = lazy(() => import('./pages/profile/GameReplay.jsx'));
+const GameReviewPage = lazy(() => import('./pages/review/GameReviewPage.jsx'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage.jsx'));
 
 function Page({ route }) {
@@ -20,7 +20,9 @@ function Page({ route }) {
     case 'training': return param ? <LessonPlayer lessonId={param} key={param} /> : <TrainingHub />;
     case 'puzzles': return <PatternTrainer />;
     case 'profile': return <ProfilePage />;
-    case 'replay': return <GameReplay gameId={param} />;
+    case 'review':
+    case 'replay':
+      return <GameReviewPage gameId={param} autoStart={route.query.get('start') === '1'} key={`${param || 'local'}-${route.query.get('start')}`} />;
     case 'login': return <AuthPage next={route.query.get('next')} />;
     default: return <HomePage />;
   }

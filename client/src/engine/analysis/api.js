@@ -1,5 +1,5 @@
 import { Position } from '../core/position.js';
-import { Searcher } from '../core/search.js';
+import { Searcher, mateIn } from '../core/search.js';
 import { MATE_BOUND } from '../core/constants.js';
 import { getLevel } from '../levels.js';
 import { explainMove } from './explain.js';
@@ -88,6 +88,59 @@ export function gradeMove(fen, uci, { timeMs = 1200, maxDepth = 6 } = {}) {
     best: bestUci,
     explanation: explainMove(fen, bestUci, best.score),
   };
+}
+
+/* Mate scores become large centipawn values so move losses stay comparable. */
+const toCp = (score) => (Math.abs(score) > MATE_BOUND ? Math.sign(score) * (3000 - Math.abs(mateIn(score)) * 10) : score);
+
+/*
+ * Reviews one played move: how much it lost compared with the engine's choice, why each move
+ * works, the best continuation, and (after a real slip) the reply that punishes it.
+ * Scores are from the mover's point of view, in centipawns.
+ */
+export function reviewMove(fen, uci, { timeMs = 900 } = {}) {
+  const pos = new Position(fen);
+  const legal = pos.legalMoves();
+  const played = pos.uciToMove(uci);
+  if (!played) return { legal: false };
+  if (legal.length === 1) {
+    const res = searcher.search(pos, { timeMs: 200, maxDepth: 6 });
+    const cp = toCp(res.score);
+    return { legal: true, forced: true, loss: 0, best: uci, bestCp: cp, playedCp: cp, bestLine: [uci], played: explainMove(fen, uci, res.score) };
+  }
+
+  const res = searcher.search(pos, { timeMs, multi: true });
+  const entry = res.rootScores.find((r) => pos.moveToUci(r.move) === uci);
+  const best = res.rootScores[0];
+  if (!entry || !best) return { legal: false };
+  const bestUci = pos.moveToUci(best.move);
+  const bestCp = toCp(best.score);
+  const playedCp = toCp(entry.score);
+  const out = {
+    legal: true,
+    forced: false,
+    loss: Math.max(0, bestCp - playedCp),
+    best: bestUci,
+    bestCp,
+    playedCp,
+    bestMate: Math.abs(best.score) > MATE_BOUND ? mateIn(best.score) : null,
+    playedMate: Math.abs(entry.score) > MATE_BOUND ? mateIn(entry.score) : null,
+    bestLine: res.pv.length && res.pv[0] === best.move ? toUci(pos, res.pv).slice(0, 5) : [bestUci],
+    played: explainMove(fen, uci, entry.score),
+    bestExplanation: bestUci === uci ? null : explainMove(fen, bestUci, best.score),
+  };
+
+  if (out.loss >= 80) {
+    pos.make(played);
+    const after = pos.fen();
+    const r = searcher.search(pos, { timeMs: Math.round(timeMs / 2) });
+    if (r.bestMove) {
+      const replyUci = pos.moveToUci(r.bestMove);
+      out.reply = { uci: replyUci, line: toUci(pos, r.pv).slice(0, 4), explanation: explainMove(after, replyUci, r.score) };
+    }
+    pos.unmake();
+  }
+  return out;
 }
 
 export function evaluatePosition(fen, { timeMs = 600 } = {}) {

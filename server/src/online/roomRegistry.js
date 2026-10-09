@@ -28,7 +28,7 @@ function persistResult(room) {
     const seat = room.seats[c];
     if (!seat?.userId) continue;
     const opp = room.seats[c === 'w' ? 'b' : 'w'];
-    recordGame(seat.userId, {
+    room.recordIds[c] = recordGame(seat.userId, {
       mode: 'online',
       opponent: opp?.name || 'Opponent',
       color: c,
@@ -37,7 +37,7 @@ function persistResult(room) {
       pgn,
       moves,
       ratingChange: ratings[c],
-    });
+    })?.id || null;
   }
 }
 

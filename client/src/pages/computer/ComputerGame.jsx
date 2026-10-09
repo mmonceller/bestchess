@@ -18,6 +18,8 @@ import { materialInfo } from '../../chess/material.js';
 import { resultText, toUci, uciLineToSan } from '../../chess/status.js';
 import { playMoveSound, sounds } from '../../utils/sound.js';
 import { saveGame, clearSavedGame } from './savedGame.js';
+import { stashGame } from '../../review/pendingReview.js';
+import { navigate } from '../../router/router.js';
 import '../../components/game/game.css';
 import './computer.css';
 
@@ -46,6 +48,7 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
   const [feedback, setFeedback] = useState(null);
   const [showEnd, setShowEnd] = useState(false);
   const [saveState, setSaveState] = useState(null);
+  const [savedId, setSavedId] = useState(null);
   const [confirmResign, setConfirmResign] = useState(false);
   const token = useRef(0);
   const savedRef = useRef(false);
@@ -103,8 +106,19 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
       pgn: c.pgn(),
       moves: game.history.length,
       level,
-    }).then(() => setSaveState('saved')).catch(() => setSaveState('error'));
+    }).then((d) => { setSavedId(d.game?.id || null); setSaveState('saved'); }).catch(() => setSaveState('error'));
   }, [over]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function openReview() {
+    const outcome = result.winner === null ? 'draw' : result.winner === color ? 'win' : 'loss';
+    stashGame({ pgn: game.chess.pgn(), color, opponent: `${lvl.name} (Lv ${lvl.id})`, result: outcome, reason: result.reason, mode: 'computer', date: Date.now() });
+    navigate(savedId ? `/review/${savedId}?start=1` : '/review?start=1');
+  }
+  const reviewButton = (
+    <button className="btn good icon-text" onClick={openReview} disabled={saveState === 'saving' || !userMoves}>
+      <Icon name="target" size={18} /> Game review
+    </button>
+  );
 
   const onMove = useCallback((m) => {
     if (over || game.turn !== color || thinking) return;
@@ -193,6 +207,7 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
         <div className="controls">
           {over ? (
             <>
+              {reviewButton}
               <button className="btn primary" onClick={onRematch}>Play again</button>
               <button className="btn" onClick={onNewGame}>Change settings</button>
             </>
@@ -227,7 +242,8 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
               {saveState === 'error' && 'Could not save this game.'}
               {saveState === 'guest' && <>Log in to keep a record of your games. <a href="#/login" style={{ color: 'var(--accent-2)' }}>Log in</a></>}
             </p>
-            <div className="row" style={{ justifyContent: 'center', marginTop: 12 }}>
+            <div className="row" style={{ justifyContent: 'center', marginTop: 12, flexWrap: 'wrap' }}>
+              {reviewButton}
               <button className="btn primary" onClick={onRematch}>Play again</button>
               <button className="btn" onClick={() => setShowEnd(false)}>View board</button>
             </div>

@@ -11,6 +11,7 @@ export const gamesApi = {
   list: () => api('/games'),
   get: (id) => api(`/games/${id}`),
   saveComputerGame: (game) => api('/games', { method: 'POST', body: { ...game, mode: 'computer' } }),
+  saveReview: (id, review) => api(`/games/${id}/review`, { method: 'PUT', body: { review } }),
 };
 
 export const progressApi = {

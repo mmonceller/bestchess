@@ -39,10 +39,18 @@ BestChess is a browser-based chess app for players of every level. You can play 
 - Focuses on the patterns you miss most, and tracks your mastery of each one.
 - Two-level hints, any correct alternative move accepted, and the solution shown after a miss.
 
+### Game Review
+- A "Game review" button after every bot and online game.
+- The coach grades each of your moves (Best, Excellent, Good, Inaccuracy, Mistake, Blunder) and explains it in plain language.
+- For slips, it shows the better move with an arrow on the board, the line that follows, and the reply your opponent could punish you with.
+- A summary with your accuracy, a count of each kind of move, and a chart of how the game went. One tap jumps to your next slip.
+- Links to completed lessons that cover the idea you missed.
+- Reviews are saved to your game history when you are logged in; guests can still review but are told it will not be kept.
+
 ### Accounts and Profile
 - Sign up with a username and password.
 - Profile with rating, win/loss record, puzzle rating, level and best streak.
-- Game history with a move-by-move replay.
+- Game history with saved reviews and accuracy for each reviewed game.
 
 ### Design
 - App-style layout with a floating menu instead of a traditional website header.
@@ -110,7 +118,8 @@ client/          React frontend
   src/api/         HTTP and WebSocket clients
   src/components/  Board, icons, layout and shared UI
   src/engine/      Chess engine and bot difficulty levels
-  src/pages/       Home, online play, bot play, training, profile, auth
+  src/pages/       Home, online play, bot play, training, game review, profile, auth
+  src/review/      Move grading, commentary and the game review runner
   src/training/    Lessons, coaches, puzzles, trainer logic and hint-to-lesson links
 server/          Express and WebSocket backend
   src/auth/        Password hashing and sessions

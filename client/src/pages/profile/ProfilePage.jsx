@@ -87,13 +87,14 @@ export default function ProfilePage() {
           {games && !shown.length && <p className="muted" style={{ marginTop: 12 }}>No games yet. <a className="link" href="#/computer">Play one now</a></p>}
           <div className="game-list">
             {shown.map((g) => (
-              <a key={g.id} href={`#/replay/${g.id}`} className="game-row">
+              <a key={g.id} href={`#/review/${g.id}`} className="game-row">
                 <span className="game-mode"><Icon name={g.mode === 'online' ? 'friends' : 'bot'} size={18} /></span>
                 <span className={`player-dot ${g.color === 'w' ? 'white' : 'black'}`} />
                 <div className="game-main">
                   <b>vs {g.opponent}</b>
                   <span className="muted small">{formatDate(g.date)} · {Math.ceil(g.moves / 2)} moves · {g.reason}</span>
                 </div>
+                {g.reviewed && <span className="review-acc" title="Reviewed: your accuracy"><Icon name="target" size={14} />{g.accuracy ?? '–'}%</span>}
                 {g.ratingChange != null && <span className={`delta ${g.ratingChange >= 0 ? 'up' : 'down'}`}>{g.ratingChange >= 0 ? '+' : ''}{g.ratingChange}</span>}
                 <span className={`result-pill ${g.result}`}>{RESULT_LABEL[g.result]}</span>
               </a>

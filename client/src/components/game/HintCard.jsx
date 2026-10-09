@@ -1,5 +1,5 @@
 import Icon from '../icons/Icon.jsx';
-import CoachAvatar from '../icons/CoachAvatar.jsx';
+import LessonReminder from './LessonReminder.jsx';
 
 /*
  * AI assistant card: best move, one or two short reasons, and the expected follow-up.
@@ -25,22 +25,7 @@ export default function HintCard({ hint, loading, onClose, title = 'AI Coach', l
           </ul>
           {hint.line?.length > 1 && <div className="hint-line muted">Likely line: {hint.line.join(' ')}</div>}
           {hint.assessment && <div className="hint-assess">{hint.assessment}</div>}
-          {lesson && (
-            <div className="hint-lesson" style={{ '--coach': lesson.coach.color }}>
-              <CoachAvatar coach={lesson.coach} size={34} />
-              <div className="hint-lesson-body">
-                <div className="hint-lesson-from small muted">
-                  {lesson.coach.name} · from your lesson <b>{lesson.title}</b>
-                </div>
-                <div>{lesson.text}</div>
-                {reviewLink && (
-                  <a className="hint-lesson-link small" href={`#/training/${lesson.lessonId}`}>
-                    <Icon name="book" size={14} /> Review this lesson
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
+          <LessonReminder lesson={lesson} reviewLink={reviewLink} />
         </>
       )}
     </div>
