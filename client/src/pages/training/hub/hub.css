@@ -1,0 +1,318 @@
+.training-hub { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- Guest banner ---------- */
+.guest-banner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: rgba(255, 181, 71, 0.1);
+  border: 1px solid rgba(255, 181, 71, 0.45);
+  color: #ffd79a;
+}
+.guest-banner p { margin: 0; font-size: 0.9rem; color: var(--text); }
+.guest-banner .icon { color: #ffb547; margin-top: 1px; }
+
+/* ---------- Player HUD ---------- */
+.player-hud { display: grid; grid-template-columns: auto 1fr; gap: 12px 16px; align-items: center; position: relative; }
+.level-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent), #5b8cff);
+  box-shadow: 0 8px 22px rgba(124, 92, 255, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.18);
+  transform: rotate(-4deg);
+}
+.level-badge span { font-size: 1.7rem; font-weight: 900; color: #fff; transform: rotate(4deg); }
+.hud-main { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.hud-name { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.hud-name b { font-size: 1.1rem; }
+.xp-bar { height: 12px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
+.xp-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffb547, #ffd166);
+  box-shadow: 0 0 12px rgba(255, 193, 71, 0.6);
+  transition: width 0.6s cubic-bezier(.2, .9, .3, 1);
+  min-width: 8px;
+}
+.hud-chips { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 99px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.chip b { color: var(--text); font-size: 0.95rem; }
+.chip-fire .icon { color: #ff7a45; }
+.chip-star .icon { color: #ffc940; }
+.chip-puzzle .icon { color: var(--accent-2); }
+.hud-path { position: absolute; top: 12px; right: 14px; }
+button.link { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
+
+/* ---------- Puzzle card ---------- */
+.puzzle-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-color: rgba(79, 209, 197, 0.45);
+  background: linear-gradient(120deg, rgba(79, 209, 197, 0.16), var(--bg-2) 70%);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.puzzle-card:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.puzzle-card-icon {
+  width: 58px;
+  height: 58px;
+  flex: none;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #0e2a27;
+  background: linear-gradient(135deg, #4fd1c5, #7ce7a8);
+}
+.puzzle-card-body { flex: 1; min-width: 0; }
+.puzzle-card-body h3 { margin: 0 0 2px; }
+.puzzle-card-body p { margin: 0 0 8px; }
+.pattern-dots { display: flex; gap: 5px; flex-wrap: wrap; }
+.pattern-dots span {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--panel-2);
+  color: var(--muted);
+  opacity: 0.6;
+}
+.pattern-dots span.on { opacity: 1; color: var(--c); background: color-mix(in srgb, var(--c) 18%, var(--bg-2)); }
+.puzzle-card-cta { display: flex; flex-direction: column; align-items: center; color: var(--accent-2); }
+.puzzle-card-cta b { font-size: 1.3rem; color: var(--text); }
+
+/* ---------- Worlds (tracks) ---------- */
+.worlds { display: flex; flex-direction: column; align-items: center; }
+.world-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+.world-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 6px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s, background 0.15s;
+}
+.world-tab:hover { transform: translateY(-2px); }
+.world-tab.active {
+  color: var(--text);
+  border-color: var(--track);
+  background: color-mix(in srgb, var(--track) 16%, var(--panel));
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--track) 25%, transparent);
+}
+.world-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--track);
+  background: color-mix(in srgb, var(--track) 16%, var(--bg-2));
+}
+.world-name { font-weight: 800; font-size: 0.85rem; text-align: center; line-height: 1.15; }
+.world-count { font-size: 0.75rem; }
+.world-pin {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--track);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--track) 30%, transparent);
+}
+.world-head { text-align: center; margin: 18px 0 4px; }
+.world-head h2 { margin: 0; color: var(--track); }
+.world-head p { margin: 4px 0 0; }
+.world-done { display: flex; gap: 12px; align-items: center; color: #ffc940; margin-top: 4px; }
+.world-done p { margin: 2px 0 0; }
+.world-done b { color: var(--text); }
+
+/* ---------- Lesson path ---------- */
+.lesson-path { position: relative; max-width: 100%; margin: 10px auto 0; }
+.trail { position: absolute; inset: 0; overflow: visible; }
+.trail path { fill: none; stroke-linecap: round; }
+.trail-base { stroke: var(--line); stroke-width: 8; stroke-dasharray: 1 15; }
+.trail-done { stroke: var(--track); stroke-width: 6; opacity: 0.55; }
+.path-node {
+  position: absolute;
+  transform: translate(-50%, -38px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+  animation: nodeIn 0.4s cubic-bezier(.3, 1.5, .5, 1) both;
+  animation-delay: calc(var(--i) * 50ms);
+}
+@keyframes nodeIn { from { opacity: 0; transform: translate(-50%, -38px) scale(0.6); } }
+.node-btn {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 0;
+  cursor: pointer;
+  background: var(--panel);
+  box-shadow: 0 6px 0 var(--bg-2), 0 0 0 3px var(--line);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.node-btn:hover { transform: translateY(-2px); }
+.node-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--bg-2), 0 0 0 3px var(--line); }
+.path-node.open .coach-avatar { filter: saturate(0.6); opacity: 0.85; }
+.path-node.done .node-btn {
+  background: color-mix(in srgb, var(--coach) 30%, var(--panel));
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--coach) 45%, #000), 0 0 0 3px var(--coach);
+}
+.path-node.next .node-btn {
+  background: color-mix(in srgb, var(--coach) 22%, var(--panel));
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--coach) 45%, #000), 0 0 0 3px var(--coach);
+  animation: nodePulse 1.8s ease-in-out infinite;
+}
+@keyframes nodePulse {
+  0%, 100% { box-shadow: 0 6px 0 color-mix(in srgb, var(--coach) 45%, #000), 0 0 0 3px var(--coach), 0 0 0 0 color-mix(in srgb, var(--coach) 50%, transparent); }
+  50% { box-shadow: 0 6px 0 color-mix(in srgb, var(--coach) 45%, #000), 0 0 0 3px var(--coach), 0 0 0 12px transparent; }
+}
+.node-check {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--good);
+  color: #0b2316;
+  box-shadow: 0 0 0 3px var(--bg);
+}
+.node-tag {
+  position: absolute;
+  top: -30px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--coach);
+  color: #111;
+  white-space: nowrap;
+  animation: tagBob 1.4s ease-in-out infinite;
+}
+.node-tag::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--coach);
+}
+@keyframes tagBob { 50% { transform: translateY(-4px); } }
+.node-label { margin-top: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.node-label b { font-size: 0.82rem; line-height: 1.2; }
+
+/* ---------- Sheets ---------- */
+.welcome-sheet, .lesson-sheet { display: flex; flex-direction: column; gap: 12px; position: relative; }
+.welcome-head { display: flex; gap: 14px; align-items: center; }
+.welcome-head h2 { margin: 0; }
+.welcome-head p { margin: 4px 0 0; }
+.path-options { display: flex; flex-direction: column; gap: 8px; }
+.path-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.path-option:hover, .path-option.active { border-color: var(--accent); }
+.path-option:active { transform: scale(0.99); }
+.path-icon {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: var(--accent-2);
+  background: rgba(79, 209, 197, 0.14);
+}
+.path-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.welcome-guest { display: flex; gap: 8px; margin: 0; padding: 10px; border-radius: 12px; background: rgba(255, 181, 71, 0.1); }
+.welcome-guest .icon { color: #ffb547; margin-top: 2px; }
+
+.sheet-close { position: absolute; top: -4px; right: -4px; }
+.sheet-coach { display: flex; gap: 12px; align-items: center; }
+.sheet-intro {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-style: italic;
+  background: color-mix(in srgb, var(--coach) 14%, var(--bg-2));
+  border-left: 3px solid var(--coach);
+}
+.lesson-sheet h2 { margin: 0; }
+.lesson-sheet > p { margin: 0; }
+.sheet-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.sheet-best { display: flex; align-items: center; justify-content: space-between; }
+
+/* ---------- Coach roster ---------- */
+.coach-roster h2 { margin: 18px 0 2px; }
+.coach-roster > p { margin: 0 0 10px; }
+.roster-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; }
+.roster-card {
+  flex: none;
+  width: 160px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: 14px 10px;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--coach) 14%, var(--panel)), var(--bg-2));
+  border: 1px solid color-mix(in srgb, var(--coach) 35%, var(--line));
+}
+.roster-title { font-size: 0.78rem; font-weight: 700; color: var(--coach); }
+.roster-card p { margin: 2px 0 0; }
+
+@media (max-width: 560px) {
+  .world-tabs { grid-template-columns: repeat(2, 1fr); }
+  .hud-path { position: static; grid-column: 1 / -1; justify-self: start; }
+  .puzzle-card-cta { display: none; }
+}

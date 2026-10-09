@@ -1,0 +1,23 @@
+.icon { display: inline-block; flex: none; vertical-align: -0.2em; }
+.icon .duo { opacity: 0.38; }
+
+.logo-mark {
+  display: grid;
+  place-items: center;
+  border-radius: 30%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 18px rgba(124, 92, 255, 0.35);
+  flex: none;
+}
+
+.coach-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--coach, var(--accent)) 25%, var(--bg-2));
+  box-shadow: 0 0 0 2px var(--coach, var(--accent));
+}
+.coach-face { width: 100%; height: 100%; display: block; }

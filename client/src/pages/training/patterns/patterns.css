@@ -1,0 +1,112 @@
+.pattern-trainer { display: flex; flex-direction: column; gap: 12px; }
+.trainer-head { display: flex; align-items: center; gap: 10px; }
+.trainer-stats { display: flex; gap: 6px; flex-wrap: wrap; }
+.trainer-stats .chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; background: var(--bg-2); border: 1px solid var(--line); font-size: 0.82rem; color: var(--muted); }
+.trainer-stats .chip b { color: var(--text); }
+.trainer-stats .chip-fire .icon { color: #ff7a45; }
+.trainer-stats .chip-today .icon { color: var(--good); }
+.trainer-stats .chip-puzzle .icon { color: var(--accent-2); }
+
+.focus-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.focus-chips button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.focus-chips button .icon { color: var(--c, var(--accent-2)); }
+.focus-chips button.active {
+  color: var(--text);
+  border-color: var(--c, var(--accent));
+  background: color-mix(in srgb, var(--c, var(--accent)) 18%, var(--panel));
+}
+
+.puzzle-panel { display: flex; flex-direction: column; gap: 12px; }
+.puzzle-turn { display: flex; align-items: center; gap: 10px; }
+.puzzle-turn > div { flex: 1; }
+.turn-dot { width: 22px; height: 22px; border-radius: 50%; flex: none; box-shadow: 0 0 0 2px var(--line); }
+.turn-dot.white { background: #f4f4f4; }
+.turn-dot.black { background: #15161b; }
+.puzzle-level { font-size: 0.8rem; }
+
+.puzzle-question {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--bg-2);
+  border: 1px dashed var(--line);
+  color: var(--accent-2);
+}
+.puzzle-question p { margin: 0; color: var(--text); }
+
+.pattern-badge {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--c) 18%, var(--panel)), var(--bg-2));
+  border: 1px solid color-mix(in srgb, var(--c) 50%, var(--line));
+}
+.pattern-badge b { display: block; font-size: 1.05rem; }
+.pattern-badge p { margin: 4px 0 0; font-size: 0.9rem; line-height: 1.45; }
+.pattern-icon {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 18%, var(--bg-2));
+}
+
+.puzzle-result { display: flex; gap: 6px; flex-wrap: wrap; }
+.puzzle-result > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 99px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+}
+.puzzle-result .delta.up { color: var(--good); border-color: rgba(60, 207, 122, 0.5); }
+.puzzle-result .delta.up .icon { transform: rotate(-90deg); }
+.puzzle-result .delta.down { color: var(--bad); border-color: rgba(255, 93, 108, 0.5); }
+.puzzle-result .delta.down .icon { transform: rotate(-90deg); }
+.puzzle-result .xp { color: #ffc940; border-color: rgba(255, 193, 71, 0.45); }
+.puzzle-result .unlock { color: var(--accent-2); border-color: rgba(79, 209, 197, 0.5); }
+
+.mastery h3 { margin: 0 0 4px; }
+.mastery > p { margin: 0 0 10px; }
+.mastery ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.mastery li { display: flex; gap: 10px; align-items: center; }
+.mastery li.locked { opacity: 0.55; }
+.mastery-icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 16%, var(--bg-2));
+}
+.mastery li.locked .mastery-icon { color: var(--muted); background: var(--panel-2); }
+.mastery-body { flex: 1; min-width: 0; }
+.mastery-line { display: flex; justify-content: space-between; gap: 6px; font-size: 0.9rem; }
+.mastery-bar { height: 6px; margin-top: 5px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
+.mastery-bar span { display: block; height: 100%; background: var(--c); border-radius: inherit; transition: width 0.5s ease; }

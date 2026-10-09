@@ -1,0 +1,15 @@
+.theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.theme-swatch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  cursor: pointer;
+}
+.theme-swatch.active { border-color: var(--accent); }
+.theme-swatch span { width: 28px; height: 28px; border-radius: 6px; }
+.toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; cursor: pointer; }
+.toggle-row input { width: 18px; height: 18px; accent-color: var(--accent); }
