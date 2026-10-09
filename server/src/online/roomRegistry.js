@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { Room } from './room.js';
 import { config } from '../config.js';
 import { recordGame, updateRatings } from '../services/gameRecords.js';
+import { findUserById } from '../db/store.js';
 
 /* No 0/O/1/I to keep codes easy to read aloud. */
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -21,6 +22,7 @@ function persistResult(room) {
   const { w, b } = room.seats;
   const winner = room.result.winner;
   const score = winner === 'w' ? 1 : winner === 'b' ? 0 : 0.5;
+  const ratingBefore = { w: findUserById(w?.userId)?.rating, b: findUserById(b?.userId)?.rating };
   const ratings = w?.userId && b?.userId ? updateRatings(w.userId, b.userId, score) : { w: null, b: null };
   const pgn = room.chess.pgn();
   const moves = room.chess.history().length;
@@ -37,6 +39,7 @@ function persistResult(room) {
       pgn,
       moves,
       ratingChange: ratings[c],
+      opponentRating: ratingBefore[c === 'w' ? 'b' : 'w'],
     })?.id || null;
   }
 }

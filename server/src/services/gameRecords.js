@@ -19,6 +19,7 @@ export function recordGame(userId, game) {
     pgn: String(game.pgn || '').slice(0, 20000),
     moves: Number(game.moves) || 0,
     ratingChange: game.ratingChange ?? null,
+    opponentRating: Number.isFinite(game.opponentRating) ? game.opponentRating : null,
     date: Date.now(),
   };
   db.games.push(record);

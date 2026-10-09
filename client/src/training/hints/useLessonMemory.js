@@ -1,15 +1,20 @@
 import { useCallback, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useProgress } from '../progressStore.js';
+import { tracksForSkill } from '../skill/tiers.js';
 import { linkHintToLesson } from './linkHint.js';
 
 /*
- * Returns a function that ties a hint to a lesson the player has completed.
- * Only logged-in players with saved lesson progress get links; everyone else gets null.
+ * Returns a function that ties a hint to a lesson: one the player completed, or one
+ * suited to their skill level. Only logged-in players get links; guests get null.
  */
 export function useLessonMemory() {
   const { user } = useAuth();
   const { progress } = useProgress();
   const completed = useMemo(() => (user ? new Set(Object.keys(progress || {})) : new Set()), [user, progress]);
-  return useCallback((hint) => (hint && completed.size ? linkHintToLesson(hint, completed) : null), [completed]);
+  const tracks = tracksForSkill(user?.skill);
+  return useCallback(
+    (hint) => (hint && user && (completed.size || tracks) ? linkHintToLesson(hint, completed, tracks) : null),
+    [user, completed, tracks],
+  );
 }

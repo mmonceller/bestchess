@@ -17,7 +17,10 @@ BestChess is a browser-based chess app for players of every level. You can play 
 - Choose to play as white, black or a random color.
 - Undo moves and flip the board.
 - AI hint assistant that suggests a move and explains why it works in plain language.
-- For logged-in players who have taken lessons, hints link back to a completed lesson that covers the same idea (for example a fork, castling or a rook ending), in that lesson coach's voice.
+- Hints use the same advice and wording as the lessons (rooks behind passed pawns, the opposition, blockades, outposts, "fix your worst piece", "trade when ahead", and so on).
+- For logged-in players, hints link back to a completed lesson that covers the same idea, in that lesson coach's voice. If they haven't taken it yet, the hint suggests a lesson that fits their skill level instead. Coach feedback on a mistake works the same way.
+- **Skill badge**: after 5 finished games, each logged-in player gets a tier (Bronze, Silver, Gold, Platinum or Diamond) from the average performance of their last 20 games. A win counts as the opponent's strength + 400, a draw as the opponent's strength, and a loss as opponent − 400 (never more than the player's own wins and draws). The tier colours the ring around their emblem at the top of the page.
+- The bot setup pre-selects the level closest to the player's skill and marks it **Recommended**; any other level can still be picked.
 - An unfinished game is saved so you can pick it up later.
 
 ### Learn Chess

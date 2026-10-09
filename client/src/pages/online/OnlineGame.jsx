@@ -24,7 +24,7 @@ import { navigate } from '../../router/router.js';
 import '../../components/game/game.css';
 
 export default function OnlineGame({ code }) {
-  const { user } = useAuth();
+  const { user, refresh } = useAuth();
   const { state, error, connection, clocks } = useOnlineGame(code, user?.username || getGuestName());
   const hint = useHint();
   const lessonFor = useLessonMemory();
@@ -36,6 +36,7 @@ export default function OnlineGame({ code }) {
   useEffect(() => { setOptimistic(null); }, [state]);
   useEffect(() => { hint.clear(); }, [state?.fen]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (state?.status === 'playing') setDismissedResult(false); }, [state?.status]);
+  useEffect(() => { if (user && state?.status === 'over') refresh(); }, [state?.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fen = optimistic?.fen || state?.fen || new Chess().fen();
   const chess = useMemo(() => new Chess(fen), [fen]);

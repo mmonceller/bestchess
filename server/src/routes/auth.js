@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import crypto from 'node:crypto';
-import { db, save, findUserByName, publicUser } from '../db/store.js';
+import { db, save, findUserByName } from '../db/store.js';
+import { userView } from '../services/userView.js';
 import { hashPassword, verifyPassword } from '../auth/password.js';
 import { createSession, destroySession } from '../auth/sessions.js';
 import { requireAuth, bearerToken } from '../middleware/auth.js';
@@ -39,7 +40,7 @@ router.post('/register', (req, res) => {
   };
   db.users.push(user);
   save();
-  res.json({ token: createSession(user.id), user: publicUser(user) });
+  res.json({ token: createSession(user.id), user: userView(user) });
 });
 
 router.post('/login', (req, res) => {
@@ -52,7 +53,7 @@ router.post('/login', (req, res) => {
     return res.status(401).json({ error: 'Wrong username or password.' });
   }
   failedLogins.delete(key);
-  res.json({ token: createSession(user.id), user: publicUser(user) });
+  res.json({ token: createSession(user.id), user: userView(user) });
 });
 
 router.post('/logout', (req, res) => {
@@ -61,7 +62,7 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/me', requireAuth, (req, res) => {
-  res.json({ user: publicUser(req.user) });
+  res.json({ user: userView(req.user) });
 });
 
 export default router;

@@ -73,6 +73,26 @@ export const TAG_LESSONS = {
     { lesson: 's-rooks', say: 'Roads for rooks: take the open file, then aim for the 7th rank.' },
     { lesson: 'i-worst-piece', say: 'Fix your worst piece: a rook needs an open file to do its job.' },
   ],
+  rookBehindPasser: [
+    { lesson: 'e-rook-rules', say: 'Rule 1 of rook endings: rooks belong behind passed pawns — yours and your opponent\'s.' },
+    { lesson: 's-rooks', say: 'Rooks need open roads. Behind a passed pawn, the road gets longer every time the pawn moves.' },
+  ],
+  cutOff: [
+    { lesson: 'e-rook-rules', say: 'Cut the king off: a rook on a file between the king and the pawn works like a wall.' },
+    { lesson: 'a-lucena', say: 'Like in the Lucena: first cut the enemy king off, then bring your own king and pawn forward.' },
+  ],
+  opposition: [
+    { lesson: 'i-key-squares', say: 'Use the opposition: kings facing each other with one square between — whoever must move has to step aside.' },
+    { lesson: 'e-zugzwang', say: 'The waiting game: put your opponent in a position where every move makes things worse.' },
+  ],
+  blockade: [
+    { lesson: 's-passed-pawns', say: 'Stop a passed pawn with a blockade — put a piece right in front of it. Knights are the best blockaders.' },
+    { lesson: 's-targets', say: 'The square in front of a weak pawn is a perfect home for your piece — no pawn can chase it away.' },
+  ],
+  outpost: [
+    { lesson: 's-minor-pieces', say: 'Knights love support points: advanced squares protected by your pawn where enemy pawns can\'t chase them.' },
+    { lesson: 'i-worst-piece', say: 'Fix your worst piece: find it a better home, like a safe advanced square for a knight.' },
+  ],
   space: [
     { lesson: 's-space', say: 'Gaining space gives your pieces room and cramps your opponent — just watch the squares your pawns leave behind.' },
   ],
@@ -89,9 +109,11 @@ export const TAG_LESSONS = {
   ],
   losing: [
     { lesson: 'a-practical', say: 'When you are behind, make it messy. Give your opponent problems to solve.' },
+    { lesson: 'e-fortress', when: (t) => t.includes('endgame'), say: 'Down material in an endgame? Look for a fortress — a setup your opponent can\'t break.' },
   ],
   ahead: [
     { lesson: 'i-trade-logic', say: 'You are ahead. Trade pieces and keep things simple.' },
+    { lesson: 'e-big-rules', when: (t) => t.includes('endgame'), say: 'A pawn up in the endgame: trade pieces, but keep the pawns.' },
   ],
   opening: [
     { lesson: 'b-opening-race', say: 'Openings are a race: develop, castle, and don\'t move the same piece twice.' },
@@ -100,7 +122,7 @@ export const TAG_LESSONS = {
 };
 
 /* Tags checked before the rest: concrete tactics and recognisable endgames beat generic ideas like "check". */
-export const PRIORITY_TAGS = ['mate', 'fork', 'pin', 'desperado', 'freePiece', 'winMaterial', 'promotion', 'loneKing', 'rookEndgame'];
+export const PRIORITY_TAGS = ['mate', 'fork', 'pin', 'desperado', 'freePiece', 'winMaterial', 'promotion', 'loneKing', 'rookBehindPasser', 'cutOff', 'opposition', 'blockade', 'outpost', 'rookEndgame'];
 
 /* How each piece moves, for when the hint is a quiet move by that piece. */
 export const PIECE_LESSONS = {

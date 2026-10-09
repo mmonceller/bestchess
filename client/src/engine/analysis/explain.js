@@ -82,6 +82,68 @@ function createsPin(pos, sq) {
   return false;
 }
 
+const rankOf = (sq) => 8 - (sq >> 4);
+const fileOf = (sq) => sq & 7;
+const forward = (color) => (color === WHITE ? 1 : -1);
+const findPiece = (pos, piece) => SQUARES_64.find((sq) => pos.board[sq] === piece);
+const passedPawns = (pos, color) => SQUARES_64.filter((sq) => pos.board[sq] === (color | PAWN) && isPassedPawn(pos, sq, color));
+
+/* Is every square strictly between two squares on the same file empty? */
+function clearFile(pos, a, b) {
+  const step = a < b ? 16 : -16;
+  for (let s = a + step; s !== b; s += step) if (pos.board[s]) return false;
+  return true;
+}
+
+/*
+ * Strategic ideas taught in the lessons, checked after the move is made and worded the
+ * way the coaches say them, so hints and lessons give the same advice.
+ */
+function strategicIdea(pos, { us, them, to, mover, context }) {
+  if (mover === ROOK) {
+    for (const color of [us, them]) {
+      const pawn = passedPawns(pos, color).find((sq) => fileOf(sq) === fileOf(to)
+        && (rankOf(to) - rankOf(sq)) * forward(color) < 0 && clearFile(pos, to, sq));
+      if (pawn != null) {
+        return color === us
+          ? { tag: 'rookBehindPasser', text: 'Puts your rook behind your passed pawn — rooks belong behind passed pawns, where they gain room as the pawn advances.' }
+          : { tag: 'rookBehindPasser', text: 'Puts your rook behind their passed pawn — from there it stops the pawn and stays active.' };
+      }
+    }
+    const enemyKing = findPiece(pos, them | KING);
+    if (context.includes('rookEndgame') && enemyKing != null) {
+      const cuts = passedPawns(pos, us).some((sq) => {
+        const [lo, hi] = [fileOf(sq), fileOf(enemyKing)].sort((a, b) => a - b);
+        return fileOf(to) > lo && fileOf(to) < hi;
+      });
+      if (cuts) return { tag: 'cutOff', text: 'Cuts the enemy king off — your rook works like a wall it can\'t cross to help.' };
+    }
+  }
+  if (mover === KING && context.includes('pawnEndgame')) {
+    const enemyKing = findPiece(pos, them | KING);
+    const df = Math.abs(fileOf(enemyKing) - fileOf(to));
+    const dr = Math.abs(rankOf(enemyKing) - rankOf(to));
+    if ((df === 0 && dr === 2) || (dr === 0 && df === 2)) {
+      return { tag: 'opposition', text: 'Takes the opposition — the kings face each other, so your opponent must step aside.' };
+    }
+  }
+  if (mover !== PAWN && passedPawns(pos, them).some((sq) => sq === to + (them === WHITE ? 16 : -16))) {
+    return { tag: 'blockade', text: 'Blockades their passed pawn — a piece right in front of it stops it cold.' };
+  }
+  if (mover === KNIGHT) {
+    const r = rankOf(to);
+    const inEnemyHalf = us === WHITE ? r >= 5 && r <= 7 : r >= 2 && r <= 4;
+    const pawnGuard = SQUARES_64.some((sq) => pos.board[sq] === (us | PAWN)
+      && Math.abs(fileOf(sq) - fileOf(to)) === 1 && rankOf(sq) === r - forward(us));
+    const canBeChased = SQUARES_64.some((sq) => pos.board[sq] === (them | PAWN)
+      && Math.abs(fileOf(sq) - fileOf(to)) === 1 && (rankOf(sq) - r) * forward(us) > 0);
+    if (inEnemyHalf && pawnGuard && !canBeChased) {
+      return { tag: 'outpost', text: 'Puts your knight on an outpost — a safe square protected by a pawn that no enemy pawn can chase it from.' };
+    }
+  }
+  return null;
+}
+
 /* Broad labels for the kind of position, so hints can point to the lessons that cover it. */
 function positionTags(pos, us, them, fullmove, score) {
   const tags = [];
@@ -108,13 +170,13 @@ export function describeScore(score) {
     return n > 0 ? `You have a forced mate in ${n}.` : `Danger: you're getting mated in ${-n}.`;
   }
   const s = score / 100;
-  if (s >= 3) return 'You are winning.';
+  if (s >= 3) return 'You are winning — trade pieces and keep it simple.';
   if (s >= 1.2) return 'You are clearly better.';
   if (s >= 0.4) return 'You have a slight edge.';
   if (s > -0.4) return 'The position is balanced.';
   if (s > -1.2) return 'You are slightly worse — stay solid.';
   if (s > -3) return 'You are in trouble; look for counterplay.';
-  return 'You are losing — set traps and fight on.';
+  return 'You are losing — make it messy, set traps and fight on.';
 }
 
 /*
@@ -170,7 +232,11 @@ export function explainMove(fen, uci, score = 0) {
       add('desperado', `Your ${piece} was lost anyway, so it grabs a ${cap} on the way out.`);
     } else if (!attackedAfter) add('freePiece', `Grabs a free ${cap} — nothing can recapture.`);
     else if (value(capturedType) > value(mover)) add('winMaterial', `Wins material: your ${piece} takes a ${cap}.`);
-    else if (value(capturedType) === value(mover)) add('trade', `Trades ${piece}s on your terms.`);
+    else if (value(capturedType) === value(mover)) {
+      add('trade', context.includes('ahead')
+        ? `Trades ${piece}s while you're ahead — every trade makes your extra material count more.`
+        : `Trades ${piece}s on your terms.`);
+    }
     else if (enemyHangingBefore.has(to) && defendedAfter) add('winMaterial', `Takes the ${cap}; your recapture keeps the material.`);
     else add('sacrifice', `A sacrifice: giving up the ${piece} for a ${cap} opens the position for your attack.`);
   }
@@ -207,21 +273,26 @@ export function explainMove(fen, uci, score = 0) {
 
   if (flags & FLAG_CASTLE) add('castle', 'Castles: the king gets safe and your rooks connect.');
 
+  if (reasons.length < 2 && !tags.includes('mate')) {
+    const idea = strategicIdea(pos, { us, them, to, mover, context });
+    if (idea) add(idea.tag, idea.text);
+  }
+
   if (!reasons.length) {
     if (mover === PAWN && CENTER.has(sqToAlg(to)) && fullmove <= 15) {
-      add('center', 'Claims the center, giving your pieces more room.');
+      add('center', 'Claims the center — control the middle so your pieces have room to come out.');
     } else if ((mover === KNIGHT || mover === BISHOP) && fullmove <= 12 && ((from >> 4) === (us === WHITE ? 7 : 0))) {
-      add('develop', `Develops your ${piece} toward the action.`);
+      add('develop', `Develops your ${piece} — the opening is a race to get your pieces out.`);
     } else if (mover === PAWN && isPassedPawn(pos, to, us)) {
-      add('passedPawn', 'Pushes your passed pawn — nothing can stop it with a pawn.');
+      add('passedPawn', 'Pushes your passed pawn — a passed pawn is a baby queen, and no pawn can stop it.');
     } else if (mover === KING && endgame) {
-      add('activeKing', 'Activates the king — in endgames, the king is a fighting piece.');
+      add('activeKing', 'Activates the king — in endgames, the king is a fighting piece. Bring it toward the middle.');
     } else if (mover === ROOK && !SQUARES_64.some((sq) => (sq & 7) === (to & 7) && pos.board[sq] === (us | PAWN))) {
-      add('openFile', 'Puts the rook on an open file where it has scope.');
+      add('openFile', 'Puts the rook on an open file — rooks need open roads to do their job.');
     } else if (mover === PAWN && !capturedType) {
       add('space', 'A useful pawn move that gains space and restricts enemy pieces.');
     } else {
-      add('improve', `Improves your ${piece} to a more active square.`);
+      add('improve', `Improves your ${piece} — when nothing urgent is happening, fix your worst piece.`);
     }
   }
 

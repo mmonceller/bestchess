@@ -12,6 +12,8 @@ import { evaluateMastery } from '../../training/mastery/criteria.js';
 import { levelInfo, totalXp } from '../../training/xp.js';
 import { formatDate } from '../../utils/format.js';
 import { navigate } from '../../router/router.js';
+import UserEmblem from '../../components/skill/UserEmblem.jsx';
+import SkillCard from './SkillCard.jsx';
 import '../../components/game/game.css';
 import './profile.css';
 
@@ -55,7 +57,7 @@ export default function ProfilePage() {
   return (
     <div className="profile fade-in">
       <div className="profile-head card">
-        <span className="avatar xl">{user.username[0].toUpperCase()}</span>
+        <UserEmblem user={user} size={72} />
         <div className="spacer-col">
           <h1>{user.username}</h1>
           <div className="muted">Member since {formatDate(user.createdAt)}</div>
@@ -63,6 +65,8 @@ export default function ProfilePage() {
         </div>
         <button className="btn ghost icon-text" onClick={async () => { await logout(); navigate('/'); }}><Icon name="logout" size={18} /> Log out</button>
       </div>
+
+      <SkillCard skill={user.skill} />
 
       <div className="stat-grid">
         <div className="stat card"><b>{user.rating}</b><span>Online rating</span></div>

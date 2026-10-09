@@ -1,14 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LEVELS } from '../../engine/levels.js';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { recommendedLevel } from '../../training/skill/tiers.js';
 import Icon from '../../components/icons/Icon.jsx';
 import ColorPicker from '../../components/game/ColorPicker.jsx';
+import SkillNote from './SkillNote.jsx';
 import './computer.css';
 
 const LEVEL_KEY = 'bc.lastLevel';
 
 export default function ComputerSetup({ onStart, onResume, saved }) {
-  const [level, setLevel] = useState(() => Number(localStorage.getItem(LEVEL_KEY)) || 3);
+  const { user } = useAuth();
+  const recommended = user ? recommendedLevel(user.skill) : null;
+  const [level, setLevel] = useState(() => recommended || Number(localStorage.getItem(LEVEL_KEY)) || 3);
+  const [picked, setPicked] = useState(false);
   const [color, setColor] = useState('w');
+
+  useEffect(() => { if (recommended && !picked) setLevel(recommended); }, [recommended, picked]);
+
+  function choose(id) {
+    setPicked(true);
+    setLevel(id);
+  }
 
   function start() {
     localStorage.setItem(LEVEL_KEY, String(level));
@@ -28,10 +41,13 @@ export default function ComputerSetup({ onStart, onResume, saved }) {
         </div>
       )}
 
+      {user && <SkillNote skill={user.skill} recommended={recommended} chosen={level} />}
+
       <span className="label">Difficulty</span>
       <div className="level-grid">
         {LEVELS.map((l) => (
-          <button key={l.id} className={`level-card${level === l.id ? ' active' : ''}`} style={{ '--tint': l.tint }} onClick={() => setLevel(l.id)}>
+          <button key={l.id} className={`level-card${level === l.id ? ' active' : ''}`} style={{ '--tint': l.tint }} onClick={() => choose(l.id)}>
+            {l.id === recommended && <span className="level-rec">Recommended</span>}
             <span className="level-icon"><Icon name={l.icon} size={22} /></span>
             <b>{l.name}</b>
             <span className="muted small">Level {l.id} · {l.elo}</span>

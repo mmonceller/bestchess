@@ -43,6 +43,7 @@ export default function BestStep({ step, coach, onNext, onMistake, onHint, onAns
       if (!alive.current) return;
       setGrading(false);
       game.undo();
+      setFeedback(fb('bad', `${coach.name} couldn't check that move. Please try it again.`));
       return;
     }
     if (!alive.current) return;

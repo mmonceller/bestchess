@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Chess } from 'chess.js';
 import Board from '../../components/board/Board.jsx';
 import PlayerBar from '../../components/game/PlayerBar.jsx';
 import MoveList from '../../components/game/MoveList.jsx';
@@ -15,9 +14,11 @@ import { engine } from '../../engine/engineClient.js';
 import { getLevel } from '../../engine/levels.js';
 import { gamesApi } from '../../api/endpoints.js';
 import { materialInfo } from '../../chess/material.js';
-import { resultText, toUci, uciLineToSan } from '../../chess/status.js';
+import { resultText, toUci } from '../../chess/status.js';
 import { playMoveSound, sounds } from '../../utils/sound.js';
 import { saveGame, clearSavedGame } from './savedGame.js';
+import { moveFeedback } from './moveFeedback.js';
+import LessonReminder from '../../components/game/LessonReminder.jsx';
 import { stashGame } from '../../review/pendingReview.js';
 import { navigate } from '../../router/router.js';
 import '../../components/game/game.css';
@@ -25,19 +26,9 @@ import './computer.css';
 
 const COACH_KEY = 'bc.coachMode';
 
-function classify(g, fen) {
-  const bestSan = uciLineToSan(Chess, fen, [g.best])[0];
-  const why = g.explanation?.reasons?.[0] || '';
-  if (g.loss <= 15) return { tone: 'good', icon: 'sparkle', text: g.loss === 0 ? 'Best move!' : 'Excellent move.' };
-  if (g.loss <= 60) return { tone: 'good', icon: 'checkCircle', text: `Good move. ${bestSan} was slightly better.` };
-  if (g.loss <= 140) return { tone: 'ok', icon: 'info', text: `Not the best. ${bestSan} was stronger. ${why}` };
-  if (g.loss <= 300) return { tone: 'bad', icon: 'warning', text: `Mistake. Try ${bestSan} next time. ${why}` };
-  return { tone: 'bad', icon: 'xCircle', text: `Big mistake! ${bestSan} was much stronger. ${why}` };
-}
-
 export default function ComputerGame({ color, level, initialPgn, onNewGame, onRematch }) {
   const game = useChessGame(undefined, initialPgn);
-  const { user } = useAuth();
+  const { user, refresh } = useAuth();
   const lvl = getLevel(level);
   const hint = useHint();
   const lessonFor = useLessonMemory();
@@ -106,7 +97,7 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
       pgn: c.pgn(),
       moves: game.history.length,
       level,
-    }).then((d) => { setSavedId(d.game?.id || null); setSaveState('saved'); }).catch(() => setSaveState('error'));
+    }).then((d) => { setSavedId(d.game?.id || null); setSaveState('saved'); refresh(); }).catch(() => setSaveState('error'));
   }, [over]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function openReview() {
@@ -131,7 +122,7 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
     setFeedback(null);
     if (coachMode) {
       engine.grade(before, toUci(mv), 700, suggested)
-        .then((g) => { if (g.legal) setFeedback(classify(g, before)); })
+        .then((g) => { if (g.legal) setFeedback(moveFeedback(g, before)); })
         .catch(() => {});
     }
   }, [over, game, color, thinking, coachMode, hint]);
@@ -199,6 +190,7 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
 
         <HintCard hint={hint.hint} loading={hint.loading} onClose={hint.clear} lesson={lessonFor(hint.hint)} />
         {feedback && <Notice tone={feedback.tone} icon={feedback.icon} className="fade-in">{feedback.text}</Notice>}
+        {feedback?.bestHint && <LessonReminder lesson={lessonFor(feedback.bestHint)} />}
 
         <div className="card">
           <h3>Moves</h3>

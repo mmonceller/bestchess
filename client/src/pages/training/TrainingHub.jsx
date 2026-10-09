@@ -6,6 +6,7 @@ import { useMastery } from '../../training/mastery/useMastery.js';
 import { guestStorage } from '../../training/guestStorage.js';
 import { levelInfo, totalXp } from '../../training/xp.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { tracksForSkill } from '../../training/skill/tiers.js';
 import Icon from '../../components/icons/Icon.jsx';
 import PlayerHud from './hub/PlayerHud.jsx';
 import GuestBanner from './hub/GuestBanner.jsx';
@@ -21,9 +22,12 @@ import './hub/hub.css';
 
 const WELCOME_SEEN = 'bc.welcomeSeen';
 
-/* The track the player should focus on: their chosen path, or the next one with unfinished lessons. */
-function recommendedTrack(path, progress, tracks) {
-  const start = Math.max(0, tracks.findIndex((t) => t.id === PATHS[path]?.track));
+/*
+ * The track the player should focus on: the first track that fits their skill level (or,
+ * without a skill rating, their chosen path), or the next one with unfinished lessons.
+ */
+function recommendedTrack(startTrack, progress, tracks) {
+  const start = Math.max(0, tracks.findIndex((t) => t.id === startTrack));
   const ordered = [...tracks.slice(start), ...tracks.slice(0, start)];
   return (ordered.find((t) => lessonsInTrack(t.id).some((l) => !progress[l.id])) || ordered[0]).id;
 }
@@ -43,9 +47,11 @@ export default function TrainingHub() {
 
   const tracks = TRACKS.filter((t) => !t.gated || mastery.visible);
   const playable = TRACKS.filter((t) => !t.gated || mastery.unlocked);
+  const skillTracks = tracksForSkill(user?.skill);
+  const startTrack = skillTracks?.find((id) => playable.some((t) => t.id === id)) || PATHS[trainer?.path]?.track;
   const recommended = useMemo(
-    () => (trainer && !progressLoading ? recommendedTrack(trainer.path, progress, playable) : null),
-    [trainer, progress, progressLoading, playable.length], // eslint-disable-line react-hooks/exhaustive-deps
+    () => (trainer && !progressLoading ? recommendedTrack(startTrack, progress, playable) : null),
+    [trainer, progress, progressLoading, playable.length, startTrack], // eslint-disable-line react-hooks/exhaustive-deps
   );
   const activeTrack = (trackId && tracks.some((t) => t.id === trackId) && trackId) || recommended || TRACKS[0].id;
   const track = TRACKS.find((t) => t.id === activeTrack);
@@ -101,7 +107,7 @@ export default function TrainingHub() {
                 <span className="world-icon"><Icon name={isLocked ? 'lock' : t.icon} size={22} /></span>
                 <span className="world-name">{t.name}</span>
                 <span className="world-count">{isLocked ? 'Locked' : `${done}/${list.length}`}</span>
-                {t.id === recommended && <span className="world-pin" title="Recommended for you" />}
+                {t.id === recommended && <span className="world-pin" title={skillTracks ? 'Recommended for your skill level' : 'Recommended for you'} />}
               </button>
             );
           })}

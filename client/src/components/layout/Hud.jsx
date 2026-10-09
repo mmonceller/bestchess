@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import Icon from '../icons/Icon.jsx';
 import Logo from '../icons/Logo.jsx';
 import SettingsModal from './SettingsModal.jsx';
+import UserEmblem from '../skill/UserEmblem.jsx';
 import { MODES } from './modes.js';
 import './hud.css';
 
@@ -45,9 +46,7 @@ export default function Hud({ section }) {
         )}
         <div className="hud-right">
           <button className="orb" onClick={() => setShowSettings(true)} aria-label="Settings"><Icon name="settings" size={20} /></button>
-          {user && (
-            <a href="#/profile" className="orb orb-user" aria-label="My profile">{user.username[0].toUpperCase()}</a>
-          )}
+          {user && <UserEmblem user={user} href="#/profile" />}
         </div>
       </div>
 
