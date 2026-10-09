@@ -68,4 +68,22 @@ export const BASE_PUZZLES = [
   { id: 'd-bishop-check', pattern: 'discovered', rating: 1050, fen: '4k3/8/2q5/8/8/8/4B3/4R1K1 w - - 0 1', moves: ['e2b5'] },
   { id: 'd-bishop-queen', pattern: 'discovered', rating: 1000, fen: 'q3k3/8/8/8/8/8/4BPPP/4R1K1 w - - 0 1', moves: ['e2f3', 'e8d8', 'f3a8'] },
   { id: 'd-bishop', pattern: 'discovered', rating: 1200, fen: '3q2k1/5ppp/8/8/8/3B4/5PPP/3R2K1 w - - 0 1', moves: ['d3h7', 'g8h7', 'd1d8'] },
+
+  // Smothered mates
+  { id: 'sm-one', pattern: 'smothered', rating: 900, fen: '6nk/6pp/8/4N3/8/8/5PPP/6K1 w - - 0 1', moves: ['e5f7'] },
+  { id: 'sm-queen-sac', pattern: 'smothered', rating: 1000, fen: '5r1k/6pp/7N/3Q4/8/8/5PPP/6K1 w - - 0 1', moves: ['d5g8', 'f8g8', 'h6f7'] },
+  { id: 'sm-center', pattern: 'smothered', rating: 950, fen: '5rkr/5ppp/8/3N4/8/8/5PPP/6K1 w - - 0 1', moves: ['d5e7'] },
+  { id: 'sm-philidor', pattern: 'smothered', rating: 1150, fen: '4r2k/6pp/8/6N1/2Q5/8/5PPP/6K1 w - - 0 1', moves: ['g5f7', 'h8g8', 'f7h6', 'g8h8', 'c4g8', 'e8g8', 'h6f7'] },
+
+  // Remove the defender
+  { id: 'rd-bishop-knight', pattern: 'removeDefender', rating: 1000, fen: '5k2/pp6/2n5/1B2b2R/8/8/P5PP/4K3 w - - 0 1', moves: ['b5c6', 'b7c6', 'h5e5'] },
+  { id: 'rd-bishop-rook', pattern: 'removeDefender', rating: 1050, fen: '6k1/5ppp/5n2/3b2B1/8/8/P4PPP/3R2K1 w - - 0 1', moves: ['g5f6', 'g7f6', 'd1d5'] },
+  { id: 'rd-bishop-guard', pattern: 'removeDefender', rating: 1050, fen: '6k1/r2n1ppp/8/2b5/6B1/7P/PP3PP1/1NR4K w - - 0 1', moves: ['g4d7', 'a7d7', 'c1c5'] },
+  { id: 'rd-knight-bishop', pattern: 'removeDefender', rating: 1100, fen: '6k1/1p3ppp/2n5/N7/3b4/8/6PP/3R3K w - - 0 1', moves: ['a5c6', 'b7c6', 'd1d4'] },
+
+  // Double check
+  { id: 'dc-knight-queen', pattern: 'doubleCheck', rating: 1050, fen: '4k3/1q6/8/8/4N3/8/5PPP/4R1K1 w - - 0 1', moves: ['e4d6', 'e8f8', 'd6b7'] },
+  { id: 'dc-bishop-queen', pattern: 'doubleCheck', rating: 1050, fen: '4k3/8/8/8/q7/8/4BPPP/4R1K1 w - - 0 1', moves: ['e2b5', 'e8f7', 'b5a4'] },
+  { id: 'dc-corner-mate', pattern: 'doubleCheck', rating: 1100, fen: '6rk/7p/8/4N3/8/8/1B3PPP/6K1 w - - 0 1', moves: ['e5f7'] },
+  { id: 'dc-knight-mate', pattern: 'doubleCheck', rating: 1150, fen: '3qkb2/3p1pp1/8/8/4N3/8/5PPP/4R1K1 w - - 0 1', moves: ['e4f6'] },
 ];

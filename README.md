@@ -46,7 +46,7 @@ BestChess is a browser-based chess app for players of every level. You can play 
 
 ### Pattern Trainer
 - Puzzles matched to your puzzle rating, which goes up and down as you solve or miss them.
-- Nine patterns that unlock as you improve: free pieces, checkmate in 1, promotion, forks, back-rank mates, pins, skewers, checkmate in 2 and discovered attacks.
+- Twelve patterns that unlock as you improve: free pieces, checkmate in 1, promotion, forks, back-rank mates, smothered mates, pins, removing the defender, skewers, double checks, checkmate in 2 and discovered attacks.
 - Focuses on the patterns you miss most, and tracks your mastery of each one.
 - Two-level hints, any correct alternative move accepted, and the solution shown after a miss.
 

@@ -2,13 +2,13 @@ import { Chess } from 'chess.js';
 import { Position } from '../../client/src/engine/core/position.js';
 import { Searcher } from '../../client/src/engine/core/search.js';
 import { MATE_BOUND } from '../../client/src/engine/core/constants.js';
+import { isMatePattern } from '../../client/src/training/patterns/patterns.js';
 
 /*
  * Checks one trainer puzzle: legal moves, the student's moves are the engine's choice
  * (or within a few centipawns), mates really mate, and other puzzles win material.
  * Returns { errors, notes }.
  */
-export const MATE_PATTERNS = new Set(['mate1', 'mate2', 'backRank']);
 const MAX_LOSS = 30;
 const MIN_GAIN = 150;
 const toMove = (uci) => ({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] });
@@ -32,10 +32,10 @@ export function checkPuzzle(p, { timeMs = 1500 } = {}) {
       const second = scores.find((s) => s.uci !== uci);
       notes.push(`${uci} score=${mine.score} loss=${loss} next=${second ? `${second.uci}:${second.score}` : '-'}`);
       if (loss > MAX_LOSS) errors.push(`${uci} loses ${loss} vs engine ${best.uci}`);
-      if (k === 0 && !MATE_PATTERNS.has(p.pattern) && mine.score < MIN_GAIN) errors.push(`first move only scores ${mine.score}`);
+      if (k === 0 && !isMatePattern(p.pattern) && mine.score < MIN_GAIN) errors.push(`first move only scores ${mine.score}`);
     }
     try { c.move(toMove(uci)); } catch { errors.push(`illegal move ${uci}`); break; }
   }
-  if (!errors.length && MATE_PATTERNS.has(p.pattern) && !c.isCheckmate()) errors.push('line does not end in checkmate');
+  if (!errors.length && isMatePattern(p.pattern) && !c.isCheckmate()) errors.push('line does not end in checkmate');
   return { errors, notes };
 }

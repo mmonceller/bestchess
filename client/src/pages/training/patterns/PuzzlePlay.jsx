@@ -6,12 +6,11 @@ import Notice from '../../../components/game/Notice.jsx';
 import { useChessGame } from '../../../hooks/useChessGame.js';
 import { engine } from '../../../engine/engineClient.js';
 import { toUci, uciLineToSan } from '../../../chess/status.js';
-import { PATTERNS } from '../../../training/patterns/patterns.js';
+import { PATTERNS, isMatePattern } from '../../../training/patterns/patterns.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
 import { solvesPuzzle } from '../../../training/puzzles/judgeMove.js';
 import { findRefutation, refutationText } from '../../../training/puzzles/refutation/index.js';
 
-const MATE_PATTERNS = new Set(['mate1', 'mate2', 'backRank']);
 const PRAISE = ['Solved!', 'Nicely spotted!', 'That\'s the one!', 'Sharp eyes!'];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 
@@ -75,7 +74,7 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
     const uci = toUci(mv);
     const expected = puzzle.moves[ply];
 
-    if (uci === expected || (MATE_PATTERNS.has(puzzle.pattern) && game.chess.isCheckmate())) {
+    if (uci === expected || (isMatePattern(puzzle.pattern) && game.chess.isCheckmate())) {
       advance(uci === expected);
       return;
     }
@@ -91,7 +90,7 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
     let graded = null;
     try { graded = await engine.grade(before, uci, 1200); } catch { /* treat as a miss */ }
     if (!alive.current) return;
-    if (solvesPuzzle(graded, { mate: MATE_PATTERNS.has(puzzle.pattern) })) {
+    if (solvesPuzzle(graded, { mate: isMatePattern(puzzle.pattern) })) {
       setBusy(false);
       settle(true, 'good', `That works too! (The puzzle's main idea was [[${uciLineToSan(Chess, before, [expected])[0]}]].)`);
       return;

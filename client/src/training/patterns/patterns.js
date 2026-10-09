@@ -1,6 +1,7 @@
 /*
  * Tactical patterns the trainer teaches. `unlock` is the trainer rating at which
- * a pattern starts appearing, so beginners meet simple ideas first.
+ * a pattern starts appearing, so beginners meet simple ideas first. `mate` patterns
+ * must end in checkmate, and any mating move counts as solving them.
  */
 export const PATTERNS = {
   hanging: {
@@ -16,6 +17,7 @@ export const PATTERNS = {
     icon: 'crown',
     color: '#e5534b',
     unlock: 0,
+    mate: true,
     clue: 'There is a check that leaves the king nowhere to go.',
     lesson: 'Before anything else, look at every check you can give. Sometimes one of them ends the game.',
   },
@@ -40,6 +42,7 @@ export const PATTERNS = {
     icon: 'rook',
     color: '#f08a3e',
     unlock: 550,
+    mate: true,
     clue: 'The enemy king is stuck behind its own pawns on the back row.',
     lesson: 'A king trapped on its back row by its own pawns can be checkmated by a single rook or queen.',
   },
@@ -64,6 +67,7 @@ export const PATTERNS = {
     icon: 'crown',
     color: '#ff5d6c',
     unlock: 850,
+    mate: true,
     clue: 'The first move doesn\'t have to be a check — it can just take away escape squares.',
     lesson: 'Mates in two often start with a quiet move that traps the king, followed by the final blow.',
   },
@@ -75,7 +79,33 @@ export const PATTERNS = {
     clue: 'Move one piece out of the way so the piece behind it can attack.',
     lesson: 'When a piece steps aside and reveals an attack, you get two threats in one move.',
   },
+  smothered: {
+    name: 'Smothered Mate',
+    icon: 'king',
+    color: '#56cc9d',
+    unlock: 900,
+    mate: true,
+    clue: 'The enemy king is boxed in by its own pieces. Which piece can jump over them?',
+    lesson: 'A king surrounded by its own pieces can be mated by a lone knight — sometimes after a sacrifice that fills its last free square.',
+  },
+  removeDefender: {
+    name: 'Remove the Defender',
+    icon: 'swords',
+    color: '#e07a5f',
+    unlock: 1000,
+    clue: 'Something is protected by just one piece. What if that protector disappears?',
+    lesson: 'Capture the piece that guards something. Once the guard is gone, what it was guarding is yours.',
+  },
+  doubleCheck: {
+    name: 'Double Check',
+    icon: 'bolt',
+    color: '#f2c94c',
+    unlock: 1050,
+    clue: 'Move a piece so it gives check AND uncovers a second check behind it.',
+    lesson: 'Against double check the only defence is a king move — no blocking, no capturing. Often it wins whatever you like, or mates.',
+  },
 };
 
 export const PATTERN_IDS = Object.keys(PATTERNS);
 export const getPattern = (id) => PATTERNS[id];
+export const isMatePattern = (id) => Boolean(PATTERNS[id]?.mate);
