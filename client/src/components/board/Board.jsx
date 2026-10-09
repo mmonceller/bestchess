@@ -3,6 +3,7 @@ import { GLYPH, FILES, parseFen } from './pieces.js';
 import Arrows from './Arrows.jsx';
 import PromotionPicker from './PromotionPicker.jsx';
 import { BoardFrame } from './Coordinates.jsx';
+import { useMoveAnimation } from './animation/useMoveAnimation.js';
 import Icon from '../icons/Icon.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
 import './board.css';
@@ -42,6 +43,8 @@ function Board({
   const [ghost, setGhost] = useState(null);
   const boardRef = useRef(null);
   const drag = useRef(null);
+  const dropped = useRef(null);
+  const anim = useMoveAnimation(pieces, flipped, dropped);
 
   useEffect(() => { setSelected(null); setPromo(null); }, [fen, movableColor]);
 
@@ -104,7 +107,10 @@ function Board({
     if (!d) return;
     const sq = squareFromPoint(e.clientX, e.clientY);
     if (d.moved) {
-      if (sq && sq !== d.from) tryMove(d.from, sq);
+      if (sq && sq !== d.from) {
+        dropped.current = { from: d.from, to: sq };
+        if (!tryMove(d.from, sq)) dropped.current = null;
+      }
     } else if (d.wasSelected) {
       setSelected(null);
     }
@@ -127,10 +133,22 @@ function Board({
       if (selected === sq) cls.push('selected');
       if (checkSquare === sq) cls.push('check');
       if (highlights?.[sq]) cls.push(`hl-${highlights[sq]}`);
+      const slide = anim?.slides[sq];
+      const appearing = anim?.appeared.has(sq);
+      const captured = anim?.captured.find((c) => c.square === sq)?.piece;
       squares.push(
         <div key={sq} className={cls.join(' ')} data-square={sq}>
+          {captured && (
+            <span key={`cap-${anim.id}`} className="capture-fade">
+              <span className={`piece ${captured.color === 'w' ? 'white' : 'black'}`}>{GLYPH[captured.type]}</span>
+            </span>
+          )}
           {piece && (
-            <span className={`piece ${piece.color === 'w' ? 'white' : 'black'}${ghost && drag.current?.from === sq ? ' dragging' : ''}`}>
+            <span
+              key={slide || appearing ? `${sq}-${anim.id}` : sq}
+              className={`piece ${piece.color === 'w' ? 'white' : 'black'}${ghost && drag.current?.from === sq ? ' dragging' : ''}${slide ? ' sliding' : ''}${appearing ? ' appearing' : ''}`}
+              style={slide ? { '--dx': slide.dx, '--dy': slide.dy } : undefined}
+            >
               {GLYPH[piece.type]}
             </span>
           )}

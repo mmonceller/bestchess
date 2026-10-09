@@ -108,6 +108,30 @@
   -webkit-text-stroke: 0.5px #000;
 }
 .piece.dragging { opacity: 0.3; }
+
+/* Move animation: --dx/--dy are how many squares away (on screen) the piece came from. */
+.piece.sliding {
+  z-index: 6;
+  animation: pieceSlide 0.24s cubic-bezier(0.25, 0.8, 0.35, 1) backwards;
+}
+@keyframes pieceSlide {
+  from { transform: translate(calc(var(--dx) * 12.5cqw), calc(var(--dy) * 12.5cqw)); }
+}
+.piece.appearing { animation: pieceAppear 0.26s ease backwards; }
+@keyframes pieceAppear { from { opacity: 0; transform: scale(0.7); } }
+.capture-fade {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  animation: captureFade 0.22s ease 0.14s forwards;
+}
+@keyframes captureFade { to { opacity: 0; transform: scale(0.55); } }
+@media (prefers-reduced-motion: reduce) {
+  .piece.sliding, .piece.appearing { animation: none; }
+  .capture-fade { display: none; }
+}
 .piece.ghost {
   position: absolute;
   left: 0;
