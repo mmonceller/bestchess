@@ -81,7 +81,7 @@ npm start
 
 The app runs as a single Render web service: the server hosts the API, the WebSocket connection for online games, and the built frontend. Render's free disk is wiped on every restart, so data is stored in a free MongoDB Atlas cluster.
 
-1. **Create the database.** Sign up at [MongoDB Atlas](https://www.mongodb.com/atlas) and create a free M0 cluster. Under Database Access, add a database user. Under Network Access, allow access from anywhere (`0.0.0.0/0`), because Render's free tier has no fixed IP address. Copy the connection string (Connect, then Drivers).
+1. **Create the database.** Sign up at [MongoDB Atlas](https://www.mongodb.com/atlas) and create a free M0 cluster on AWS in Singapore (`ap-southeast-1`), the same region as the Render service in `render.yaml`. Under Database Access, add a database user. Under Network Access, allow access from anywhere (`0.0.0.0/0`), because Render's free tier has no fixed IP address. Copy the connection string (Connect, then Drivers).
 2. **Push the project to GitHub** (or GitLab).
 3. **Create the service.** In the [Render dashboard](https://dashboard.render.com), choose New, then Blueprint, and pick the repository. Render reads `render.yaml` and sets up the build and start commands.
 4. **Add the connection string.** When asked, paste the Atlas connection string as `MONGODB_URI`, with your database user's password filled in.
