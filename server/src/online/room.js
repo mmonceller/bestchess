@@ -42,14 +42,24 @@ export class Room {
     return this.options.minutes > 0;
   }
 
-  /* Seats a player, honouring reconnects by playerKey. Returns the assigned color or 'spectator'. */
+  /*
+   * Seats a player, honouring reconnects by playerKey. A player who closed their tab can
+   * reclaim an empty seat with the key it was held by (`resumeKey`) or with their account.
+   * Returns the assigned color or 'spectator'.
+   */
   seat(player) {
-    for (const c of ['w', 'b']) {
-      if (this.seats[c]?.playerKey === player.playerKey) {
-        Object.assign(this.seats[c], { name: player.name, userId: player.userId ?? this.seats[c].userId, rating: player.rating ?? this.seats[c].rating });
-        return c;
-      }
-    }
+    const refresh = (c) => {
+      Object.assign(this.seats[c], { playerKey: player.playerKey, name: player.name, userId: player.userId ?? this.seats[c].userId, rating: player.rating ?? this.seats[c].rating });
+      return c;
+    };
+    const held = ['w', 'b'].find((c) => this.seats[c]?.playerKey === player.playerKey);
+    if (held) return refresh(held);
+    const reclaim = ['w', 'b'].find((c) => {
+      const s = this.seats[c];
+      return s && !s.sockets.size
+        && ((player.resumeKey && s.playerKey === player.resumeKey) || (player.userId && s.userId === player.userId));
+    });
+    if (reclaim) return refresh(reclaim);
     const free = ['w', 'b'].filter((c) => !this.seats[c]);
     if (!free.length) return 'spectator';
     let color = free[0];

@@ -21,6 +21,10 @@ export const progressApi = {
   merge: (progress) => api('/progress/merge', { method: 'POST', body: { progress } }),
 };
 
+export const onlineApi = {
+  active: (saved) => api('/online/active', { method: 'POST', body: { saved } }),
+};
+
 export const trainerApi = {
   get: () => api('/trainer'),
   save: (trainer) => api('/trainer', { method: 'PUT', body: { trainer } }),

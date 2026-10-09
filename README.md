@@ -9,6 +9,7 @@ BestChess is a browser-based chess app for players of every level. You can play 
 - Time controls from 1 to 30 minutes, or untimed games.
 - In-game chat, draw offers, resignation and rematches.
 - Reconnects you to your seat if your connection drops.
+- Closed the tab or browser by accident? A **Resume game** button appears at the top of every page, and unfinished games are listed on your profile and in the online lobby. Logged-in players can resume from any device; guests can resume from the same browser. The opponent can claim the win if you're gone for more than a minute.
 - Extra visitors can watch as spectators.
 - No account needed: guests can play under a temporary name.
 

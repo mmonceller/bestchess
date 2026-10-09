@@ -14,6 +14,7 @@ import { formatDate } from '../../utils/format.js';
 import { navigate } from '../../router/router.js';
 import UserEmblem from '../../components/skill/UserEmblem.jsx';
 import SkillCard from './SkillCard.jsx';
+import ActiveGamesCard from '../../components/online/ActiveGamesCard.jsx';
 import '../../components/game/game.css';
 import './profile.css';
 
@@ -66,6 +67,7 @@ export default function ProfilePage() {
         <button className="btn ghost icon-text" onClick={async () => { await logout(); navigate('/'); }}><Icon name="logout" size={18} /> Log out</button>
       </div>
 
+      <ActiveGamesCard />
       <SkillCard skill={user.skill} />
 
       <div className="stat-grid">

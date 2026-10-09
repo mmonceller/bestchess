@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { getGuestName, setGuestName } from './guestName.js';
 import Icon from '../../components/icons/Icon.jsx';
 import ColorPicker from '../../components/game/ColorPicker.jsx';
+import ActiveGamesCard from '../../components/online/ActiveGamesCard.jsx';
 
 const TIME_CONTROLS = [
   { label: '3 + 2', minutes: 3, increment: 2 },
@@ -52,6 +53,8 @@ export default function OnlineLobby() {
     <div className="lobby fade-in">
       <h1>Play with an Online Friend</h1>
       <p className="muted">Create a game and send the code to your friend, or enter the code your friend sent you.</p>
+
+      <ActiveGamesCard title="Your unfinished games" />
 
       {!user && (
         <div className="card lobby-name">

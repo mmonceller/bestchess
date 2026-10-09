@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { online } from '../../api/onlineSocket.js';
 import { playMoveSound, sounds } from '../../utils/sound.js';
+import { useSeatMemory } from './resume/useSeatMemory.js';
 
 /* Subscribes to a game room and keeps a locally ticking copy of the clocks. */
 export function useOnlineGame(code, name) {
@@ -37,6 +38,8 @@ export function useOnlineGame(code, name) {
     online.join(code);
     return () => { unsub(); online.leave(); };
   }, [code]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useSeatMemory(code, state);
 
   useEffect(() => {
     if (!state?.clockRunning) return undefined;

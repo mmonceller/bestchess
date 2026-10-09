@@ -36,7 +36,7 @@ export default function App() {
   const section = route.path[0] || null;
   return (
     <>
-      <Hud section={section} />
+      <Hud section={section} param={route.path[1] || null} />
       <main className={`app-main${section ? '' : ' is-home'}`}>
         <Suspense fallback={<div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>}>
           <Page route={route} />

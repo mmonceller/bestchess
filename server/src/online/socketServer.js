@@ -31,6 +31,7 @@ function identify(msg) {
   const name = user ? user.username : String(msg.name || 'Guest').trim().slice(0, 20) || 'Guest';
   return {
     playerKey: String(msg.playerKey || '').slice(0, 64) || Math.random().toString(36).slice(2),
+    resumeKey: String(msg.resumeKey || '').slice(0, 64) || null,
     name,
     userId: user?.id ?? null,
     rating: user?.rating ?? null,

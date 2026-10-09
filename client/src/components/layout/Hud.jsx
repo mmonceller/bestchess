@@ -4,6 +4,7 @@ import Icon from '../icons/Icon.jsx';
 import Logo from '../icons/Logo.jsx';
 import SettingsModal from './SettingsModal.jsx';
 import UserEmblem from '../skill/UserEmblem.jsx';
+import ResumeGameButton from '../online/ResumeGameButton.jsx';
 import { MODES } from './modes.js';
 import './hud.css';
 
@@ -19,7 +20,7 @@ const SECTION_TITLE = {
 };
 
 /* Floating game-style controls instead of a website header: a home orb with a quick-jump menu, plus settings and profile. */
-export default function Hud({ section }) {
+export default function Hud({ section, param }) {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -45,6 +46,7 @@ export default function Hud({ section }) {
           </div>
         )}
         <div className="hud-right">
+          <ResumeGameButton currentCode={section === 'online' ? param?.toUpperCase() : null} refreshKey={`${section}/${param}`} />
           <button className="orb" onClick={() => setShowSettings(true)} aria-label="Settings"><Icon name="settings" size={20} /></button>
           {user && <UserEmblem user={user} href="#/profile" />}
         </div>

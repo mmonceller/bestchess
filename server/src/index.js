@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
 import progressRoutes from './routes/progress.js';
 import trainerRoutes from './routes/trainer.js';
+import onlineRoutes from './routes/online.js';
 import { attachSocketServer } from './online/socketServer.js';
 
 const storage = await initStore();
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/trainer', trainerRoutes);
+app.use('/api/online', onlineRoutes);
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
 

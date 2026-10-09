@@ -1,4 +1,5 @@
 import { tokenStore } from './http.js';
+import { savedSeats } from '../online/savedSeats.js';
 
 /*
  * Single shared WebSocket for online play. Reconnects automatically and re-joins the
@@ -28,8 +29,8 @@ function setStatus(s) {
   emit({ t: 'connection', status: s });
 }
 
-function identity(name) {
-  return { token: tokenStore.get(), playerKey: playerKey(), name };
+function identity(name, code = null) {
+  return { token: tokenStore.get(), playerKey: playerKey(), resumeKey: code ? savedSeats.get(code)?.key : undefined, name };
 }
 
 let guestName = 'Guest';
@@ -42,7 +43,7 @@ function connect() {
   ws.onopen = () => {
     retry = 0;
     setStatus('open');
-    if (currentCode) ws.send(JSON.stringify({ t: 'join', code: currentCode, ...identity(guestName) }));
+    if (currentCode) ws.send(JSON.stringify({ t: 'join', code: currentCode, ...identity(guestName, currentCode) }));
     queue.forEach((m) => ws.send(JSON.stringify(m)));
     queue = [];
   };
@@ -83,8 +84,9 @@ export const online = {
   },
   join(code) {
     currentCode = code.toUpperCase();
-    send({ t: 'join', code: currentCode, ...identity(guestName) });
+    send({ t: 'join', code: currentCode, ...identity(guestName, currentCode) });
   },
+  playerKey,
   leave() {
     if (currentCode) send({ t: 'leave' });
     currentCode = null;
