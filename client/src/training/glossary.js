@@ -1,11 +1,22 @@
 /*
  * Plain-English definitions for chess words. Lesson text is scanned for these
  * terms and each one becomes tappable, so beginners always have a context clue.
+ * An entry may carry a test that spots the word's everyday (non-chess) meaning.
  */
+
+/* "Check the method", "double-check", "checking your move" mean verifying, not attacking a king. */
+const CHECK_OBJECT = /^\s+(?:the|these|this|that|those|your|my|our|their|his|her|which|what|whether|if|for|again|out|each|every|it|them|how|where|who|once|before|first\s*\?)\b/i;
+const CHECK_KING = /^\s+the\s+(?:\w+\s+)?king\b/i;
+function everydayCheck(before, after) {
+  if (/(?:double|re|cross)-$|\b(?:blunder|safety|quick|simple|without|of)\s+$/i.test(before)) return true;
+  if (/^\s*\?/.test(after)) return true;
+  return CHECK_OBJECT.test(after) && !CHECK_KING.test(after);
+}
+
 const ENTRIES = [
   ['checkmate', ['checkmate', 'checkmates', 'checkmated', 'checkmating', 'mate in one', 'mate in two'], 'The king is attacked and has no way to escape. The game is over — whoever gives checkmate wins.'],
   ['stalemate', ['stalemate'], 'The player to move has no legal move, but their king is NOT under attack. The game ends in a draw — nobody wins.'],
-  ['check', ['check', 'checks', 'checking'], 'The king is being attacked. The player must get the king out of danger on their very next move.'],
+  ['check', ['check', 'checks', 'checking'], 'The king is being attacked. The player must get the king out of danger on their very next move.', everydayCheck],
   ['fork', ['fork', 'forks', 'forked', 'forking'], 'One piece attacks two (or more) enemy pieces at the same time. Usually only one of them can be saved.'],
   ['pin', ['pin', 'pins', 'pinned', 'pinning'], 'A piece that can\'t move (or shouldn\'t), because a more valuable piece is standing right behind it.'],
   ['skewer', ['skewer', 'skewers', 'skewered'], 'The reverse of a pin: a valuable piece is attacked, and when it steps aside, the piece behind it gets captured.'],
@@ -54,6 +65,7 @@ export const GLOSSARY = Object.fromEntries(ENTRIES.map(([term, , def]) => [term,
 
 const variantToTerm = new Map();
 for (const [term, variants] of ENTRIES) for (const v of variants) variantToTerm.set(v.toLowerCase(), term);
+const everydaySense = new Map(ENTRIES.filter((e) => e[3]).map(([term, , , test]) => [term, test]));
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const PATTERN = new RegExp(
@@ -69,6 +81,8 @@ export function splitGlossary(text) {
   for (const m of text.matchAll(PATTERN)) {
     const term = variantToTerm.get(m[0].toLowerCase());
     if (seen.has(term)) continue;
+    const end = m.index + m[0].length;
+    if (everydaySense.get(term)?.(text.slice(Math.max(0, m.index - 20), m.index), text.slice(end, end + 30))) continue;
     seen.add(term);
     if (m.index > last) out.push({ text: text.slice(last, m.index) });
     out.push({ text: m[0], term });
