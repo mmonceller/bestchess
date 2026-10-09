@@ -4,6 +4,7 @@ import StepLayout from '../../components/StepLayout.jsx';
 import { GlossText } from '../../components/Glossary.jsx';
 import { orientationFor, toArrows, toHighlights } from '../../stepUtils.js';
 import AnswerVerdict from './AnswerVerdict.jsx';
+import { optionLetter, optionOrder } from '../../../../training/quiz/optionOrder.js';
 
 const ORDINAL = ['1st', '2nd', '3rd', '4th', '5th'];
 
@@ -25,14 +26,15 @@ export default function QuizReview({ step, answer, coach, actions }) {
       actions={actions}
     >
       <div className="quiz-options review">
-        {step.options.map((o, i) => {
+        {optionOrder(step).map((i, position) => {
+          const o = step.options[i];
           const order = picks.indexOf(i);
           const state = o.correct ? 'right' : order >= 0 ? 'wrong' : 'unpicked';
           return (
             <div key={i} className={`quiz-option ${state}`}>
               <div className="quiz-pick static">
                 <span className="quiz-letter">
-                  {o.correct ? <Icon name="check" size={16} /> : order >= 0 ? <Icon name="close" size={16} /> : String.fromCharCode(65 + i)}
+                  {o.correct ? <Icon name="check" size={16} /> : order >= 0 ? <Icon name="close" size={16} /> : optionLetter(position)}
                 </span>
                 <span>{o.text}</span>
                 {order >= 0 && <span className="pick-tag">Your {ORDINAL[order] || ''} pick</span>}

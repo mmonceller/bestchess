@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Board from '../../../components/board/Board.jsx';
 import Icon from '../../../components/icons/Icon.jsx';
 import StepLayout from '../components/StepLayout.jsx';
@@ -6,12 +6,14 @@ import { ContinueButton } from '../components/StepButtons.jsx';
 import { GlossText } from '../components/Glossary.jsx';
 import { orientationFor, pick, toArrows, toHighlights } from '../stepUtils.js';
 import { sounds } from '../../../utils/sound.js';
+import { optionLetter, optionOrder } from '../../../training/quiz/optionOrder.js';
 
 export default function QuizStep({ step, coach, onNext, onMistake, onAnswer }) {
   const [tried, setTried] = useState({});
   const [solved, setSolved] = useState(false);
   const [reaction, setReaction] = useState('');
   const picks = useRef([]);
+  const order = useMemo(() => optionOrder(step), [step]);
 
   function choose(i) {
     if (solved || tried[i]) return;
@@ -41,13 +43,14 @@ export default function QuizStep({ step, coach, onNext, onMistake, onAnswer }) {
       actions={solved && <ContinueButton onClick={onNext} />}
     >
       <div className="quiz-options">
-        {step.options.map((o, i) => {
+        {order.map((i, position) => {
+          const o = step.options[i];
           const state = tried[i] ? (o.correct ? 'right' : 'wrong') : '';
           return (
             <div key={i} className={`quiz-option ${state}`}>
               <button className="quiz-pick" onClick={() => choose(i)} disabled={solved && !tried[i]}>
                 <span className="quiz-letter">
-                  {state === 'right' ? <Icon name="check" size={16} /> : state === 'wrong' ? <Icon name="close" size={16} /> : String.fromCharCode(65 + i)}
+                  {state === 'right' ? <Icon name="check" size={16} /> : state === 'wrong' ? <Icon name="close" size={16} /> : optionLetter(position)}
                 </span>
                 <span>{o.text}</span>
               </button>
