@@ -32,7 +32,7 @@ export default function ReviewStep({ step, answer, coach, retrying, onRetry, onN
   }
   const actions = (
     <div className="controls">
-      <button className="btn icon-text" onClick={onRetry}><Icon name="retry" size={18} /> Try it again</button>
+      {onRetry && <button className="btn icon-text" onClick={onRetry}><Icon name="retry" size={18} /> Try it again</button>}
       <button className="btn primary icon-text" onClick={onNext} autoFocus>{nextLabel} <Icon name="arrowRight" size={18} /></button>
     </div>
   );

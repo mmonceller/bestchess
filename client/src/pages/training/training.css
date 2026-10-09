@@ -22,6 +22,14 @@
 .step-progress span.done { background: var(--coach); }
 .step-progress span.current { background: linear-gradient(90deg, var(--coach), var(--panel-2)); }
 
+.live-step { display: contents; }
+.live-step[hidden] { display: none; }
+.look-back-note {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px 12px;
+  border-radius: 10px; background: var(--panel-2); color: var(--muted);
+}
+.look-back-note .icon { color: var(--coach); flex: none; }
+
 .coach-bubble {
   background: linear-gradient(160deg, color-mix(in srgb, var(--coach) 16%, var(--panel)), var(--panel) 60%);
   border: 1px solid color-mix(in srgb, var(--coach) 45%, var(--line));

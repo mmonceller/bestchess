@@ -10,6 +10,7 @@ import { STEP_COMPONENTS, STEP_LABEL } from './steps/registry.js';
 import LessonBar from './player/LessonBar.jsx';
 import LessonComplete from './LessonComplete.jsx';
 import LockedLesson from './player/LockedLesson.jsx';
+import LookBack from './player/LookBack.jsx';
 import RevisitIntro from './revisit/RevisitIntro.jsx';
 import ReviewStep from './revisit/ReviewStep.jsx';
 import BonusComplete from './revisit/BonusComplete.jsx';
@@ -42,6 +43,7 @@ export default function LessonPlayer({ lessonId, start }) {
   const [mistakes, setMistakes] = useState(0);
   const [hints, setHints] = useState(0);
   const [result, setResult] = useState(null);
+  const [peek, setPeek] = useState(null);
   const answers = useRef([]);
   const savedRef = useRef(false);
 
@@ -85,6 +87,7 @@ export default function LessonPlayer({ lessonId, start }) {
     setHints(0);
     setResult(null);
     setRetrying(false);
+    setPeek(null);
     setAttempt((a) => a + 1);
     scrollTop();
   }
@@ -167,26 +170,42 @@ export default function LessonPlayer({ lessonId, start }) {
   const steps = mode === 'bonus' ? lesson.bonus : lesson.steps;
   const step = steps[index];
   const Step = STEP_COMPONENTS[step.type];
-  const label = `${mode === 'bonus' ? 'Bonus round · ' : ''}${STEP_LABEL[step.type]} · ${index + 1} of ${steps.length}`;
+  const shown = peek ?? index;
+  const label = `${mode === 'bonus' ? 'Bonus round · ' : ''}${peek !== null ? 'Looking back · ' : ''}${STEP_LABEL[steps[shown].type]} · ${shown + 1} of ${steps.length}`;
+  const lookTo = (i) => { setPeek(i >= index ? null : i); scrollTop(); };
   return (
-    <div className={`lesson-player${mode === 'bonus' ? ' bonus-run' : ''}`} style={{ '--coach': coach.color }}>
+    <div className={`lesson-player${mode === 'bonus' ? ' bonus-run' : ''}${peek !== null ? ' reviewing' : ''}`} style={{ '--coach': coach.color }}>
       <LessonBar
         title={lesson.title}
         subtitle={label}
-        segments={steps.map((_, i) => ({ state: i < index ? 'done' : i === index ? 'current' : '', kind: mode === 'bonus' ? 'bonus' : undefined }))}
+        segments={steps.map((_, i) => ({ state: i === shown ? 'current' : i < index ? 'done' : '', kind: mode === 'bonus' ? 'bonus' : undefined }))}
         mistakes={mistakes}
         hints={hints}
         showScore
+        onBack={shown > 0 ? () => lookTo(shown - 1) : null}
       />
-      <Step
-        key={`${attempt}-${index}`}
-        step={step}
-        coach={coach}
-        onNext={() => nextPlayed(steps)}
-        onMistake={onMistake}
-        onHint={onHint}
-        onAnswer={(a) => { answers.current[index] = a; }}
-      />
+      {peek !== null && (
+        <LookBack
+          key={`peek-${attempt}-${peek}`}
+          step={steps[peek]}
+          answer={answers.current[peek]}
+          coach={coach}
+          isLast={peek + 1 >= index}
+          currentNumber={index + 1}
+          onNext={() => lookTo(peek + 1)}
+        />
+      )}
+      <div className="live-step" hidden={peek !== null}>
+        <Step
+          key={`${attempt}-${index}`}
+          step={step}
+          coach={coach}
+          onNext={() => nextPlayed(steps)}
+          onMistake={onMistake}
+          onHint={onHint}
+          onAnswer={(a) => { answers.current[index] = a; }}
+        />
+      </div>
     </div>
   );
 }
