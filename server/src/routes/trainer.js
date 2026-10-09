@@ -52,7 +52,7 @@ function sanitize(t = {}) {
     streak: int(t.streak, 0, 1e5),
     bestStreak: int(t.bestStreak, 0, 1e5),
     patterns,
-    recent: (Array.isArray(t.recent) ? t.recent : []).filter((r) => typeof r === 'string' && ID.test(r)).slice(-20),
+    recent: (Array.isArray(t.recent) ? t.recent : []).filter((r) => typeof r === 'string' && ID.test(r)).slice(-60),
     lastDay: DAY.test(t.lastDay) ? t.lastDay : null,
     dayStreak: int(t.dayStreak, 0, 1e5),
     woodpecker: woodpecker(t.woodpecker),

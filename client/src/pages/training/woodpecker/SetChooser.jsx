@@ -3,6 +3,7 @@ import { WOODPECKER_SETS, recommendedSet } from '../../../training/woodpecker/se
 import { accuracy, formatDuration, runFor } from '../../../training/woodpecker/cycles.js';
 import CycleHistory from './CycleHistory.jsx';
 import MethodNote from './MethodNote.jsx';
+import WoodpeckerPrep from './themes/WoodpeckerPrep.jsx';
 
 export default function SetChooser({ trainer }) {
   const recommended = recommendedSet(trainer.rating).id;
@@ -48,6 +49,8 @@ export default function SetChooser({ trainer }) {
           );
         })}
       </div>
+
+      <WoodpeckerPrep recommended={recommended} />
     </>
   );
 }

@@ -9,6 +9,7 @@ import MoveLine from '../../../components/notation/MoveLine.jsx';
 import NotationGuideButton from '../../../components/notation/NotationGuideButton.jsx';
 import { firstMoveHint, goalText } from '../../../training/woodpecker/describe.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
+import PuzzleThemes from './themes/PuzzleThemes.jsx';
 
 /*
  * One Woodpecker exercise. The key move must be the book's move (any mate also counts in a
@@ -135,7 +136,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
         </div>
 
         {hinted && !done && (
-          <div className="puzzle-question"><Icon name="hint" size={22} /><p>{firstMoveHint(puzzle)}</p></div>
+          <div className="puzzle-question"><Icon name="hint" size={22} /><div><p>{firstMoveHint(puzzle)}</p><PuzzleThemes puzzle={puzzle} hint /></div></div>
         )}
         {note && <Notice tone={note.tone} key={note.text}>{note.text}</Notice>}
 
@@ -144,6 +145,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
             <span className="muted small">Solution</span>
             <b><MoveLine fen={puzzle.fen} moves={puzzle.moves} /></b>
             {puzzle.game && <span className="muted small">{puzzle.game}</span>}
+            <PuzzleThemes puzzle={puzzle} />
             <NotationGuideButton className="wp-guide" />
           </div>
         )}
