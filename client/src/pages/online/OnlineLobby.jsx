@@ -6,20 +6,13 @@ import { getGuestName, setGuestName } from './guestName.js';
 import Icon from '../../components/icons/Icon.jsx';
 import ColorPicker from '../../components/game/ColorPicker.jsx';
 import ActiveGamesCard from '../../components/online/ActiveGamesCard.jsx';
-
-const TIME_CONTROLS = [
-  { label: '3 + 2', minutes: 3, increment: 2 },
-  { label: '5 + 0', minutes: 5, increment: 0 },
-  { label: '10 + 0', minutes: 10, increment: 0 },
-  { label: '15 + 10', minutes: 15, increment: 10 },
-  { label: '30 + 0', minutes: 30, increment: 0 },
-  { label: 'No clock', minutes: 0, increment: 0 },
-];
+import TimeControlPicker from '../../components/online/timeControl/TimeControlPicker.jsx';
+import { DEFAULT_TIME_CONTROL, TIME_CONTROLS } from '../../components/online/timeControl/timeControls.js';
 
 export default function OnlineLobby() {
   const { user } = useAuth();
   const [name, setName] = useState(getGuestName);
-  const [tc, setTc] = useState(2);
+  const [tc, setTc] = useState(DEFAULT_TIME_CONTROL);
   const [color, setColor] = useState('random');
   const [allowHints, setAllowHints] = useState(false);
   const [joinCode, setJoinCode] = useState('');
@@ -69,12 +62,7 @@ export default function OnlineLobby() {
       <div className="lobby-grid">
         <div className="card">
           <h2>Create a game</h2>
-          <span className="label">Time control</span>
-          <div className="segmented">
-            {TIME_CONTROLS.map((t, i) => (
-              <button key={t.label} className={tc === i ? 'active' : ''} onClick={() => setTc(i)}>{t.label}</button>
-            ))}
-          </div>
+          <TimeControlPicker value={tc} onChange={setTc} />
           <span className="label">I play</span>
           <ColorPicker value={color} onChange={setColor} />
           <label className="toggle-inline" style={{ marginTop: 12 }}>
