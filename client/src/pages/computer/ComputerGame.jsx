@@ -9,6 +9,8 @@ import Icon from '../../components/icons/Icon.jsx';
 import { useChessGame } from '../../hooks/useChessGame.js';
 import { useHint } from '../../hooks/useHint.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useSettings } from '../../context/SettingsContext.jsx';
+import EvalBar from '../../components/board/eval/EvalBar.jsx';
 import { useLessonMemory } from '../../training/hints/useLessonMemory.js';
 import { engine } from '../../engine/engineClient.js';
 import { getLevel } from '../../engine/levels.js';
@@ -29,6 +31,7 @@ const COACH_KEY = 'bc.coachMode';
 export default function ComputerGame({ color, level, initialPgn, onNewGame, onRematch }) {
   const game = useChessGame(undefined, initialPgn);
   const { user, refresh } = useAuth();
+  const { settings } = useSettings();
   const lvl = getLevel(level);
   const hint = useHint();
   const lessonFor = useLessonMemory();
@@ -167,6 +170,7 @@ export default function ComputerGame({ color, level, initialPgn, onNewGame, onRe
           lastMove={game.lastMove}
           checkSquare={game.checkSquare}
           arrows={hint.hint ? [hint.hint.arrow] : undefined}
+          sideBar={settings.evalBar ? <EvalBar fen={game.fen} orientation={orientation} playerColor={color} /> : null}
         />
         {bar(topColor === 'w' ? 'b' : 'w')}
       </div>

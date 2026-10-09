@@ -17,6 +17,7 @@ BestChess is a browser-based chess app for players of every level. You can play 
 - Seven difficulty levels, from Pawn Pusher (about 400 rating) to Master (2100+).
 - Choose to play as white, black or a random color.
 - Undo moves and flip the board.
+- A thin **winning meter** beside the board shows who is ahead, updated after every move (bottom half for you, top half for your opponent, in the board theme's colours). It runs in its own engine worker so the bot never waits for it, and can be turned off in Settings. It also appears in game reviews, and in online games only when AI hints are allowed or the game is over.
 - AI hint assistant that suggests a move and explains why it works in plain language.
 - Hints use the same advice and wording as the lessons (rooks behind passed pawns, the opposition, blockades, outposts, "fix your worst piece", "trade when ahead", and so on).
 - For logged-in players, hints link back to a completed lesson that covers the same idea, in that lesson coach's voice. If they haven't taken it yet, the hint suggests a lesson that fits their skill level instead. Coach feedback on a mistake works the same way.

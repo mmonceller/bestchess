@@ -28,6 +28,10 @@ export default function SettingsModal({ onClose }) {
         <input type="checkbox" checked={settings.showCoords} onChange={(e) => update({ showCoords: e.target.checked })} />
         Board coordinates
       </label>
+      <label className="toggle-row">
+        <input type="checkbox" checked={settings.evalBar} onChange={(e) => update({ evalBar: e.target.checked })} />
+        Winning meter beside the board
+      </label>
       <div className="row" style={{ marginTop: 16 }}>
         <span className="spacer" />
         <button className="btn primary" onClick={onClose}>Done</button>

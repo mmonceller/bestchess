@@ -5,6 +5,9 @@
   margin: 0 auto;
 }
 
+.board-wrap.has-side { display: flex; gap: 6px; }
+.board-wrap.has-side .board { flex: 1; min-width: 0; }
+
 .board {
   position: relative;
   display: grid;

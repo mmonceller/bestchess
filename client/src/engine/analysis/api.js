@@ -154,5 +154,9 @@ export function reviewMove(fen, uci, { timeMs = 900 } = {}) {
 export function evaluatePosition(fen, { timeMs = 600 } = {}) {
   const pos = new Position(fen);
   const res = searcher.search(pos, { timeMs });
-  return { score: res.score, best: res.bestMove ? pos.moveToUci(res.bestMove) : null };
+  return {
+    score: res.score,
+    mate: Math.abs(res.score) > MATE_BOUND ? mateIn(res.score) : null,
+    best: res.bestMove ? pos.moveToUci(res.bestMove) : null,
+  };
 }

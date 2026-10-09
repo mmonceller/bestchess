@@ -6,6 +6,8 @@ import Icon from '../../components/icons/Icon.jsx';
 import { kingSquare } from '../../components/board/pieces.js';
 import { formatDate } from '../../utils/format.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useSettings } from '../../context/SettingsContext.jsx';
+import EvalBar from '../../components/board/eval/EvalBar.jsx';
 import { useLessonMemory } from '../../training/hints/useLessonMemory.js';
 import { replayPgn } from '../../review/analyzeGame.js';
 import { useGameReview } from './useGameReview.js';
@@ -29,6 +31,7 @@ function SaveNote({ state }) {
 
 export default function GameReviewPage({ gameId, autoStart }) {
   const { user } = useAuth();
+  const { settings } = useSettings();
   const { game, error, review, progress, saveState, start } = useGameReview(gameId, autoStart);
   const lessonFor = useLessonMemory();
   const [ply, setPly] = useState(-1);
@@ -91,6 +94,7 @@ export default function GameReviewPage({ gameId, autoStart }) {
           lastMove={!better && move ? { from: move.from, to: move.to } : null}
           checkSquare={check}
           arrows={arrows}
+          sideBar={settings.evalBar ? <EvalBar fen={fen} orientation={orientation} playerColor={game.color} /> : null}
         />
         <div className="replay-controls">
           <button className="btn" onClick={() => setPly(-1)} disabled={ply < 0} aria-label="First move"><Icon name="first" size={18} /></button>

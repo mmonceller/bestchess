@@ -13,6 +13,8 @@ import { online } from '../../api/onlineSocket.js';
 import { useOnlineGame } from './useOnlineGame.js';
 import { useHint } from '../../hooks/useHint.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useSettings } from '../../context/SettingsContext.jsx';
+import EvalBar from '../../components/board/eval/EvalBar.jsx';
 import { useLessonMemory } from '../../training/hints/useLessonMemory.js';
 import { kingSquare } from '../../components/board/pieces.js';
 import { materialInfo } from '../../chess/material.js';
@@ -25,6 +27,7 @@ import '../../components/game/game.css';
 
 export default function OnlineGame({ code }) {
   const { user, refresh } = useAuth();
+  const { settings } = useSettings();
   const { state, error, connection, clocks } = useOnlineGame(code, user?.username || getGuestName());
   const hint = useHint();
   const lessonFor = useLessonMemory();
@@ -65,6 +68,8 @@ export default function OnlineGame({ code }) {
   const material = materialInfo(fen);
   const lastMove = optimistic?.lastMove || state.lastMove;
   const checkSquare = chess.inCheck() ? kingSquare(fen, chess.turn()) : null;
+  /* A live engine meter is only fair in games that allow AI help. */
+  const showMeter = settings.evalBar && (state.options.allowHints || state.status === 'over');
 
   function onMove(m) {
     if (!myTurn) return;
@@ -131,6 +136,7 @@ export default function OnlineGame({ code }) {
           lastMove={lastMove}
           checkSquare={checkSquare}
           arrows={hint.hint ? [hint.hint.arrow] : undefined}
+          sideBar={showMeter ? <EvalBar fen={fen} orientation={orientation} playerColor={seated ? you : null} /> : null}
         />
         {seatBar(topColor === 'w' ? 'b' : 'w')}
       </div>

@@ -30,6 +30,7 @@ function Board({
   markers,
   onSquareClick,
   showCoords,
+  sideBar,
 }) {
   const { settings } = useSettings();
   const coords = showCoords ?? settings.showCoords;
@@ -142,7 +143,8 @@ function Board({
   }
 
   return (
-    <div className="board-wrap">
+    <div className={`board-wrap${sideBar ? ' has-side' : ''}`}>
+      {sideBar}
       <div
         ref={boardRef}
         className={`board${movableColor || onSquareClick ? ' interactive' : ''}`}

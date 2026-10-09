@@ -9,7 +9,7 @@ export const BOARD_THEMES = {
 };
 
 const KEY = 'bc.settings';
-const DEFAULTS = { boardTheme: 'classic', sound: true, showCoords: true };
+const DEFAULTS = { boardTheme: 'classic', sound: true, showCoords: true, evalBar: true };
 
 const SettingsContext = createContext(null);
 

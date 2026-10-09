@@ -1,0 +1,37 @@
+/* Top = opponent, bottom = player; colours follow the board theme's square colours. */
+.eval-bar {
+  position: relative;
+  width: 8px;
+  flex: none;
+  border-radius: 99px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 6px 16px rgba(0, 0, 0, 0.35);
+  cursor: help;
+}
+.eval-bar.bottom-light { background: var(--sq-dark, #b58863); }
+.eval-bar.bottom-dark { background: var(--sq-light, #f0d9b5); }
+.eval-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: height 0.6s cubic-bezier(.3, 1.2, .5, 1);
+}
+.eval-bar.bottom-light .eval-fill { background: var(--sq-light, #f0d9b5); }
+.eval-bar.bottom-dark .eval-fill { background: var(--sq-dark, #b58863); }
+.eval-mid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .eval-fill { transition: none; }
+}
+@media (max-width: 520px) {
+  .eval-bar { width: 6px; }
+}
