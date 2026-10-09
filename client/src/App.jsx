@@ -2,12 +2,14 @@ import { lazy, Suspense } from 'react';
 import { useRoute } from './router/router.js';
 import Hud from './components/layout/Hud.jsx';
 import HomePage from './pages/home/HomePage.jsx';
+import MoveTooltip from './components/notation/MoveTooltip.jsx';
 
 const PlayComputerPage = lazy(() => import('./pages/computer/PlayComputerPage.jsx'));
 const OnlinePage = lazy(() => import('./pages/online/OnlinePage.jsx'));
 const TrainingHub = lazy(() => import('./pages/training/TrainingHub.jsx'));
 const LessonPlayer = lazy(() => import('./pages/training/LessonPlayer.jsx'));
 const PatternTrainer = lazy(() => import('./pages/training/patterns/PatternTrainer.jsx'));
+const WoodpeckerPage = lazy(() => import('./pages/training/woodpecker/WoodpeckerPage.jsx'));
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage.jsx'));
 const GameReviewPage = lazy(() => import('./pages/review/GameReviewPage.jsx'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage.jsx'));
@@ -21,7 +23,8 @@ function Page({ route }) {
       const start = route.query.get('start');
       return param ? <LessonPlayer lessonId={param} start={start} key={`${param}-${start || ''}`} /> : <TrainingHub />;
     }
-    case 'puzzles': return <PatternTrainer />;
+    case 'puzzles':
+      return param === 'woodpecker' ? <WoodpeckerPage setId={route.path[2]} /> : <PatternTrainer />;
     case 'profile': return <ProfilePage />;
     case 'review':
     case 'replay':
@@ -42,6 +45,7 @@ export default function App() {
           <Page route={route} />
         </Suspense>
       </main>
+      <MoveTooltip />
     </>
   );
 }

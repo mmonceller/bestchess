@@ -14,6 +14,7 @@ import WelcomeSheet from './hub/WelcomeSheet.jsx';
 import LessonPath from './hub/LessonPath.jsx';
 import LessonSheet from './hub/LessonSheet.jsx';
 import PuzzleCard from './hub/PuzzleCard.jsx';
+import WoodpeckerCard from './hub/WoodpeckerCard.jsx';
 import CoachRoster from './hub/CoachRoster.jsx';
 import MasteryChecklist from './mastery/MasteryChecklist.jsx';
 import MasteryUnlocked from './mastery/MasteryUnlocked.jsx';
@@ -88,6 +89,7 @@ export default function TrainingHub() {
         onChangePath={() => setWelcome(true)}
       />
       <PuzzleCard trainer={trainer} />
+      <WoodpeckerCard trainer={trainer} />
 
       <section className="worlds">
         <div className="world-tabs" role="tablist">

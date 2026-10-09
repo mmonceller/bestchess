@@ -1,7 +1,8 @@
 import Board from '../../../../components/board/Board.jsx';
 import StepLayout from '../../components/StepLayout.jsx';
 import { orientationFor } from '../../stepUtils.js';
-import { finalFen, numberLine } from '../answerSummary.js';
+import MoveLine from '../../../../components/notation/MoveLine.jsx';
+import { finalFen } from '../answerSummary.js';
 import AnswerVerdict from './AnswerVerdict.jsx';
 
 const GOAL_DONE = { mate: 'You delivered checkmate', promote: 'You promoted the pawn', hold: 'You held the position' };
@@ -22,7 +23,7 @@ export default function DrillReview({ step, answer, coach, actions }) {
           okText={`${done} on your first attempt. The board shows your final position.`}
           badText={`${done} after ${fails} failed attempt${fails > 1 ? 's' : ''}. The board shows your final position.`}
         >
-          {moves.length > 0 && <><b>Your winning game:</b> {numberLine(step.fen, moves)}</>}
+          {moves.length > 0 && <><b>Your winning game:</b> <MoveLine fen={step.fen} moves={moves} /></>}
         </AnswerVerdict>
       )}
       actions={actions}

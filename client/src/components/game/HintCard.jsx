@@ -1,5 +1,8 @@
 import Icon from '../icons/Icon.jsx';
 import LessonReminder from './LessonReminder.jsx';
+import MoveLine from '../notation/MoveLine.jsx';
+import MoveText from '../notation/MoveText.jsx';
+import NotationGuideButton from '../notation/NotationGuideButton.jsx';
 
 /*
  * AI assistant card: best move, one or two short reasons, and the expected follow-up.
@@ -19,12 +22,14 @@ export default function HintCard({ hint, loading, onClose, title = 'AI Coach', l
         <div className="row muted"><span className="spinner" /> Thinking…</div>
       ) : (
         <>
-          {hint.san && <div className="hint-move">Try <b>{hint.san}</b></div>}
+          {hint.san && <div className="hint-move">Try <b><MoveLine fen={hint.fen} moves={[hint.san]} numbered={false} /></b></div>}
           <ul className="hint-reasons">
-            {hint.reasons?.map((r, i) => <li key={i}>{r}</li>)}
+            {hint.reasons?.map((r, i) => <li key={i}><MoveText text={r} /></li>)}
           </ul>
-          {hint.line?.length > 1 && <div className="hint-line muted">Likely line: {hint.line.join(' ')}</div>}
-          {hint.assessment && <div className="hint-assess">{hint.assessment}</div>}
+          {hint.line?.length > 1 && <div className="hint-line muted">Likely line: <MoveLine fen={hint.fen} moves={hint.line} /></div>}
+          {hint.assessment && <div className="hint-assess"><MoveText text={hint.assessment} /></div>}
+          <NotationGuideButton />
+          
           <LessonReminder lesson={lesson} reviewLink={reviewLink} />
         </>
       )}

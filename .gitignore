@@ -1,6 +1,7 @@
 node_modules/
 client/dist/
 server/data/
+scripts/woodpecker/.cache/
 .env
 .env.*
 !.env.example

@@ -1,4 +1,5 @@
 import Notice from '../../../../components/game/Notice.jsx';
+import MoveText from '../../../../components/notation/MoveText.jsx';
 
 /* One-line verdict on the player's saved answer for a step. */
 export default function AnswerVerdict({ known, ok, okText, badText, children }) {
@@ -11,7 +12,7 @@ export default function AnswerVerdict({ known, ok, okText, badText, children }) 
   }
   return (
     <Notice tone={ok ? 'good' : 'ok'} icon={ok ? 'checkCircle' : 'retry'}>
-      <span className="answer-line">{ok ? okText : badText}</span>
+      <span className="answer-line"><MoveText text={ok ? okText : badText} /></span>
       {children && <span className="answer-detail">{children}</span>}
     </Notice>
   );

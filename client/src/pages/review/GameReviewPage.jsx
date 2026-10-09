@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Chess } from 'chess.js';
 import Board from '../../components/board/Board.jsx';
 import MoveList from '../../components/game/MoveList.jsx';
+import Move from '../../components/notation/Move.jsx';
 import Icon from '../../components/icons/Icon.jsx';
 import { kingSquare } from '../../components/board/pieces.js';
 import { formatDate } from '../../utils/format.js';
@@ -145,6 +146,7 @@ export default function GameReviewPage({ gameId, autoStart }) {
         {review && item && (
           <MoveComment
             item={item}
+            move={replay.moves[item.ply]}
             moveNumber={moveNo(item.ply)}
             showBetter={showBetter}
             onToggleBetter={() => setShowBetter((v) => !v)}
@@ -155,7 +157,8 @@ export default function GameReviewPage({ gameId, autoStart }) {
         {review && move && !item && (
           <div className="card move-comment tone-neutral">
             <p className="muted" style={{ margin: 0 }}>
-              {move.color === game.color ? 'Your move' : 'Your opponent played'} <b>{moveNo(ply)}{move.san}</b>.
+              {move.color === game.color ? 'Your move' : 'Your opponent played'}{' '}
+              <b><Move san={move.san} prefix={moveNo(ply).trim()} ctx={{ color: move.color, from: move.from, captured: move.captured }} /></b>.
               {move.color !== game.color && ply < last && ' Step forward to see how you answered.'}
             </p>
           </div>

@@ -17,7 +17,8 @@
     "test:engine": "node scripts/perft.js",
     "test:lessons": "node scripts/validateLessons.js",
     "check:endgames": "node scripts/checkEndgames.js",
-    "test:puzzles": "node scripts/validatePuzzles.js"
+    "test:puzzles": "node scripts/validatePuzzles.js",
+    "test:woodpecker": "node scripts/woodpecker/validate.js"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

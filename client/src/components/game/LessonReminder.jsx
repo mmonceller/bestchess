@@ -1,5 +1,6 @@
 import Icon from '../icons/Icon.jsx';
 import CoachAvatar from '../icons/CoachAvatar.jsx';
+import MoveText from '../notation/MoveText.jsx';
 
 /*
  * A coach's tip tied to a lesson (see training/hints): a reminder from a lesson the player
@@ -14,7 +15,7 @@ export default function LessonReminder({ lesson, reviewLink = true }) {
         <div className="hint-lesson-from small muted">
           {lesson.coach.name} · {lesson.suggested ? 'a lesson for your level:' : 'from your lesson'} <b>{lesson.title}</b>
         </div>
-        <div>{lesson.text}</div>
+        <div><MoveText text={lesson.text} /></div>
         {reviewLink && (
           <a className="hint-lesson-link small" href={`#/training/${lesson.lessonId}`}>
             <Icon name="book" size={14} /> {lesson.suggested ? 'Learn this in the lesson' : 'Review this lesson'}

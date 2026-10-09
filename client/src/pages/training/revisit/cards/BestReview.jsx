@@ -26,8 +26,8 @@ export default function BestReview({ step, answer, coach, actions }) {
         <AnswerVerdict
           known={Boolean(answer)}
           ok={!misses.length}
-          okText={`Your first idea, ${accepted?.san}, was already a good move.`}
-          badText={`You found a good move (${accepted?.san}) after ${misses.length} weaker tr${misses.length > 1 ? 'ies' : 'y'}.`}
+          okText={`Your first idea, [[${accepted?.san}]], was already a good move.`}
+          badText={`You found a good move ([[${accepted?.san}]]) after ${misses.length} weaker tr${misses.length > 1 ? 'ies' : 'y'}.`}
         >
           {engineBest && engineBest !== accepted?.uci && <>The engine&apos;s top choice was <b>{sanOf(step.fen, engineBest)}</b> (blue arrow). </>}
           <TryList tries={tries} />

@@ -1,4 +1,5 @@
 import Modal from '../ui/Modal.jsx';
+import NotationGuideButton from '../notation/NotationGuideButton.jsx';
 import { BOARD_THEMES, useSettings } from '../../context/SettingsContext.jsx';
 import './layout.css';
 
@@ -33,6 +34,7 @@ export default function SettingsModal({ onClose }) {
         Winning meter beside the board
       </label>
       <div className="row" style={{ marginTop: 16 }}>
+        <NotationGuideButton label="Notation guide" />
         <span className="spacer" />
         <button className="btn primary" onClick={onClose}>Done</button>
       </div>

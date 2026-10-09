@@ -1,0 +1,102 @@
+/* Colour code for chess notation, shared by every move in the app and the notation guide. */
+:root {
+  --n-piece: #8fb4ff;
+  --n-from: #b39dff;
+  --n-capture: #ff7a6b;
+  --n-check: #ffa94d;
+  --n-mate: #ff5d6c;
+  --n-castle: #4fd1c5;
+  --n-promote: #ffc940;
+  --n-good: #3ccf7a;
+  --n-bad: #ff5d6c;
+  --n-mixed: #ffb547;
+}
+
+.san { white-space: nowrap; cursor: help; border-radius: 4px; }
+.san:hover { background: color-mix(in srgb, var(--n-piece) 14%, transparent); }
+button .san, .mv .san { cursor: inherit; }
+.san-num { color: var(--muted); font-weight: 600; margin-right: 1px; }
+.san-piece { color: var(--n-piece); font-weight: 800; }
+.san-from { color: var(--n-from); font-weight: 700; }
+.san-capture { color: var(--n-capture); font-weight: 800; }
+.san-square { color: inherit; }
+.san-promote { color: var(--n-promote); font-weight: 800; }
+.san-check { color: var(--n-check); font-weight: 800; }
+.san-mate { color: var(--n-mate); font-weight: 900; }
+.san-castle { color: var(--n-castle); font-weight: 800; }
+.san-annotation { font-weight: 800; }
+.san-annotation.good { color: var(--n-good); }
+.san-annotation.bad { color: var(--n-bad); }
+.san-annotation.mixed { color: var(--n-mixed); }
+
+.move-tooltip {
+  position: fixed;
+  z-index: 300;
+  transform: translate(-50%, -100%);
+  padding: 7px 11px;
+  border-radius: 9px;
+  background: #0c0e13;
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  pointer-events: none;
+  animation: fadeIn 0.12s ease both;
+}
+.move-tooltip.below { transform: translate(-50%, 0); }
+
+.notation-guide-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--accent-2);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.notation-guide-btn:hover { background: var(--panel-2); }
+
+.modal.notation-guide-modal { width: min(640px, 100%); }
+.notation-guide { display: flex; flex-direction: column; gap: 14px; }
+.notation-guide p { margin: 0; line-height: 1.55; }
+.notation-guide h3 { margin: 0 0 8px; display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+.notation-guide .san { font-size: 1.02em; }
+.ng-head { display: flex; align-items: center; justify-content: space-between; }
+.ng-head h2 { margin: 0; }
+.ng-swatch {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  font-weight: 800;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  flex: none;
+}
+.ng-pieces { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+.ng-piece {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--bg-2);
+}
+.ng-piece > b { font-size: 1.1rem; text-align: center; }
+.ng-symbols { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
+.ng-symbol { display: flex; gap: 10px; align-items: flex-start; padding: 9px 10px; border-radius: 10px; background: var(--bg-2); }
+.ng-symbol p { margin-top: 2px; }
+.ng-annotations { display: flex; flex-wrap: wrap; gap: 6px; }
+.ng-annotation { padding: 5px 10px; border-radius: 99px; background: var(--bg-2); font-size: 0.88rem; }

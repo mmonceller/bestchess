@@ -57,14 +57,14 @@ export default function BestStep({ step, coach, onNext, onMistake, onHint, onAns
       sounds.good();
       const extra = g.best === toUci(mv)
         ? ' That was the very best move!'
-        : ` Another strong idea was ${bestSan} — ${g.explanation?.reasons?.[0]?.toLowerCase() || 'also good.'}`;
+        : ` Another strong idea was [[${bestSan}]] — ${g.explanation?.reasons?.[0]?.toLowerCase() || 'also good.'}`;
       setFeedback(fb('good', `${step.success}${extra}`));
     } else {
       onMistake();
       sounds.bad();
       setFails((f) => f + 1);
       const cost = Math.abs(g.loss) > 5000 ? 'could lose the game' : `gives away about ${(g.loss / 100).toFixed(1)} pawns' worth`;
-      setFeedback(fb('bad', `${pick(coach.oops)} ${mv.san} ${cost}. Try again.`));
+      setFeedback(fb('bad', `${pick(coach.oops)} [[${mv.san}]] ${cost}. Try again.`));
       setTimeout(() => { if (alive.current) game.undo(); }, 900);
     }
   }

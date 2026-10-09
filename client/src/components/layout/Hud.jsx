@@ -42,7 +42,9 @@ export default function Hud({ section, param }) {
             <button className={`orb orb-logo${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen((o) => !o)} aria-label="Open menu" aria-expanded={menuOpen}>
               <Logo size={38} />
             </button>
-            {SECTION_TITLE[section] && <span className="hud-title">{SECTION_TITLE[section]}</span>}
+            {SECTION_TITLE[section] && (
+              <span className="hud-title">{section === 'puzzles' && param === 'woodpecker' ? 'Woodpecker Method' : SECTION_TITLE[section]}</span>
+            )}
           </div>
         )}
         <div className="hud-right">

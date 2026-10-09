@@ -2,7 +2,8 @@ import Board from '../../../../components/board/Board.jsx';
 import StepLayout from '../../components/StepLayout.jsx';
 import { GlossText } from '../../components/Glossary.jsx';
 import { orientationFor } from '../../stepUtils.js';
-import { judgeMoveTries, solutionText } from '../answerSummary.js';
+import MoveLine from '../../../../components/notation/MoveLine.jsx';
+import { judgeMoveTries } from '../answerSummary.js';
 import AnswerVerdict from './AnswerVerdict.jsx';
 import TryList from './TryList.jsx';
 
@@ -26,7 +27,7 @@ export default function MoveReview({ step, answer, coach, actions }) {
           okText="You found every move on your first try."
           badText={`You solved it after ${misses.length} wrong move${misses.length > 1 ? 's' : ''}.`}
         >
-          <b>Solution:</b> {solutionText(step)}
+          <b>Solution:</b> <MoveLine fen={step.fen} moves={step.line} />
           <TryList tries={tries} />
         </AnswerVerdict>
       )}

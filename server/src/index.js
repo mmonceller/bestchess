@@ -23,7 +23,8 @@ app.use('/api/games', gameRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/trainer', trainerRoutes);
 app.use('/api/online', onlineRoutes);
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+const startedAt = new Date().toISOString();
+app.get('/api/health', (req, res) => res.json({ ok: true, commit: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null, startedAt }));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
 
 if (fs.existsSync(config.clientDist)) {

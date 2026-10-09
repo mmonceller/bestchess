@@ -91,10 +91,10 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
     if (!alive.current) return;
     setBusy(false);
     if (graded && graded.loss <= 40) {
-      settle(true, 'good', `That works too! (The puzzle's main idea was ${uciLineToSan(Chess, before, [expected])[0]}.)`);
+      settle(true, 'good', `That works too! (The puzzle's main idea was [[${uciLineToSan(Chess, before, [expected])[0]}]].)`);
       return;
     }
-    settle(false, 'bad', `${mv.san} isn't it. The blue arrow shows the answer — play it to see why.`);
+    settle(false, 'bad', `[[${mv.san}]] isn't it. The blue arrow shows the answer — play it to see why.`);
     setBusy(true);
     later(() => { game.undo(); setBusy(false); }, 700);
   }

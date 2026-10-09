@@ -50,6 +50,14 @@ BestChess is a browser-based chess app for players of every level. You can play 
 - Focuses on the patterns you miss most, and tracks your mastery of each one.
 - Two-level hints, any correct alternative move accepted, and the solution shown after a miss.
 
+### Woodpecker Method
+- Tactics exercises from *The Woodpecker Method* by Axel Smith and Hans Tikkanen, in the book's three sets: Easy, Intermediate and Advanced. A set is suggested based on your puzzle rating.
+- You solve a whole set in order, which is one cycle, and then start again. Each new cycle aims to finish in half the time of the previous one.
+- A cycle clock that runs only while an exercise is on the board, accuracy for the current cycle, and a history of finished cycles. Progress is saved to your account.
+- The key move must be the book's move (in a mate exercise, any mate counts). Later moves accept any alternative the engine approves. One hint, which counts as a miss, says whether the first move is a check, a capture or a quiet move.
+- After each exercise you see the full solution and the game it came from.
+- Only positions, moves and game names are used, never text from the book. Each line was checked with our engine and cut short where the engine disagreed.
+
 ### Game Review
 - A "Game review" button after every bot and online game.
 - The coach grades each of your moves (Best, Excellent, Good, Inaccuracy, Mistake, Blunder) and explains it in plain language.
@@ -67,6 +75,7 @@ BestChess is a browser-based chess app for players of every level. You can play 
 - App-style layout with a floating menu instead of a traditional website header.
 - Custom flat SVG icons and coach mascots throughout.
 - Several board themes, optional move sounds and board coordinates.
+- Colour-coded move notation everywhere in the app: move lists, hints, reviews, lessons and puzzle solutions. Pieces, captures, checks, mates, castling and promotions each have their own colour. Hovering over or tapping a move describes it in plain words, for example "White's knight takes the queen on h3, giving check." A "How to read moves" guide is linked from move lists, hints, solutions and Settings.
 - Works on desktop and mobile.
 
 ## Tech Stack
@@ -121,6 +130,9 @@ Notes:
 | `npm run test:engine` | Checks the chess engine's move generation |
 | `npm run test:lessons` | Validates every lesson step and position |
 | `npm run test:puzzles` | Validates every puzzle solution with the engine |
+| `npm run test:woodpecker` | Checks the Woodpecker sets: legal positions and moves, mates that really mate |
+
+To rebuild the Woodpecker sets from your own copy of the book, install PyMuPDF (`pip install pymupdf`) and run `python scripts/woodpecker/extract.py "<book.pdf>"`, then `node scripts/woodpecker/build.js`. Extraction writes to `scripts/woodpecker/.cache/`, which is git-ignored. The build checks every line with the engine and takes about 10 minutes.
 
 ## Project Structure
 

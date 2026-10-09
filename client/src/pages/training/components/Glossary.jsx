@@ -1,10 +1,12 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import Icon from '../../../components/icons/Icon.jsx';
+import MoveText from '../../../components/notation/MoveText.jsx';
 import { GLOSSARY, splitGlossary } from '../../../training/glossary.js';
 
 /*
  * Tappable chess words. Any text wrapped in <GlossText> turns known terms
- * (fork, pin, castling…) into buttons that open a plain-English definition.
+ * (fork, pin, castling…) into buttons that open a plain-English definition,
+ * and chess moves into colour-coded notation.
  */
 const GlossaryContext = createContext(null);
 
@@ -16,7 +18,8 @@ export function GlossaryProvider({ children }) {
 
 export function GlossText({ children }) {
   const ctx = useContext(GlossaryContext);
-  if (typeof children !== 'string' || !ctx) return children ?? null;
+  if (typeof children !== 'string') return children ?? null;
+  if (!ctx) return <MoveText text={children} />;
   return splitGlossary(children).map((part, i) => (part.term ? (
     <button
       key={i}
@@ -26,7 +29,7 @@ export function GlossText({ children }) {
     >
       {part.text}
     </button>
-  ) : part.text));
+  ) : <MoveText key={i} text={part.text} />));
 }
 
 export function DefinitionCard() {

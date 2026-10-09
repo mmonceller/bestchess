@@ -1,24 +1,6 @@
 import { Chess } from 'chess.js';
-import { uciLineToSan } from '../../../chess/status.js';
 
 const toMove = (uci) => ({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] });
-
-/* "1. Nc7+ Ke7 2. Nxa6" from a start position and a list of moves in SAN. */
-export function numberLine(fen, sans) {
-  const [, side, , , , full] = fen.split(' ');
-  let num = Number(full) || 1;
-  let white = side === 'w';
-  const out = [];
-  sans.forEach((san, i) => {
-    if (white) out.push(`${num}. ${san}`);
-    else out.push(i === 0 ? `${num}... ${san}` : san);
-    if (!white) num++;
-    white = !white;
-  });
-  return out.join(' ');
-}
-
-export const solutionText = (step) => numberLine(step.fen, uciLineToSan(Chess, step.fen, step.line));
 
 /*
  * Replays the student's attempts at a `move` step against the scripted line and

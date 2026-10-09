@@ -28,6 +28,7 @@ export const defaultTrainer = () => ({
   recent: [],
   lastDay: null,
   dayStreak: 0,
+  woodpecker: {},
 });
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -104,6 +105,7 @@ export async function mergeGuestTrainer() {
       rating: server.games ? server.rating : guest.rating,
       bestStreak: Math.max(server.bestStreak || 0, guest.bestStreak || 0),
       patterns,
+      woodpecker: { ...(guest.woodpecker || {}), ...(server.woodpecker || {}) },
     }
     : { ...defaultTrainer(), ...guest };
   await trainerApi.save(merged);
