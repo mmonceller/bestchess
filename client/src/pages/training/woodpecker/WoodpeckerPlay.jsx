@@ -4,7 +4,10 @@ import Icon from '../../../components/icons/Icon.jsx';
 import Notice from '../../../components/game/Notice.jsx';
 import { useChessGame } from '../../../hooks/useChessGame.js';
 import { engine } from '../../../engine/engineClient.js';
-import { toUci } from '../../../chess/status.js';
+import { Chess } from 'chess.js';
+import { toUci, uciLineToSan } from '../../../chess/status.js';
+import { solvesPuzzle } from '../../../training/puzzles/judgeMove.js';
+import { findRefutation, refutationText } from '../../../training/puzzles/refutation/index.js';
 import MoveLine from '../../../components/notation/MoveLine.jsx';
 import NotationGuideButton from '../../../components/notation/NotationGuideButton.jsx';
 import { firstMoveHint, goalText } from '../../../training/woodpecker/describe.js';
@@ -12,9 +15,9 @@ import { playMoveSound, sounds } from '../../../utils/sound.js';
 import PuzzleThemes from './themes/PuzzleThemes.jsx';
 
 /*
- * One Woodpecker exercise. The key move must be the book's move (any mate also counts in a
- * mate puzzle); later moves may be any engine-approved alternative. A hint or a miss counts
- * as unsolved for the cycle, and the solution can then be played through.
+ * One Woodpecker exercise. Any move the engine says also solves it counts (any mate in a mate
+ * puzzle); a different key move ends the exercise as solved and shows the book's line. A hint
+ * or a miss counts as unsolved for the cycle, and the solution can then be played through.
  */
 export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const game = useChessGame(puzzle.fen);
@@ -50,6 +53,11 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
     } else {
       settle(true, 'good', 'Solved!');
     }
+  }
+
+  function settleAlternative(text) {
+    if (hinted) finishLine();
+    else settle(true, 'good', text);
   }
 
   function advance(onMainLine) {
@@ -89,16 +97,28 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
       later(() => { game.undo(); setBusy(false); }, 600);
       return;
     }
-    if (ply === 0) { miss(`[[${mv.san}]] isn't the key move. The blue arrow shows it — play it through.`); return; }
-
     setBusy(true);
     setNote({ tone: 'ok', text: 'Checking your move…' });
     let graded = null;
-    try { graded = await engine.grade(before, uci, 1200, expected); } catch { /* treat as a miss */ }
+    try { graded = await engine.grade(before, uci, 1500, expected); } catch { /* treat as a miss */ }
+    if (!alive.current) return;
+    if (solvesPuzzle(graded, { mate: puzzle.goal === 'mate' })) {
+      setBusy(false);
+      if (ply === 0) {
+        const [key] = uciLineToSan(Chess, before, [expected]);
+        settleAlternative(`That works too! The book's key move was [[${key}]] — have a look at the solution.`);
+      } else {
+        finishLine();
+      }
+      return;
+    }
+    const refutation = await findRefutation(game.fen, mv);
     if (!alive.current) return;
     setBusy(false);
-    if (graded && graded.loss <= 40) { finishLine(); return; }
-    miss(`[[${mv.san}]] lets the advantage slip. The blue arrow shows the continuation.`);
+    const why = refutationText(refutation, me === 'w' ? 'Black' : 'White');
+    miss(ply === 0
+      ? `[[${mv.san}]] isn't the key move.${why} The blue arrow shows it — play it through.`
+      : `[[${mv.san}]] lets the advantage slip.${why} The blue arrow shows the continuation.`);
   }
 
   function giveUp() {

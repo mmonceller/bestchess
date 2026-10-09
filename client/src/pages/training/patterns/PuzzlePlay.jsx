@@ -8,6 +8,8 @@ import { engine } from '../../../engine/engineClient.js';
 import { toUci, uciLineToSan } from '../../../chess/status.js';
 import { PATTERNS } from '../../../training/patterns/patterns.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
+import { solvesPuzzle } from '../../../training/puzzles/judgeMove.js';
+import { findRefutation, refutationText } from '../../../training/puzzles/refutation/index.js';
 
 const MATE_PATTERNS = new Set(['mate1', 'mate2', 'backRank']);
 const PRAISE = ['Solved!', 'Nicely spotted!', 'That\'s the one!', 'Sharp eyes!'];
@@ -89,12 +91,16 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
     let graded = null;
     try { graded = await engine.grade(before, uci, 1200); } catch { /* treat as a miss */ }
     if (!alive.current) return;
-    setBusy(false);
-    if (graded && graded.loss <= 40) {
+    if (solvesPuzzle(graded, { mate: MATE_PATTERNS.has(puzzle.pattern) })) {
+      setBusy(false);
       settle(true, 'good', `That works too! (The puzzle's main idea was [[${uciLineToSan(Chess, before, [expected])[0]}]].)`);
       return;
     }
-    settle(false, 'bad', `[[${mv.san}]] isn't it. The blue arrow shows the answer — play it to see why.`);
+    const refutation = await findRefutation(game.fen, mv);
+    if (!alive.current) return;
+    setBusy(false);
+    const opponent = me === 'w' ? 'Black' : 'White';
+    settle(false, 'bad', `[[${mv.san}]] isn't it.${refutationText(refutation, opponent)} The blue arrow shows the answer — play it to see why.`);
     setBusy(true);
     later(() => { game.undo(); setBusy(false); }, 700);
   }
