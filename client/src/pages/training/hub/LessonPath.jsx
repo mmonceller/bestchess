@@ -9,6 +9,8 @@ const ROW = 128;
 const SWAY = [0, 1, 1.6, 1, 0, -1, -1.6, -1];
 const xAt = (i) => WIDTH / 2 + SWAY[i % SWAY.length] * 62;
 const yAt = (i) => 84 + i * ROW;
+/* Room under the last node's centre: half the button, a two-line title and the stars/minutes line. */
+const BELOW_LAST = 124;
 
 function trail(count) {
   let d = `M ${xAt(0)} ${yAt(0)}`;
@@ -20,7 +22,7 @@ function trail(count) {
 }
 
 export default function LessonPath({ lessons, progress, nextId, color, onOpen }) {
-  const height = yAt(lessons.length - 1) + 80;
+  const height = yAt(lessons.length - 1) + BELOW_LAST;
   const doneCount = lessons.filter((l) => progress[l.id]).length;
   return (
     <div className="lesson-path" style={{ width: WIDTH, height, '--track': color }}>

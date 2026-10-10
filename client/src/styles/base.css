@@ -21,6 +21,12 @@
 
 html, body, #root { height: 100%; }
 
+/*
+ * No horizontal scrollbars anywhere: the page never scrolls sideways, vertical scroll areas
+ * clip sideways overflow, and rows that do scroll sideways hide their bar (swipe or arrows).
+ */
+html, body { overflow-x: clip; }
+
 body {
   margin: 0;
   background:

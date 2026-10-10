@@ -74,6 +74,7 @@
   align-content: start;
   max-height: 220px;
   overflow-y: auto;
+  overflow-x: hidden;
   font-variant-numeric: tabular-nums;
   font-size: 0.92rem;
   background: var(--bg-2);

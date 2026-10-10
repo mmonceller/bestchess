@@ -5,7 +5,7 @@
 .sb-tabs button { display: inline-flex; align-items: center; gap: 6px; }
 .sb-tab-short { display: none; }
 @media (max-width: 520px) { .sb-tab-long { display: none; } .sb-tab-short { display: inline; } }
-.sb-body { overflow-y: auto; min-height: 120px; padding-right: 2px; }
+.sb-body { overflow-y: auto; overflow-x: hidden; min-height: 120px; padding-right: 2px; }
 
 /* Points */
 .sb-formula { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: var(--bg-2); }

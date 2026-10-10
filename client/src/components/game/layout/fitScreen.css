@@ -11,6 +11,7 @@
   .fit-screen > .side-panel {
     contain: size;
     overflow-y: auto;
+    overflow-x: hidden;
     gap: 10px;
     scrollbar-width: thin;
   }

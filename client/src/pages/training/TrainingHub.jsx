@@ -23,6 +23,8 @@ import './training.css';
 import './hub/hub.css';
 
 const WELCOME_SEEN = 'bc.welcomeSeen';
+/* World tabs that fit in one row at the hub's full width; more than this splits into two even rows. */
+const MAX_TABS_PER_ROW = 7;
 
 /*
  * The track the player should focus on: the first track that fits their skill level (or,
@@ -93,7 +95,7 @@ export default function TrainingHub() {
       <WoodpeckerCard trainer={trainer} />
 
       <section className="worlds">
-        <div className="world-tabs" role="tablist">
+        <div className="world-tabs" role="tablist" style={{ '--tabs': tracks.length > MAX_TABS_PER_ROW ? Math.ceil(tracks.length / 2) : tracks.length }}>
           {tracks.map((t) => {
             const list = lessonsInTrack(t.id);
             const done = list.filter((l) => progress[l.id]).length;

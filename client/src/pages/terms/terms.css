@@ -14,8 +14,16 @@
   background: linear-gradient(135deg, #3ccf7a, #9be8b4);
 }
 
-/* Filters stay reachable while scrolling a long list; they sit just under the floating top bar. */
+/* Zero-height marker just above the filters; it cancels the page gap so the filters don't move. */
+.term-filters-marker { height: 0; margin-bottom: -14px; }
+
+/*
+ * Filters stay reachable while scrolling a long list; they sit just under the floating top bar.
+ * While pinned, the strip above them (behind the top bar's buttons) gets the same backdrop,
+ * so cards never show through between the top of the screen and the filters.
+ */
 .term-filters {
+  --filters-bg: color-mix(in srgb, var(--bg) 92%, transparent);
   position: sticky;
   top: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
   z-index: 5;
@@ -24,10 +32,25 @@
   gap: 8px;
   margin: 0 -14px;
   padding: 8px 14px 10px;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid transparent;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.term-filters.stuck {
+  border-bottom-color: var(--line);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+.term-filters.stuck::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: calc(-1 * (var(--nav-h) + env(safe-area-inset-top, 0px)));
+  background: var(--filters-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
 }
 
 .term-search { position: relative; display: flex; align-items: center; }

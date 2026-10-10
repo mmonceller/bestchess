@@ -136,7 +136,7 @@
  */
 @media (min-width: 900px) and (orientation: landscape) and (min-height: 520px) {
   .fit-screen .review-opponent { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fit-screen .review-detail { flex: 0 1 auto; min-height: 0; overflow-y: auto; gap: 10px; scrollbar-width: thin; }
+  .fit-screen .review-detail { flex: 0 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; gap: 10px; scrollbar-width: thin; }
   .fit-screen .review-detail > * { flex: none; }
   .fit-screen.review-page .moves-card { min-height: min(320px, 40%); }
   .fit-screen .review-score { gap: 12px; }

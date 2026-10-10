@@ -8,7 +8,8 @@ export default function TermCard({ term, showCategory, highlight }) {
   const category = CATEGORY[term.category];
   const level = LEVEL[term.level];
   const lesson = term.lesson && getLesson(term.lesson);
-  const aka = term.aka.filter((a) => /[a-z]/i.test(a) && !term.name.toLowerCase().includes(a.toLowerCase()));
+  const name = term.name.toLowerCase();
+  const aka = term.aka.filter((a) => /[a-z]/i.test(a) && !name.includes(a.toLowerCase()) && !a.toLowerCase().startsWith(name));
   return (
     <article id={`term-${term.id}`} className={`term-card${highlight ? ' highlight' : ''}`} style={{ '--c': category.color }}>
       <header className="term-head">
