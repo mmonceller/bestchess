@@ -32,6 +32,7 @@ export default function HomePage() {
       </div>
 
       <footer className="landing-foot">
+        <a href="#/terms">Chess terms</a>{' · '}
         {user
           ? <>Signed in as <a href="#/profile">{user.username}</a></>
           : <a href="#/login">Log in</a>}

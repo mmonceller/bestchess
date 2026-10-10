@@ -108,6 +108,10 @@ export const beginnerLessons = [
         ],
       },
       {
+        type: 'talk',
+        text: 'Good to know: there\'s no special move limit once your opponent has only a king left. But the fifty-move rule still counts — if 50 moves go by for each side with no capture and no pawn move, your opponent can claim a draw.\n\nThe box method needs far fewer moves than that. The 20-move goal in the next drill is just practice, not a rule.',
+      },
+      {
         type: 'drill',
         fen: KQK,
         prompt: 'Use the recipe: checkmate the lone king within 20 moves.',

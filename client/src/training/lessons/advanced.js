@@ -137,7 +137,7 @@ export const advancedLessons = [
         prompt: 'Hold the wall for 12 moves. Don\'t lose your rook and don\'t let the pawn promote.',
         goal: 'hold',
         moves: 12,
-        hint: 'Keep your rook on the 6th row until the pawn reaches e6 — then check from behind.',
+        hint: 'Keep your rook on your 3rd row (the 6th rank) until the pawn reaches e6 — then check from behind.',
         success: 'Wall held! A pawn down, and nothing to fear.',
       },
     ],

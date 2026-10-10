@@ -24,11 +24,11 @@ const noop = () => {};
  * A finished step shown with the player's saved answer. Info steps are shown as they were;
  * "Try it again" replays the step without touching stars or saved answers.
  */
-export default function ReviewStep({ step, answer, coach, retrying, onRetry, onNext, nextLabel }) {
+export default function ReviewStep({ step, answer, coach, retrying, onRetry, onNext, nextLabel, reshuffle = false }) {
   const Card = REVIEW_CARDS[step.type];
   if (!Card || retrying) {
     const Step = STEP_COMPONENTS[step.type];
-    return <Step step={step} coach={coach} onNext={onNext} onMistake={noop} onHint={noop} />;
+    return <Step step={step} coach={coach} onNext={onNext} onMistake={noop} onHint={noop} reshuffle={reshuffle} />;
   }
   const actions = (
     <div className="controls">

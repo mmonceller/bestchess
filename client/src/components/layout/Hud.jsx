@@ -17,6 +17,7 @@ const SECTION_TITLE = {
   review: 'Game Review',
   replay: 'Game Review',
   login: 'Account',
+  terms: 'Chess Terms',
 };
 
 /* Floating game-style controls instead of a website header: a home orb with a quick-jump menu, plus settings and profile. */
@@ -65,7 +66,10 @@ export default function Hud({ section, param }) {
                 <span className="quick-icon"><Icon name={m.icon} size={22} /></span>{m.label}
               </a>
             ))}
-            <a href={user ? '#/profile' : '#/login'} className="quick-item" style={{ '--i': MODES.length + 1, '--tint': '#7c5cff' }}>
+            <a href="#/terms" className={`quick-item${section === 'terms' ? ' current' : ''}`} style={{ '--i': MODES.length + 1, '--tint': '#3ccf7a' }}>
+              <span className="quick-icon"><Icon name="book" size={22} /></span>Chess terms
+            </a>
+            <a href={user ? '#/profile' : '#/login'} className="quick-item" style={{ '--i': MODES.length + 2, '--tint': '#7c5cff' }}>
               <span className="quick-icon"><Icon name="user" size={22} /></span>{user ? 'My profile' : 'Log in'}
             </a>
           </nav>

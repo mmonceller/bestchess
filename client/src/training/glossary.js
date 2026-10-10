@@ -56,7 +56,7 @@ const ENTRIES = [
   ['smothered mate', ['smothered mate', 'smothered'], 'A checkmate by a knight when the king is boxed in by its own pieces.'],
   ['minor piece', ['minor piece', 'minor pieces'], 'A knight or a bishop (each worth about 3 pawns).'],
   ['Lucena', ['Lucena'], 'A famous winning setup in rook endings: you use your rook as a "bridge" to shield your king from checks.'],
-  ['Philidor', ['Philidor'], 'A famous way to hold a draw in rook endings: keep your rook on your 6th row so the enemy king can\'t come forward.'],
+  ['Philidor', ['Philidor'], 'A famous way to hold a draw in rook endings: keep your rook on your 3rd row so the enemy king can\'t come forward. When the pawn steps onto that row, move the rook far back and check from behind.'],
   ['draw', ['draw', 'drawn', 'drawing'], 'A game that ends with no winner, like stalemate or both sides agreeing.'],
   ['capture', ['capture', 'captures', 'captured', 'capturing'], 'Taking an enemy piece by moving onto its square. The captured piece leaves the board.'],
 ];

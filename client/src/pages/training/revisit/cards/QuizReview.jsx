@@ -26,7 +26,7 @@ export default function QuizReview({ step, answer, coach, actions }) {
       actions={actions}
     >
       <div className="quiz-options review">
-        {optionOrder(step).map((i, position) => {
+        {optionOrder(step, answer?.order).map((i, position) => {
           const o = step.options[i];
           const order = picks.indexOf(i);
           const state = o.correct ? 'right' : order >= 0 ? 'wrong' : 'unpicked';

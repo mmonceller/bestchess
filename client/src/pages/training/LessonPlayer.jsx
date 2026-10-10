@@ -71,8 +71,10 @@ export default function LessonPlayer({ lessonId, start }) {
   const coach = getCoach(lesson.coach);
   const record = progress[lesson.id];
   const bonusDone = Boolean(record?.bonusStars);
+  /* Answers are saved one per step, so a different length means the lesson changed since and they no longer line up. */
+  const savedAnswers = record?.answers?.length === lesson.steps.length ? record.answers : null;
   const reviewItems = [
-    ...lesson.steps.map((step, i) => ({ step, answer: record?.answers?.[i], kind: 'review' })),
+    ...lesson.steps.map((step, i) => ({ step, answer: savedAnswers?.[i], kind: 'review' })),
     ...(bonusDone ? lesson.bonus.map((step, i) => ({ step, answer: record?.bonusAnswers?.[i], kind: 'bonus' })) : []),
   ];
 
@@ -159,6 +161,7 @@ export default function LessonPlayer({ lessonId, start }) {
           answer={item.answer}
           coach={coach}
           retrying={retrying}
+          reshuffle={item.kind === 'bonus'}
           onRetry={() => setRetrying(true)}
           onNext={nextReview}
           nextLabel={nextLabel}
@@ -203,6 +206,7 @@ export default function LessonPlayer({ lessonId, start }) {
           onNext={() => nextPlayed(steps)}
           onMistake={onMistake}
           onHint={onHint}
+          reshuffle={mode === 'bonus'}
           onAnswer={(a) => { answers.current[index] = a; }}
         />
       </div>

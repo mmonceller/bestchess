@@ -1,0 +1,93 @@
+/* Words from game reviews, clocks and thinking at the board. Entries without `def` borrow the lesson glossary's definition. */
+export default [
+  { name: 'Blunder', aka: ['??'], level: 'beginner', lesson: 'b-blunder-filter' },
+  {
+    name: 'Mistake',
+    aka: ['?'],
+    level: 'beginner',
+    def: 'A move that makes your position clearly worse, but not as badly as a blunder. In a game review, it\'s marked between an inaccuracy and a blunder.',
+  },
+  {
+    name: 'Inaccuracy',
+    aka: ['?!'],
+    level: 'beginner',
+    def: 'Not a disaster, but there was something better. The smallest slip a game review points out.',
+  },
+  {
+    name: 'Blunder check',
+    aka: ['blunder filter', 'safety check'],
+    level: 'beginner',
+    lesson: 'b-blunder-filter',
+    def: 'A quick safety look before every move: what does my opponent threaten, and does my move leave anything loose?',
+  },
+  {
+    name: 'Annotation symbols',
+    aka: ['!', '!!', '!?', '?!'],
+    level: 'intermediate',
+    lesson: 'f-notation',
+    def: 'Marks written after a move: ! good, !! brilliant, !? interesting, ?! dubious, ? mistake, ?? blunder.',
+  },
+  {
+    name: 'Evaluation',
+    aka: ['eval', 'eval bar', 'score'],
+    level: 'beginner',
+    def: 'A score for who\'s better, counted in pawns. +1 means White is about a pawn ahead; a minus number means Black is better.',
+  },
+  { name: 'Engine', aka: ['computer', 'bot'], level: 'beginner' },
+  {
+    name: 'Calculation',
+    aka: ['calculate', 'analysis'],
+    level: 'intermediate',
+    lesson: 'm-calculation',
+    def: 'Playing the moves out in your head before you make them: "I go here, they go there, then I…".',
+  },
+  {
+    name: 'Candidate moves',
+    aka: ['candidates'],
+    level: 'intermediate',
+    lesson: 'm-tree',
+    def: 'The few moves worth thinking about seriously in a position. Strong players list them first, then calculate each one.',
+  },
+  {
+    name: 'Swindle',
+    level: 'intermediate',
+    lesson: 'a-practical',
+    def: 'Saving or even winning a lost game by setting traps and making things complicated.',
+  },
+  {
+    name: 'Time control',
+    aka: ['increment', '+2', 'clock'],
+    level: 'beginner',
+    def: 'How much time each player gets for the whole game. 3 + 2 means three minutes each, plus two seconds added after every move you make.',
+  },
+  {
+    name: 'Blitz',
+    aka: ['bullet', 'rapid', 'classical', 'speed chess'],
+    level: 'beginner',
+    def: 'Fast chess, with only a few minutes each. In this app, 3 + 2 and 5 + 0 are Blitz, 10 and 15 minutes are Rapid, and 30 minutes is Classical. Even faster games (under 3 minutes) are called bullet.',
+  },
+  {
+    name: 'Flag',
+    aka: ['flagging', 'lose on time', 'timeout'],
+    level: 'beginner',
+    def: 'Running out of time. If your clock hits zero you lose — unless your opponent has no way to ever checkmate, then it\'s a draw.',
+  },
+  {
+    name: 'Time trouble',
+    aka: ['Zeitnot', 'time pressure'],
+    level: 'intermediate',
+    def: 'Having very little time left on your clock, so you must move fast. This is when most blunders happen.',
+  },
+  {
+    name: 'Rating',
+    aka: ['Elo'],
+    level: 'beginner',
+    def: 'A number that shows playing strength. Beat stronger players and it goes up more; lose to weaker ones and it drops more.',
+  },
+  {
+    name: 'Grandmaster',
+    aka: ['GM', 'IM', 'FM', 'title'],
+    level: 'beginner',
+    def: 'The highest title a chess player can earn. Below it come International Master (IM) and FIDE Master (FM).',
+  },
+];

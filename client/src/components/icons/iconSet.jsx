@@ -165,6 +165,11 @@ export const ICONS = {
     <Duo d="M3 5.5 8.5 3.5l7 2.5 5.5-2v14.5l-5.5 2-7-2.5L3 20Z" />
     <path {...line} strokeWidth="1.8" d="M8.5 3.5v14.5M15.5 6v14.5" />
   </>),
+  search: (<>
+    <circle className="duo" cx="10.5" cy="10.5" r="6.5" />
+    <circle {...line} cx="10.5" cy="10.5" r="6.5" />
+    <path {...line} strokeWidth="2.8" d="m15.6 15.6 5 5" />
+  </>),
   book: (<>
     <Duo d="M12 6.2C10 4.6 7 4 3 4v14c4 0 7 .6 9 2.2Z" />
     <path d="M12 6.2C14 4.6 17 4 21 4v14c-4 0-7 .6-9 2.2Z" />

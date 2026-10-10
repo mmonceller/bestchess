@@ -16,6 +16,7 @@
     "start": "npm run start -w server",
     "test:engine": "node scripts/perft.js",
     "test:lessons": "node scripts/validateLessons.js",
+    "test:terms": "node scripts/validateTerms.js",
     "check:endgames": "node scripts/checkEndgames.js",
     "test:puzzles": "node scripts/validatePuzzles.js",
     "puzzles:variants": "node scripts/patterns/buildVariants.js",

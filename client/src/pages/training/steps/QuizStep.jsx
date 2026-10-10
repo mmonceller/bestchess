@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Board from '../../../components/board/Board.jsx';
 import Icon from '../../../components/icons/Icon.jsx';
 import StepLayout from '../components/StepLayout.jsx';
@@ -6,14 +6,16 @@ import { ContinueButton } from '../components/StepButtons.jsx';
 import { GlossText } from '../components/Glossary.jsx';
 import { orientationFor, pick, toArrows, toHighlights } from '../stepUtils.js';
 import { sounds } from '../../../utils/sound.js';
-import { optionLetter, optionOrder } from '../../../training/quiz/optionOrder.js';
+import { freshOptionOrder, optionLetter, optionOrder, rememberOptionOrder } from '../../../training/quiz/optionOrder.js';
 
-export default function QuizStep({ step, coach, onNext, onMistake, onAnswer }) {
+/* `reshuffle` gives the options a new order on every try instead of the fixed lesson order. */
+export default function QuizStep({ step, coach, onNext, onMistake, onAnswer, reshuffle = false }) {
   const [tried, setTried] = useState({});
   const [solved, setSolved] = useState(false);
   const [reaction, setReaction] = useState('');
   const picks = useRef([]);
-  const order = useMemo(() => optionOrder(step), [step]);
+  const order = useMemo(() => (reshuffle ? freshOptionOrder(step) : optionOrder(step)), [step, reshuffle]);
+  useEffect(() => { if (reshuffle) rememberOptionOrder(step, order); }, [step, order, reshuffle]);
 
   function choose(i) {
     if (solved || tried[i]) return;
@@ -21,7 +23,7 @@ export default function QuizStep({ step, coach, onNext, onMistake, onAnswer }) {
     picks.current.push(i);
     if (step.options[i].correct) {
       setSolved(true);
-      onAnswer?.({ picks: picks.current });
+      onAnswer?.(reshuffle ? { picks: picks.current, order } : { picks: picks.current });
       setReaction(pick(coach.praise));
       sounds.good();
     } else {

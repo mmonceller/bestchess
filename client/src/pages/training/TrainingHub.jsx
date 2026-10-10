@@ -16,6 +16,7 @@ import LessonSheet from './hub/LessonSheet.jsx';
 import PuzzleCard from './hub/PuzzleCard.jsx';
 import WoodpeckerCard from './hub/WoodpeckerCard.jsx';
 import CoachRoster from './hub/CoachRoster.jsx';
+import TermsCard from './hub/TermsCard.jsx';
 import MasteryChecklist from './mastery/MasteryChecklist.jsx';
 import MasteryUnlocked from './mastery/MasteryUnlocked.jsx';
 import './training.css';
@@ -137,6 +138,7 @@ export default function TrainingHub() {
         )}
       </section>
 
+      <TermsCard />
       <CoachRoster />
 
       {preview && <LessonSheet lesson={preview} progress={progress} onClose={() => setPreview(null)} />}

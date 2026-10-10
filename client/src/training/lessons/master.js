@@ -191,17 +191,50 @@ export const masterLessons = [
     title: 'Think Like a Tournament Player',
     coach: 'elena',
     summary: 'The rules, habits and nerves that decide real competitive games.',
-    minutes: 5,
+    minutes: 9,
     steps: [
       {
         type: 'recap',
-        title: 'Tournament rules you must know',
-        text: 'These rules decide real games every day:',
+        title: 'At the board',
+        text: 'Over-the-board games have rules that online chess handles for you. These decide real games every day:',
         items: [
-          { label: 'Touch', title: 'Touch-move', text: 'Deliberately touch a piece and you must move it, if it has a legal move.' },
-          { label: '×3', title: 'Threefold repetition', text: 'The same position three times, same player to move: a draw can be claimed.' },
-          { label: '50', title: 'Fifty-move rule', text: '50 moves each with no capture and no pawn move: a draw can be claimed.' },
+          { label: 'Touch', title: 'Touch-move', text: 'Deliberately touch one of your pieces and you must move it, if it has a legal move.' },
+          { label: 'Take', title: 'Touching an enemy piece', text: 'Deliberately touch an enemy piece and you must capture it, if you legally can.' },
+          { icon: 'lock', title: 'Let go and it\'s played', text: 'Once you let go of a piece on a new square, the move is made. No changing your mind.' },
+          { icon: 'info', title: '"I adjust"', text: 'To straighten a piece without moving it, say "I adjust" (or "j\'adoube") before you touch it.' },
+          { icon: 'warning', title: 'Illegal moves', text: 'An illegal move is taken back and your opponent gets extra time on their clock. A second illegal move in the same game loses.' },
+          { icon: 'book', title: 'Write your moves', text: 'In slow games you must write every move on a score sheet in notation — after you play it, never before.' },
+          { icon: 'xCircle', title: 'Phones off and away', text: 'No phones or devices during the game. At many events, just having one on you loses the game on the spot.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'You accidentally brush a piece while reaching for another. Must you move it?',
+        options: [
+          { text: 'No — touch-move only applies to deliberate touches. Say "I adjust" before straightening pieces.', correct: true, why: 'Accidental touches don\'t count, but always announce adjustments.' },
+          { text: 'Yes, any touch counts', why: 'Only deliberate touches count.' },
+          { text: 'Only in blitz', why: 'The rule is the same in every time control.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'You make an illegal move and your opponent points it out. What happens?',
+        options: [
+          { text: 'The move is taken back, you play a legal move, and your opponent gets extra time', correct: true, why: 'The first illegal move costs you time. A second one in the same game loses.' },
+          { text: 'You lose the game immediately', why: 'Not for the first one — but a second illegal move in the same game does lose.' },
+          { text: 'Nothing — the move stands if it was already played', why: 'Illegal moves never stand. The position goes back to before the mistake.' },
+        ],
+      },
+      {
+        type: 'recap',
+        title: 'How games end in a draw',
+        text: 'Know these, or you\'ll play on in dead-drawn positions — or let a draw slip away:',
+        items: [
+          { icon: 'draw', title: 'Draw offers', text: 'Make your move, offer the draw, then press your clock. Your opponent can accept, say no, or simply play on.' },
+          { label: '×3', title: 'Threefold repetition', text: 'The same position three times (not always in a row), same player to move: a draw can be claimed. Five times and it\'s drawn automatically.' },
+          { label: '50', title: 'Fifty-move rule', text: '50 moves each with no capture and no pawn move: a draw can be claimed. After 75 moves it\'s drawn automatically.' },
           { label: 'K+N', title: 'Not enough material', text: 'King and knight (or bishop) against a lone king can\'t mate — it\'s a draw.' },
+          { icon: 'king', title: 'No lone-king countdown', text: 'There\'s no special move limit once your opponent has only a king left. Only the fifty-move rule applies.' },
         ],
       },
       {
@@ -215,11 +248,41 @@ export const masterLessons = [
       },
       {
         type: 'quiz',
-        question: 'You accidentally brush a piece while reaching for another. Must you move it?',
+        question: 'You have king and rook against a lone king. How many moves do you have to checkmate?',
         options: [
-          { text: 'No — touch-move only applies to deliberate touches. Say "I adjust" before straightening pieces.', correct: true, why: 'Accidental touches don\'t count, but always announce adjustments.' },
-          { text: 'Yes, any touch counts', why: 'Only deliberate touches count.' },
-          { text: 'Only in blitz', why: 'The rule is the same in every time control.' },
+          { text: 'No special limit — but after 50 moves each with no capture or pawn move, a draw can be claimed', correct: true, why: 'Only the fifty-move rule counts. King and rook mate takes well under 20 moves with good technique.' },
+          { text: '16 moves, counted from when the king was left alone', why: 'Move countdowns like this come from house rules and other chess variants, not from standard chess.' },
+          { text: 'As many as you like', why: 'The fifty-move rule still applies, so you can\'t shuffle forever.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'When is the right moment to offer a draw?',
+        options: [
+          { text: 'After making your move, before pressing your clock', correct: true, why: 'That way your opponent decides on their own time, and you don\'t disturb them while they think.' },
+          { text: 'While your opponent is thinking', why: 'Offering on their time is distracting — and repeated offers can be penalized.' },
+          { text: 'Before making your move, so they can answer first', why: 'An offer before your move can be answered by asking you to show your move first. Move, then offer.' },
+        ],
+      },
+      {
+        type: 'recap',
+        title: 'The clock',
+        text: 'In a tournament, time is a piece too:',
+        items: [
+          { icon: 'clock', title: 'Press with the same hand', text: 'Your clock only runs on your turn. Make your move and press the clock with the same hand.' },
+          { label: '+30', title: 'Increment', text: 'A time control like 90 + 30 means 90 minutes each, plus 30 seconds added after every move.' },
+          { icon: 'flag', title: 'Out of time', text: 'If your clock hits zero, you lose — unless your opponent has no way at all to ever checkmate you, like a lone king. Then it\'s a draw.' },
+          { icon: 'user', title: 'Be on time', text: 'Your clock starts when the round starts, even if you\'re not there. Many events forfeit players who arrive too late.' },
+          { icon: 'target', title: 'Budget your time', text: 'Don\'t spend half your time in the opening. Players short on time blunder far more often.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'Your clock runs out, but your opponent has only a king left. What\'s the result?',
+        options: [
+          { text: 'A draw — a lone king can never checkmate you', correct: true, why: 'Losing on time needs an opponent who could still mate in some way. A lone king can\'t.' },
+          { text: 'You lose on time', why: 'Not here. Your opponent has no way to ever checkmate, so it\'s a draw.' },
+          { text: 'You win, because you have more material', why: 'Running out of time never wins the game for you.' },
         ],
       },
       {

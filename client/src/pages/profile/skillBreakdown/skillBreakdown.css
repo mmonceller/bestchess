@@ -1,4 +1,4 @@
-.skill-breakdown-modal { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 32px); display: flex; flex-direction: column; gap: 12px; }
+.skill-breakdown-modal { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); display: flex; flex-direction: column; gap: 12px; }
 .sb-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .sb-head h2 { margin: 0 0 6px; }
 .sb-tabs { align-self: flex-start; max-width: 100%; }

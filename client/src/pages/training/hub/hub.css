@@ -79,6 +79,12 @@ button.link { background: none; border: 0; padding: 0; cursor: pointer; font: in
   color: #0e2a27;
   background: linear-gradient(135deg, #4fd1c5, #7ce7a8);
 }
+.terms-card {
+  border-color: rgba(60, 207, 122, 0.45);
+  background: linear-gradient(120deg, rgba(60, 207, 122, 0.14), var(--bg-2) 70%);
+}
+.terms-card .puzzle-card-icon { color: #0b2a18; background: linear-gradient(135deg, #3ccf7a, #9be8b4); }
+.terms-card .puzzle-card-cta { color: var(--good); }
 .puzzle-card-body { flex: 1; min-width: 0; }
 .puzzle-card-body h3 { margin: 0 0 2px; }
 .puzzle-card-body p { margin: 0 0 8px; }

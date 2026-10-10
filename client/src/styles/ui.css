@@ -97,15 +97,23 @@
   position: fixed;
   inset: 0;
   background: rgba(5, 6, 10, 0.6);
-  display: grid;
-  place-items: center;
+  display: flex;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   z-index: 100;
   padding: 16px;
   animation: fadeIn 0.15s ease both;
 }
+/*
+ * `margin: auto` centres the dialog but, unlike grid centring, never pushes its top
+ * off-screen when it is taller than the window. `dvh` is the visible height on tablets
+ * and phones, where `vh` also counts the space behind the browser toolbars.
+ */
 .modal {
+  margin: auto;
   width: min(420px, 100%);
   max-height: 90vh;
+  max-height: calc(100dvh - 32px);
   overflow: auto;
 }
 

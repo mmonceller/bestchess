@@ -13,6 +13,7 @@ const WoodpeckerPage = lazy(() => import('./pages/training/woodpecker/Woodpecker
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage.jsx'));
 const GameReviewPage = lazy(() => import('./pages/review/GameReviewPage.jsx'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage.jsx'));
+const TermsPage = lazy(() => import('./pages/terms/TermsPage.jsx'));
 
 function Page({ route }) {
   const [section, param] = route.path;
@@ -37,6 +38,7 @@ function Page({ route }) {
         />
       );
     case 'login': return <AuthPage next={route.query.get('next')} />;
+    case 'terms': return <TermsPage termId={param} query={route.query.get('q') || ''} key={`${param || ''}-${route.query.get('q') || ''}`} />;
     default: return <HomePage />;
   }
 }
