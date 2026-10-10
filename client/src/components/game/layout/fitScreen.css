@@ -1,0 +1,30 @@
+/*
+ * `.game-layout.fit-screen` on landscape tablets and desktops: the side panel is exactly as
+ * tall as the board column (`contain: size` keeps its content from stretching the row), so the
+ * page never scrolls. The moves card takes the room that is left and scrolls on its own.
+ */
+@media (min-width: 900px) and (orientation: landscape) and (min-height: 520px) {
+  .app-main:has(.fit-screen) { padding-bottom: 14px; }
+  .game-layout.fit-screen { --board-reserve: 160px; align-items: stretch; }
+  .game-layout.fit-screen.review-page { --board-reserve: 106px; }
+
+  .fit-screen > .side-panel {
+    contain: size;
+    overflow-y: auto;
+    gap: 10px;
+    scrollbar-width: thin;
+  }
+  .fit-screen > .side-panel > * { flex: none; }
+  .fit-screen .side-panel .card { padding: 12px 14px; }
+  .fit-screen .side-panel h3 { margin-top: 0; margin-bottom: 6px; }
+
+  .fit-screen .moves-card { flex: 1 1 0; min-height: 170px; display: flex; flex-direction: column; }
+  .fit-screen .moves-card .moves-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .fit-screen .moves-card .move-list-wrap { flex: 1; min-height: 0; }
+  .fit-screen .moves-card .move-list { flex: 1; min-height: 0; max-height: none; }
+  .fit-screen .moves-card .move-list.empty { flex: none; }
+
+  .fit-screen .player-bar { padding: 5px 10px; }
+  .fit-screen .player-icon { width: 26px; height: 26px; }
+  .fit-screen .chat-list { max-height: 96px; }
+}

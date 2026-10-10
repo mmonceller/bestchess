@@ -3,6 +3,7 @@ import Move from '../notation/Move.jsx';
 import NotationGuideButton from '../notation/NotationGuideButton.jsx';
 import { describeMove } from '../../chess/notation/describe.js';
 import { replayLine, START_FEN } from '../../chess/notation/line.js';
+import { scrollWithin } from '../../utils/scrollWithin.js';
 
 /*
  * SAN move list in numbered pairs, colour-coded with a plain-English tooltip per move.
@@ -13,8 +14,7 @@ export default function MoveList({ moves, current = moves.length - 1, onSelect, 
   const ref = useRef(null);
   const line = useMemo(() => replayLine(startFen, moves), [startFen, moves]);
   useEffect(() => {
-    const el = ref.current?.querySelector('.mv.current');
-    if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    scrollWithin(ref.current, ref.current?.querySelector('.mv.current'));
   }, [current, moves.length]);
 
   if (!moves.length) return <div className="move-list empty muted">No moves yet.</div>;
@@ -30,14 +30,14 @@ export default function MoveList({ moves, current = moves.length - 1, onSelect, 
           const tip = describeMove(m.san, m.ctx) || m.san;
           const mark = marks?.[ply];
           const props = {
-            className: `mv${ply === current ? ' current' : ''}`,
+            className: `mv${ply === current ? ' current' : ''}${mark ? ' marked' : ''}`,
             'data-move-tip': mark ? `${tip} (${mark})` : tip,
             'aria-label': tip,
           };
           const body = (
             <>
-              <Move san={m.san} tip={props['data-move-tip']} />
               {mark && <span className={`mv-mark mark-${mark}`} />}
+              <Move san={m.san} tip={props['data-move-tip']} />
             </>
           );
           return onSelect

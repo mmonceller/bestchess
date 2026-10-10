@@ -1,10 +1,4 @@
-.lobby { max-width: 860px; margin: 0 auto; }
-.lobby-name { margin-bottom: 14px; }
-.lobby-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-.code-input { font-size: 1.6rem; letter-spacing: 0.35em; text-align: center; font-weight: 800; text-transform: uppercase; }
 .small { font-size: 0.82rem; }
-.toggle-inline { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; }
-.toggle-inline input { accent-color: var(--accent); width: 16px; height: 16px; }
 
 .waiting { border-color: rgba(124, 92, 255, 0.5); }
 .code-display { display: flex; justify-content: center; gap: 6px; margin: 12px 0; }

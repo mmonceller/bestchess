@@ -113,7 +113,7 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
   const opponent = { shown: showOpponent, progress: opponentProgress, onToggle: toggleOpponent };
 
   return (
-    <div className="game-layout review-page fade-in">
+    <div className="game-layout fit-screen review-page fade-in">
       <div className="board-column">
         <Board
           fen={fen}
@@ -134,83 +134,92 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
       </div>
 
       <aside className="side-panel">
-        <div className="card">
-          <a href={gameId ? '#/profile' : `#/${game.mode === 'online' ? 'online' : 'computer'}`} className="muted small icon-text">
-            <Icon name="arrowLeft" size={14} /> {gameId ? 'Back to my games' : 'Back to playing'}
-          </a>
-          <h2 style={{ marginTop: 6 }}>Game review</h2>
-          <div className="row">
+        <div className="card review-head">
+          <div className="review-head-top">
+            <h2>Game review</h2>
             <span className={`result-pill ${game.result}`}>{RESULT_LABEL[game.result] || ''}</span>
-            <span className="muted small">vs {game.opponent}{game.date ? ` · ${formatDate(game.date)}` : ''}{game.reason ? ` · ${game.reason}` : ''}</span>
+            <span className="spacer" />
+            <a
+              href={gameId ? '#/profile' : `#/${game.mode === 'online' ? 'online' : 'computer'}`}
+              className="muted small icon-text"
+              title={gameId ? 'Back to my games' : 'Back to playing'}
+            >
+              <Icon name="arrowLeft" size={14} /> Back
+            </a>
           </div>
+          <span className="muted small review-opponent">vs {game.opponent}{game.date ? ` · ${formatDate(game.date)}` : ''}{game.reason ? ` · ${game.reason}` : ''}</span>
           <HintUsage game={game} />
+        </div>
+
+        <div className="review-detail">
+          {!review && !progress && (
+            <div className="card review-cta">
+              <h3 className="icon-text"><Icon name="bot" size={20} /> Go over this game with your coach</h3>
+              <p className="muted">
+                The coach checks each of your {playerMoves} moves, explains what it did, and shows a better move whenever there was one.
+                This takes about {Math.max(5, Math.round(playerMoves * 1.1))} seconds.
+              </p>
+              {error && <p className="small error-text">{error}</p>}
+              <button className="btn primary block icon-text" onClick={start} disabled={!playerMoves}>
+                <Icon name="play" size={18} /> {playerMoves ? 'Start game review' : 'No moves to review'}
+              </button>
+            </div>
+          )}
+
+          {progress && (
+            <div className="card review-progress">
+              <div className="row"><span className="spinner" /> <b>Reviewing your moves…</b></div>
+              <div className="progress-track"><span style={{ width: `${progress.total ? (progress.done / progress.total) * 100 : 0}%` }} /></div>
+              <span className="muted small">{progress.total ? `Move ${Math.min(progress.done + 1, progress.total)} of ${progress.total}` : 'Getting started'}</span>
+            </div>
+          )}
+
+          {review && ply < 0 && (
+            <ReviewSummary review={review} currentPly={ply} onSelect={setPly} onNextMistake={nextSlip} phases={phases} opponent={opponent} />
+          )}
+
+          {review && item && (
+            <MoveComment
+              item={item}
+              move={replay.moves[item.ply]}
+              moveNumber={moveNo(item.ply)}
+              showBetter={showBetter}
+              onToggleBetter={() => setShowBetter((v) => !v)}
+              lesson={lessonFor({ tags: item.tags, piece: item.piece, san: item.bestLine?.[0] || item.san })}
+              theirs={colorOfPly(item.ply) !== game.color}
+            />
+          )}
+          {move && hinted.has(ply) && (
+            <p className="hint-usage small" style={{ margin: 0 }}><Icon name="hint" size={15} /> <span>You asked for a hint before this move.</span></p>
+          )}
+
+          {review && move && !item && (
+            <div className="card move-comment tone-neutral">
+              <p className="muted" style={{ margin: 0 }}>
+                {move.color === game.color ? 'Your move' : 'Your opponent played'}{' '}
+                <b><Move san={move.san} prefix={moveNo(ply).trim()} ctx={{ color: move.color, from: move.from, captured: move.captured }} /></b>.
+                {move.color !== game.color && ply < last && ' Step forward to see how you answered.'}
+              </p>
+              {move.color !== game.color && <OpponentReview review={review} {...opponent} />}
+            </div>
+          )}
+
+          {review && ply >= 0 && (
+            <div className="row review-nav">
+              <button className="btn small icon-text" onClick={() => setPly(-1)}><Icon name="trophy" size={16} /> Summary</button>
+              {review.summary.counts && (review.summary.counts.inaccuracy + review.summary.counts.mistake + review.summary.counts.blunder) > 0 && (
+                <button className="btn small icon-text" onClick={nextSlip}><Icon name="target" size={16} /> Next slip</button>
+              )}
+            </div>
+          )}
           <SaveNote state={saveState} />
         </div>
 
-        {!review && !progress && (
-          <div className="card review-cta">
-            <h3 className="icon-text"><Icon name="bot" size={20} /> Go over this game with your coach</h3>
-            <p className="muted">
-              The coach checks each of your {playerMoves} moves, explains what it did, and shows a better move whenever there was one.
-              This takes about {Math.max(5, Math.round(playerMoves * 1.1))} seconds.
-            </p>
-            {error && <p className="small error-text">{error}</p>}
-            <button className="btn primary block icon-text" onClick={start} disabled={!playerMoves}>
-              <Icon name="play" size={18} /> {playerMoves ? 'Start game review' : 'No moves to review'}
-            </button>
-          </div>
-        )}
-
-        {progress && (
-          <div className="card review-progress">
-            <div className="row"><span className="spinner" /> <b>Reviewing your moves…</b></div>
-            <div className="progress-track"><span style={{ width: `${progress.total ? (progress.done / progress.total) * 100 : 0}%` }} /></div>
-            <span className="muted small">{progress.total ? `Move ${Math.min(progress.done + 1, progress.total)} of ${progress.total}` : 'Getting started'}</span>
-          </div>
-        )}
-
-        {review && ply < 0 && (
-          <ReviewSummary review={review} currentPly={ply} onSelect={setPly} onNextMistake={nextSlip} phases={phases} opponent={opponent} />
-        )}
-
-        {review && item && (
-          <MoveComment
-            item={item}
-            move={replay.moves[item.ply]}
-            moveNumber={moveNo(item.ply)}
-            showBetter={showBetter}
-            onToggleBetter={() => setShowBetter((v) => !v)}
-            lesson={lessonFor({ tags: item.tags, piece: item.piece, san: item.bestLine?.[0] || item.san })}
-            theirs={colorOfPly(item.ply) !== game.color}
-          />
-        )}
-        {move && hinted.has(ply) && (
-          <p className="hint-usage small" style={{ margin: 0 }}><Icon name="hint" size={15} /> <span>You asked for a hint before this move.</span></p>
-        )}
-
-        {review && move && !item && (
-          <div className="card move-comment tone-neutral">
-            <p className="muted" style={{ margin: 0 }}>
-              {move.color === game.color ? 'Your move' : 'Your opponent played'}{' '}
-              <b><Move san={move.san} prefix={moveNo(ply).trim()} ctx={{ color: move.color, from: move.from, captured: move.captured }} /></b>.
-              {move.color !== game.color && ply < last && ' Step forward to see how you answered.'}
-            </p>
-            {move.color !== game.color && <OpponentReview review={review} {...opponent} />}
-          </div>
-        )}
-
-        {review && ply >= 0 && (
-          <div className="row review-nav">
-            <button className="btn small icon-text" onClick={() => setPly(-1)}><Icon name="trophy" size={16} /> Summary</button>
-            {review.summary.counts && (review.summary.counts.inaccuracy + review.summary.counts.mistake + review.summary.counts.blunder) > 0 && (
-              <button className="btn small icon-text" onClick={nextSlip}><Icon name="target" size={16} /> Next slip</button>
-            )}
-          </div>
-        )}
-
-        <div className="card">
+        <div className="card moves-card">
           <h3>Moves</h3>
-          <MoveList moves={replay.moves.map((m) => m.san)} current={ply} onSelect={setPly} marks={marks} />
+          <div className="moves-body">
+            <MoveList moves={replay.moves.map((m) => m.san)} current={ply} onSelect={setPly} marks={marks} />
+          </div>
         </div>
       </aside>
     </div>

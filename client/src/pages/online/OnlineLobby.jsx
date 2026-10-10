@@ -3,19 +3,15 @@ import { online } from '../../api/onlineSocket.js';
 import { navigate } from '../../router/router.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getGuestName, setGuestName } from './guestName.js';
-import Icon from '../../components/icons/Icon.jsx';
-import ColorPicker from '../../components/game/ColorPicker.jsx';
 import ActiveGamesCard from '../../components/online/ActiveGamesCard.jsx';
-import TimeControlPicker from '../../components/online/timeControl/TimeControlPicker.jsx';
-import { DEFAULT_TIME_CONTROL, TIME_CONTROLS } from '../../components/online/timeControl/timeControls.js';
+import CreateGameCard from './lobby/CreateGameCard.jsx';
+import JoinGameCard from './lobby/JoinGameCard.jsx';
+import PlayerCard from './lobby/PlayerCard.jsx';
+import './lobby/lobby.css';
 
 export default function OnlineLobby() {
   const { user } = useAuth();
   const [name, setName] = useState(getGuestName);
-  const [tc, setTc] = useState(DEFAULT_TIME_CONTROL);
-  const [color, setColor] = useState('random');
-  const [allowHints, setAllowHints] = useState(false);
-  const [joinCode, setJoinCode] = useState('');
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,18 +21,16 @@ export default function OnlineLobby() {
     if (msg.t === 'connection' && msg.status === 'closed') setCreating(false);
   }), []);
 
-  function create() {
+  function create(options) {
     setError('');
     setCreating(true);
     if (!user) setGuestName(name);
     online.setName(user ? user.username : name);
-    const t = TIME_CONTROLS[tc];
-    online.create({ minutes: t.minutes, increment: t.increment, color, allowHints });
+    online.create(options);
   }
 
-  function join(e) {
-    e.preventDefault();
-    const code = joinCode.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  function join(typed) {
+    const code = typed.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (code.length !== 6) { setError('Game codes are 6 characters.'); return; }
     if (!user) setGuestName(name);
     navigate(`/online/${code}`);
@@ -45,51 +39,18 @@ export default function OnlineLobby() {
   return (
     <div className="lobby fade-in">
       <h1>Play with an Online Friend</h1>
-      <p className="muted">Create a game and send the code to your friend, or enter the code your friend sent you.</p>
+      <p className="muted lobby-intro">Create a game and send your friend the code, or join with theirs.</p>
 
       <ActiveGamesCard title="Your unfinished games" />
 
-      {!user && (
-        <div className="card lobby-name">
-          <label className="label" htmlFor="gn">Your display name</label>
-          <input id="gn" className="input" value={name} maxLength={20} onChange={(e) => setName(e.target.value)} />
-          <p className="small muted" style={{ marginTop: 6 }}>
-            Playing as a guest. <a href="#/login?next=/online" style={{ color: 'var(--accent-2)' }}>Log in</a> to save games and earn a rating.
-          </p>
-        </div>
-      )}
-
       <div className="lobby-grid">
-        <div className="card">
-          <h2>Create a game</h2>
-          <TimeControlPicker value={tc} onChange={setTc} />
-          <span className="label">I play</span>
-          <ColorPicker value={color} onChange={setColor} />
-          <label className="toggle-inline" style={{ marginTop: 12 }}>
-            <input type="checkbox" checked={allowHints} onChange={(e) => setAllowHints(e.target.checked)} />
-            Allow AI hints (for a relaxed or practice game)
-          </label>
-          <button className="btn primary block" style={{ marginTop: 16 }} onClick={create} disabled={creating}>
-            {creating ? <span className="spinner" /> : <><Icon name="link" size={18} /> Create game and get a code</>}
-          </button>
+        <CreateGameCard creating={creating} onCreate={create} />
+        <div className="lobby-side">
+          <JoinGameCard onJoin={join} />
+          <PlayerCard user={user} name={name} onNameChange={setName} />
+          {error && <div className="error-text small">{error}</div>}
         </div>
-
-        <form className="card" onSubmit={join}>
-          <h2>Join with a code</h2>
-          <label className="label" htmlFor="jc">Game code</label>
-          <input
-            id="jc"
-            className="input code-input"
-            placeholder="ABC123"
-            value={joinCode}
-            maxLength={6}
-            autoCapitalize="characters"
-            onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-          />
-          <button className="btn primary block" style={{ marginTop: 16 }}><Icon name="friends" size={18} /> Join game</button>
-        </form>
       </div>
-      {error && <div className="error-text center">{error}</div>}
     </div>
   );
 }

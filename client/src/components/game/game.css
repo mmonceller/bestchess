@@ -1,3 +1,5 @@
+@import './layout/fitScreen.css';
+
 .game-layout {
   display: grid;
   gap: 14px;
@@ -19,7 +21,7 @@
   border-radius: 12px;
   background: var(--panel);
   border: 1px solid var(--line);
-  max-width: min(100%, calc(100vh - var(--nav-h) - 190px), 640px);
+  max-width: min(100%, calc(100vh - var(--nav-h) - var(--board-reserve, 190px)), 640px);
   width: 100%;
   margin: 0 auto;
   transition: border-color 0.2s;
@@ -67,31 +69,43 @@
 @keyframes bounce { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
 
 .move-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: start;
   max-height: 220px;
   overflow-y: auto;
   font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
   background: var(--bg-2);
   border-radius: 10px;
-  padding: 6px;
+  padding: 5px;
 }
-.move-list.empty { padding: 14px; text-align: center; }
-.mv-row { display: grid; grid-template-columns: 36px 1fr 1fr; align-items: center; }
-.mv-num { color: var(--muted); font-size: 0.85rem; padding-left: 4px; }
+.move-list.empty { display: block; padding: 14px; text-align: center; }
+.mv-row { display: grid; grid-template-columns: 28px 1fr 1fr; align-items: center; border-radius: 6px; }
+.mv-num { color: var(--muted); font-size: 0.8rem; padding-left: 3px; }
 .mv {
+  position: relative;
   text-align: left;
   border: 0;
   background: transparent;
-  padding: 3px 8px;
+  padding: 2px 6px;
   border-radius: 6px;
   font-weight: 600;
+  white-space: nowrap;
+}
+/* Two move pairs per row whenever the list is wide enough. */
+@container moves (min-width: 270px) {
+  .move-list { grid-template-columns: 1fr 1fr; column-gap: 4px; }
+  .mv-row:nth-child(4n + 3), .mv-row:nth-child(4n + 4) { background: rgba(255, 255, 255, 0.025); }
 }
 button.mv { cursor: pointer; color: var(--text); font: inherit; font-weight: 600; }
 .mv:hover { background: var(--panel-2); }
 span.mv { cursor: help; }
-.move-list-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.move-list-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; container: moves / inline-size; }
 .move-list-wrap .move-list { align-self: stretch; }
 .mv.current { background: rgba(124, 92, 255, 0.3); }
-.mv-mark { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 5px; vertical-align: 1px; }
+.mv.marked { padding-left: 11px; padding-right: 3px; }
+.mv-mark { position: absolute; left: 3px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; }
 .mv-mark.mark-best { background: #3ccf7a; }
 .mv-mark.mark-excellent, .mv-mark.mark-good { background: #4fd1c5; }
 .mv-mark.mark-forced { background: #9aa3b5; }

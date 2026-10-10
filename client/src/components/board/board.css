@@ -1,6 +1,6 @@
 .board-wrap {
   width: 100%;
-  max-width: min(100%, calc(100vh - var(--nav-h) - 190px), 640px);
+  max-width: min(100%, calc(100vh - var(--nav-h) - var(--board-reserve, 190px)), 640px);
   min-width: 260px;
   margin: 0 auto;
 }

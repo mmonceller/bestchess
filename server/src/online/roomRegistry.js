@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { Room } from './room.js';
+import { EXPIRED_KEEP_MS } from './invite.js';
 import { config } from '../config.js';
 import { recordGame, updateRatings } from '../services/gameRecords.js';
 import { findUserById } from '../db/store.js';
@@ -58,9 +59,15 @@ export function allRooms() {
   return rooms.values();
 }
 
+/* Open invites stay until they expire, even if the creator closes the tab. */
 export function sweepRooms() {
   const now = Date.now();
   for (const [code, room] of rooms) {
+    if (room.status === 'waiting' && now < room.inviteExpiresAt) continue;
+    if (room.status === 'expired') {
+      if (now - room.inviteExpiresAt > EXPIRED_KEEP_MS) rooms.delete(code);
+      continue;
+    }
     const empty = ![room.seats.w, room.seats.b].some((s) => s?.sockets.size) && !room.spectators.size;
     if (now - room.lastActivity > config.roomIdleMs || (empty && now - room.lastActivity > 30 * 60_000)) {
       rooms.delete(code);

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import Icon from '../../components/icons/Icon.jsx';
+import InviteCountdown from '../../components/online/inviteExpiry/InviteCountdown.jsx';
 
-export default function WaitingRoom({ code, options }) {
+export default function WaitingRoom({ code, options, expiresIn }) {
   const [copied, setCopied] = useState('');
   const link = `${location.origin}${location.pathname}#/online/${code}`;
 
@@ -33,6 +34,7 @@ export default function WaitingRoom({ code, options }) {
       <p className="muted small" style={{ marginTop: 10 }}>
         <span className="spinner" style={{ width: 12, height: 12, verticalAlign: -1 }} /> Waiting for opponent · {tc}{options.allowHints ? ' · hints on' : ''}
       </p>
+      {expiresIn != null && <InviteCountdown expiresIn={expiresIn} />}
     </div>
   );
 }

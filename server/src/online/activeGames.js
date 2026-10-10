@@ -14,6 +14,7 @@ function summary(room, color) {
     minutes: room.options.minutes,
     increment: room.options.increment,
     lastActivity: room.lastActivity,
+    inviteExpiresIn: room.status === 'waiting' ? Math.max(0, room.inviteExpiresAt - Date.now()) : null,
   };
 }
 
@@ -24,7 +25,8 @@ function summary(room, color) {
 export function activeGamesFor({ userId = null, saved = [] }) {
   const found = new Map();
   const add = (room, color) => {
-    if (room && color && room.status !== 'over' && !found.has(room.code)) found.set(room.code, summary(room, color));
+    room?.expireInvite();
+    if (room && color && (room.status === 'waiting' || room.status === 'playing') && !found.has(room.code)) found.set(room.code, summary(room, color));
   };
   if (userId) {
     for (const room of allRooms()) {

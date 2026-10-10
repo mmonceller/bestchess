@@ -1,0 +1,55 @@
+.invite-expiry-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 0.9rem; }
+.invite-expiry-head label { cursor: pointer; }
+.invite-expiry-head b { color: var(--accent-2); }
+.invite-expiry-ends { display: flex; justify-content: space-between; font-size: 0.72rem; }
+
+.invite-expiry input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  margin: 4px 0 0;
+  background: transparent;
+  cursor: pointer;
+}
+.invite-expiry input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent-2) var(--fill), var(--panel-2) var(--fill));
+}
+.invite-expiry input[type='range']::-moz-range-track { height: 6px; border-radius: 99px; background: var(--panel-2); }
+.invite-expiry input[type='range']::-moz-range-progress { height: 6px; border-radius: 99px; background: var(--accent-2); }
+.invite-expiry input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--accent-2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.invite-expiry input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--accent-2);
+}
+.invite-expiry input[type='range']:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; border-radius: 8px; }
+
+.invite-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: var(--panel-2);
+  font-variant-numeric: tabular-nums;
+}
+.invite-countdown b { color: var(--text); }
+.invite-countdown.urgent { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.invite-countdown.urgent b { color: var(--warn); }

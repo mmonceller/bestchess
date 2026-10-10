@@ -77,6 +77,10 @@ const actions = {
   join(ws, msg) {
     const room = getRoom(msg.code);
     if (!room) return send(ws, { t: 'error', code: 'not-found', message: 'No game with that code. Check the code and try again.' });
+    room.expireInvite();
+    if (room.status === 'expired' && !room.ownSeat(identify(msg))) {
+      return send(ws, { t: 'error', code: 'expired', message: 'This invite has expired. Ask your friend to create a new game.' });
+    }
     attach(ws, room, msg);
   },
   move(ws, msg, room) {
@@ -124,7 +128,7 @@ export function attachSocketServer(server) {
 
   const tick = setInterval(() => {
     for (const room of allRooms()) {
-      if (room.checkFlag()) broadcast(room);
+      if (room.checkFlag() || room.expireInvite()) broadcast(room);
     }
   }, 500);
 

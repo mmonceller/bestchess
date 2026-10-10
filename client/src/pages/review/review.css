@@ -122,6 +122,32 @@
 .move-comment .btn.small { margin-top: 4px; }
 
 .review-nav { gap: 8px; }
+
+.review-head { display: flex; flex-direction: column; gap: 4px; }
+.review-head-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.review-head-top h2 { margin: 0; font-size: 1.3rem; }
+.review-head .hint-usage { margin-top: 2px; }
+.review-detail { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.review-detail > p { margin: 0; }
+
+/*
+ * Fitted layout: the commentary scrolls on its own, and the move list keeps at least
+ * 40% of the panel so it never gets squeezed out.
+ */
+@media (min-width: 900px) and (orientation: landscape) and (min-height: 520px) {
+  .fit-screen .review-opponent { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fit-screen .review-detail { flex: 0 1 auto; min-height: 0; overflow-y: auto; gap: 10px; scrollbar-width: thin; }
+  .fit-screen .review-detail > * { flex: none; }
+  .fit-screen.review-page .moves-card { min-height: min(320px, 40%); }
+  .fit-screen .review-score { gap: 12px; }
+  .fit-screen .accuracy-ring { width: 64px; height: 64px; }
+  .fit-screen .accuracy-ring b { font-size: 1.2rem; }
+  .fit-screen .accuracy-ring span { font-size: 0.52rem; letter-spacing: 0; }
+  .fit-screen .kind-counts { margin: 8px 0 6px; gap: 4px; }
+  .fit-screen .kind-chip { padding: 2px 7px; font-size: 0.76rem; }
+  .fit-screen .eval-legend { margin: 4px 0 8px; }
+  .fit-screen .review-cta p { margin: 6px 0 10px; }
+}
 .review-cta h3 { margin-top: 0; }
 
 .review-progress { display: flex; flex-direction: column; gap: 8px; }

@@ -1,4 +1,5 @@
 import { Chess } from 'chess.js';
+import { inviteMinutes } from './invite.js';
 
 const TIME_CONTROLS = new Set([0, 1, 3, 5, 10, 15, 30]);
 const other = (c) => (c === 'w' ? 'b' : 'w');
@@ -7,7 +8,7 @@ export function normalizeOptions(o = {}) {
   const minutes = TIME_CONTROLS.has(Number(o.minutes)) ? Number(o.minutes) : 10;
   const increment = Math.max(0, Math.min(30, Number(o.increment) || 0));
   const color = ['w', 'b', 'random'].includes(o.color) ? o.color : 'random';
-  return { minutes, increment, color, allowHints: Boolean(o.allowHints) };
+  return { minutes, increment, color, allowHints: Boolean(o.allowHints), inviteMinutes: inviteMinutes(o.inviteMinutes) };
 }
 
 /* One online game identified by a join code. Holds authoritative game state and clocks. */
@@ -19,8 +20,16 @@ export class Room {
     this.spectators = new Set();
     this.chat = [];
     this.lastActivity = Date.now();
+    this.inviteExpiresAt = this.lastActivity + this.options.inviteMinutes * 60_000;
     this.onFinish = null;
     this.resetGame();
+  }
+
+  /* Closes the invite once its time is up and nobody has joined. Returns true when it just expired. */
+  expireInvite(now = Date.now()) {
+    if (this.status !== 'waiting' || now < this.inviteExpiresAt) return false;
+    this.status = 'expired';
+    return true;
   }
 
   resetGame() {
@@ -48,19 +57,24 @@ export class Room {
    * reclaim an empty seat with the key it was held by (`resumeKey`) or with their account.
    * Returns the assigned color or 'spectator'.
    */
-  seat(player) {
-    const refresh = (c) => {
-      Object.assign(this.seats[c], { playerKey: player.playerKey, name: player.name, userId: player.userId ?? this.seats[c].userId, rating: player.rating ?? this.seats[c].rating });
-      return c;
-    };
+  /* The seat this player already holds or may reclaim, if any. */
+  ownSeat(player) {
     const held = ['w', 'b'].find((c) => this.seats[c]?.playerKey === player.playerKey);
-    if (held) return refresh(held);
-    const reclaim = ['w', 'b'].find((c) => {
+    if (held) return held;
+    return ['w', 'b'].find((c) => {
       const s = this.seats[c];
       return s && !s.sockets.size
         && ((player.resumeKey && s.playerKey === player.resumeKey) || (player.userId && s.userId === player.userId));
-    });
-    if (reclaim) return refresh(reclaim);
+    }) || null;
+  }
+
+  seat(player) {
+    const own = this.ownSeat(player);
+    if (own) {
+      const s = this.seats[own];
+      Object.assign(s, { playerKey: player.playerKey, name: player.name, userId: player.userId ?? s.userId, rating: player.rating ?? s.rating });
+      return own;
+    }
     const free = ['w', 'b'].filter((c) => !this.seats[c]);
     if (!free.length) return 'spectator';
     let color = free[0];
@@ -188,6 +202,7 @@ export class Room {
       you,
       options: this.options,
       status: this.status,
+      inviteExpiresIn: this.status === 'waiting' ? Math.max(0, this.inviteExpiresAt - Date.now()) : null,
       result: this.result,
       fen: this.chess.fen(),
       pgn: this.chess.pgn(),

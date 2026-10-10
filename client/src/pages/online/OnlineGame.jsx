@@ -64,6 +64,18 @@ export default function OnlineGame({ code }) {
       </div>
     );
   }
+  if (error?.code === 'expired' || state?.status === 'expired') {
+    const mine = state?.status === 'expired';
+    return (
+      <div className="card center fade-in" style={{ maxWidth: 420, margin: '30px auto' }}>
+        <h2 className="icon-text" style={{ justifyContent: 'center' }}><Icon name="clock" size={22} /> Invite expired</h2>
+        <p className="muted">
+          {mine ? 'Nobody joined before your invite ran out, so this code no longer works.' : error.message}
+        </p>
+        <a className="btn primary" href="#/online">{mine ? 'Create a new game' : 'Back to lobby'}</a>
+      </div>
+    );
+  }
   if (!state) {
     return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /> Connecting to game {code}…</div>;
   }
@@ -134,7 +146,7 @@ export default function OnlineGame({ code }) {
   );
 
   return (
-    <div className="game-layout fade-in">
+    <div className="game-layout fit-screen fade-in">
       <div className="board-column">
         {seatBar(topColor)}
         <Board
@@ -154,7 +166,7 @@ export default function OnlineGame({ code }) {
 
       <aside className="side-panel">
         {connection !== 'open' && <Notice tone="ok" icon="retry">Reconnecting…</Notice>}
-        {state.status === 'waiting' && <WaitingRoom code={code} options={state.options} />}
+        {state.status === 'waiting' && <WaitingRoom code={code} options={state.options} expiresIn={state.inviteExpiresIn} />}
         {!seated && <Notice tone="ok" icon="eye">You are watching this game.</Notice>}
 
         {opponentOfferedDraw && (
@@ -206,9 +218,9 @@ export default function OnlineGame({ code }) {
         {showMeter && seated && playing && <DangerNotice fen={fen} evaluation={evaluation} playerColor={you} />}
         <HintCard hint={hint.hint} loading={hint.loading} onClose={hint.clear} lesson={lessonFor(hint.hint)} reviewLink={false} />
 
-        <div className="card">
+        <div className="card moves-card">
           <div className="row"><h3 style={{ margin: 0 }}>Moves</h3><span className="spacer" /><span className="badge">Code {code}</span></div>
-          <div style={{ marginTop: 8 }}>
+          <div className="moves-body" style={{ marginTop: 8 }}>
             {view.browsing && <BrowsingNotice ply={view.goal} onBack={view.backToGame} />}
             <MoveList moves={state.history} current={view.goal} onSelect={view.select} />
           </div>

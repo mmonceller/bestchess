@@ -171,7 +171,7 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
     : <PlayerBar name={lvl.name} icon={lvl.icon} tint={lvl.tint} sub={`Level ${lvl.id} · ${lvl.elo}`} color={c} captured={material.captured[c]} advantage={adv(c)} active={!over && game.turn === c} thinking={thinking} />);
 
   return (
-    <div className="game-layout fade-in">
+    <div className="game-layout fit-screen fade-in">
       <div className="board-column">
         {bar(topColor)}
         <Board
@@ -217,10 +217,12 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
         {feedback && <Notice tone={feedback.tone} icon={feedback.icon} className="fade-in">{feedback.text}</Notice>}
         {feedback?.bestHint && <LessonReminder lesson={lessonFor(feedback.bestHint)} />}
 
-        <div className="card">
+        <div className="card moves-card">
           <h3>Moves</h3>
-          {view.browsing && <BrowsingNotice ply={view.goal} onBack={view.backToGame} />}
-          <MoveList moves={sanList} current={view.goal} onSelect={view.select} />
+          <div className="moves-body">
+            {view.browsing && <BrowsingNotice ply={view.goal} onBack={view.backToGame} />}
+            <MoveList moves={sanList} current={view.goal} onSelect={view.select} />
+          </div>
         </div>
 
         <div className="controls">
