@@ -1,0 +1,73 @@
+.focus-bar { position: relative; }
+
+.focus-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 2px 0;
+  --fade-l: 0px;
+  --fade-r: 0px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+}
+.focus-chips::-webkit-scrollbar { display: none; }
+.focus-bar.more-left .focus-chips { --fade-l: 44px; }
+.focus-bar.more-right .focus-chips { --fade-r: 44px; }
+
+.focus-chips button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.focus-chips button:hover { color: var(--text); border-color: color-mix(in srgb, var(--c, var(--accent)) 50%, var(--line)); }
+.focus-chips button .icon { color: var(--c, var(--accent-2)); }
+.focus-chips button.active {
+  color: var(--text);
+  border-color: var(--c, var(--accent));
+  background: color-mix(in srgb, var(--c, var(--accent)) 18%, var(--panel));
+}
+
+.focus-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.focus-arrow.left { left: 0; }
+.focus-arrow.left .icon { transform: rotate(180deg); }
+.focus-arrow.right { right: 0; }
+.focus-bar.more-left .focus-arrow.left,
+.focus-bar.more-right .focus-arrow.right { opacity: 1; pointer-events: auto; }
+.focus-arrow:hover { border-color: var(--accent); }
+
+/* Touch screens swipe the row, so the arrows only get in the way there. */
+@media (hover: none) {
+  .focus-arrow { display: none; }
+}

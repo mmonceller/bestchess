@@ -82,6 +82,35 @@ function createsPin(pos, sq) {
   return false;
 }
 
+/*
+ * Does the slider on `sq` skewer two enemy pieces: the front one is the king or worth more
+ * than the one behind it, and the one behind can then be won (loose or worth more than the slider)?
+ * Returns the piece types { front, back }, or null.
+ */
+function createsSkewer(pos, sq) {
+  const p = pos.board[sq];
+  const t = typeOf(p);
+  const dirs = t === BISHOP ? BISHOP_DIRS : t === ROOK ? ROOK_DIRS : t === QUEEN ? [...BISHOP_DIRS, ...ROOK_DIRS] : [];
+  const them = colorOf(p) ^ 8;
+  for (const d of dirs) {
+    let front = null;
+    let frontSq = null;
+    for (let s = sq + d; !(s & 0x88); s += d) {
+      const q = pos.board[s];
+      if (!q) continue;
+      if (colorOf(q) !== them) break;
+      if (!front) { front = typeOf(q); frontSq = s; continue; }
+      const back = typeOf(q);
+      if (back === KING) break;
+      const frontHit = front === KING || (value(front) > value(back) && (value(front) > value(t) || !pos.isAttacked(frontSq, them)));
+      const backWon = value(back) > value(t) || !pos.isAttacked(s, them);
+      if (frontHit && backWon) return { front, back };
+      break;
+    }
+  }
+  return null;
+}
+
 const rankOf = (sq) => 8 - (sq >> 4);
 const fileOf = (sq) => sq & 7;
 const forward = (color) => (color === WHITE ? 1 : -1);
@@ -251,11 +280,14 @@ export function explainMove(fen, uci, score = 0) {
     if (t === KING || value(t) > value(mover) || !pos.isAttacked(sq, them)) targets.push(t);
   }
   const safeEnough = !attackedAfter || defendedAfter;
+  const skewer = safeEnough ? createsSkewer(pos, to) : null;
   if (targets.length >= 2 && safeEnough) {
     const names = targets.map((t) => NAMES[t]);
     add('fork', `Fork! Your ${piece} attacks the ${names.slice(0, 2).join(' and the ')} at once.`);
   } else if (safeEnough && createsPin(pos, to)) {
     add('pin', `Pins a piece: it can't move without exposing something more valuable behind it.`);
+  } else if (skewer) {
+    add('skewer', `Skewer! Your ${piece} hits the ${NAMES[skewer.front]}, and when it moves, the ${NAMES[skewer.back]} behind it falls.`);
   } else if (check) {
     add('check', 'Gives check, so your opponent must respond to it.');
   } else if (targets.length === 1 && safeEnough) {

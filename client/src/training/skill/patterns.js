@@ -5,6 +5,7 @@ export const PATTERNS = {
   mate: { name: 'Finding checkmates', icon: 'crown' },
   fork: { name: 'Forks', icon: 'knight' },
   pin: { name: 'Pins', icon: 'bishop' },
+  skewer: { name: 'Skewers', icon: 'rook' },
   freePiece: { name: 'Taking free pieces', icon: 'target' },
   winMaterial: { name: 'Winning material', icon: 'gem' },
   sacrifice: { name: 'Sacrifices', icon: 'fire' },

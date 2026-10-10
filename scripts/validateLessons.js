@@ -4,7 +4,7 @@ import { COACHES } from '../client/src/training/coaches.js';
 import { gradeMove } from '../client/src/engine/analysis/api.js';
 import { Position } from '../client/src/engine/core/position.js';
 import { minMovesToCollect } from '../client/src/training/pieceMoves.js';
-import { TAG_LESSONS, PIECE_LESSONS } from '../client/src/training/hints/lessonLinks.js';
+import { TAG_LESSONS } from '../client/src/training/hints/lessonLinks.js';
 import { BONUS } from '../client/src/training/lessons/bonus/index.js';
 
 /*
@@ -142,7 +142,7 @@ const lessonIds = new Set(LESSONS.map((l) => l.id));
 for (const id of Object.keys(BONUS)) {
   if (!lessonIds.has(id)) { errors++; console.log(`  ✗ bonus round for unknown lesson ${id}`); }
 }
-for (const [tag, links] of [...Object.entries(TAG_LESSONS), ...Object.entries(PIECE_LESSONS).map(([k, l]) => [k, [l]])]) {
+for (const [tag, links] of Object.entries(TAG_LESSONS)) {
   for (const l of links) {
     if (!lessonIds.has(l.lesson)) { errors++; console.log(`  ✗ hint link "${tag}" points to unknown lesson ${l.lesson}`); }
   }

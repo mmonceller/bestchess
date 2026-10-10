@@ -7,28 +7,6 @@
 .trainer-stats .chip-today .icon { color: var(--good); }
 .trainer-stats .chip-puzzle .icon { color: var(--accent-2); }
 
-.focus-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-.focus-chips button {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  border-radius: 99px;
-  border: 1px solid var(--line);
-  background: var(--panel);
-  color: var(--muted);
-  cursor: pointer;
-  white-space: nowrap;
-  font-weight: 600;
-}
-.focus-chips button .icon { color: var(--c, var(--accent-2)); }
-.focus-chips button.active {
-  color: var(--text);
-  border-color: var(--c, var(--accent));
-  background: color-mix(in srgb, var(--c, var(--accent)) 18%, var(--panel));
-}
-
 .puzzle-panel { display: flex; flex-direction: column; gap: 12px; }
 .puzzle-turn { display: flex; align-items: center; gap: 10px; }
 .puzzle-turn > div { flex: 1; }

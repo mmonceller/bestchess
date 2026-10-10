@@ -2,12 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../../../components/icons/Icon.jsx';
 import { useAuth } from '../../../context/AuthContext.jsx';
 import { useTrainer } from '../../../training/trainerStore.js';
-import { PATTERNS } from '../../../training/patterns/patterns.js';
 import { applyResult, pickPuzzle, unlockedPatterns } from '../../../training/patterns/trainerLogic.js';
 import { engine } from '../../../engine/engineClient.js';
 import GuestBanner from '../hub/GuestBanner.jsx';
 import PuzzlePlay from './PuzzlePlay.jsx';
 import MasteryPanel from './MasteryPanel.jsx';
+import FocusChips from './focus/FocusChips.jsx';
 import '../../../components/game/game.css';
 import '../training.css';
 import './patterns.css';
@@ -64,16 +64,7 @@ export default function PatternTrainer() {
         </div>
       </header>
 
-      <div className="focus-chips" role="tablist" aria-label="Choose what to practice">
-        <button className={!focus ? 'active' : ''} onClick={() => chooseFocus(null)}>
-          <Icon name="random" size={15} /> Mixed
-        </button>
-        {unlocked.map((id) => (
-          <button key={id} className={focus === id ? 'active' : ''} style={{ '--c': PATTERNS[id].color }} onClick={() => chooseFocus(id)}>
-            <Icon name={PATTERNS[id].icon} size={15} /> {PATTERNS[id].name}
-          </button>
-        ))}
-      </div>
+      <FocusChips patterns={unlocked} focus={focus} onChoose={chooseFocus} />
 
       <PuzzlePlay key={`${puzzle.id}-${round}`} puzzle={puzzle} onResult={onResult} onNext={() => next()} />
 
