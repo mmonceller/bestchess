@@ -21,6 +21,7 @@ export const TRACKS = [
   { id: 'master', name: 'Master Class', blurb: 'For players who have outgrown the basics: calculation, prophylaxis and tournament technique.', icon: 'crown', color: '#ff5c8a', gated: true },
 ];
 
+/* Bump `rev` (or `bonusRev`) when you add steps, so old completions show Updated. */
 export const LESSONS = [...firstStepsLessons, ...beginnerLessons, ...intermediateLessons, ...tacticsLessons, ...advancedLessons, ...strategyLessons, ...endgameLessons, ...masterLessons, ...masterThinkingLessons]
   .map((lesson) => ({ ...lesson, bonus: BONUS[lesson.id] || [] }));
 

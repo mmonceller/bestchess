@@ -2,6 +2,7 @@ import CoachAvatar from '../../../components/icons/CoachAvatar.jsx';
 import Icon from '../../../components/icons/Icon.jsx';
 import Stars from '../components/Stars.jsx';
 import { getCoach } from '../../../training/coaches.js';
+import { lessonUpdate } from '../../../training/progress/lessonFresh.js';
 
 /* A winding trail of lesson nodes, like a game level map. */
 const WIDTH = 320;
@@ -33,11 +34,13 @@ export default function LessonPath({ lessons, progress, nextId, color, onOpen })
       {lessons.map((l, i) => {
         const coach = getCoach(l.coach);
         const p = progress[l.id];
+        const update = lessonUpdate(p, l);
         const state = p ? 'done' : l.id === nextId ? 'next' : 'open';
         return (
           <div key={l.id} className={`path-node ${state}`} style={{ left: xAt(i), top: yAt(i), '--coach': coach.color, '--i': i }}>
             {state === 'next' && <span className="node-tag">Start here</span>}
-            <button className="node-btn" onClick={() => onOpen(l)} aria-label={`${l.title} with ${coach.name}`}>
+            {update.stale && state !== 'next' && <span className="node-tag updated">Updated</span>}
+            <button className="node-btn" onClick={() => onOpen(l)} aria-label={`${l.title} with ${coach.name}${update.stale ? ', updated' : ''}`}>
               <CoachAvatar coach={coach} size={56} />
               {p && <span className="node-check"><Icon name="check" size={14} /></span>}
               {p && !p.bonusStars && l.bonus.length > 0 && <span className="node-bonus" title="Bonus round available"><Icon name="gem" size={13} /></span>}

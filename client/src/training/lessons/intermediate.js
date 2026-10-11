@@ -11,7 +11,8 @@ export const intermediateLessons = [
     title: 'Fix Your Worst Piece',
     coach: 'rook',
     summary: 'When you don\'t know what to do, improve the piece that\'s doing the least.',
-    minutes: 5,
+    minutes: 6,
+    rev: 1,
     steps: [
       {
         type: 'talk',
@@ -49,6 +50,23 @@ export const intermediateLessons = [
       {
         type: 'talk',
         text: 'Now flip it around. Find your opponent\'s BEST piece and trade it off. Find their WORST piece and leave it on the board — let them suffer with it. Many "deep" strategic decisions come down to exactly this.',
+      },
+      {
+        type: 'talk',
+        fen: '6k1/5ppp/8/8/N2N4/8/5PPP/6K1 w - - 0 1',
+        highlights: ['a4', 'd4', 'd5', 'e4', 'e5'],
+        text: 'One more shortcut. A piece in the center — d4, d5, e4, e5 — usually does more work than the same piece on the rim. When you don\'t know what to move, send the lazy one toward the middle.',
+      },
+      {
+        type: 'quiz',
+        fen: '6k1/5ppp/8/8/N2N4/8/5PPP/6K1 w - - 0 1',
+        highlights: ['a4', 'd4'],
+        question: 'You have two knights. Which one is the worst piece — the one to improve first?',
+        options: [
+          { text: 'The knight on a4 — it\'s on the rim and sees fewer squares', correct: true, why: 'A knight on the edge is often the lazy one. Bring it toward c5 or c3, closer to the center.' },
+          { text: 'The knight on d4 — it\'s already in the center', why: 'That one is already working. Don\'t keep moving your best piece.' },
+          { text: 'Neither — knights are always fine wherever they sit', why: '"A knight on the rim is dim." The center is where they earn their keep.' },
+        ],
       },
     ],
   },
@@ -140,6 +158,85 @@ export const intermediateLessons = [
       {
         type: 'talk',
         text: 'Notice what happened: you didn\'t calculate long sequences of moves. You asked a simple question, and the answer pointed to the right move. That\'s how strong players "see" so much — they ask better questions.',
+      },
+    ],
+  },
+  {
+    id: 'i-hold-on',
+    track: 'intermediate',
+    title: 'This Move or That One?',
+    coach: 'elena',
+    summary: 'When the position feels almost lost, pick the calm defence: count, kick, then hold on.',
+    minutes: 6,
+    steps: [
+      {
+        type: 'talk',
+        text: 'When a position feels almost lost, feelings scream "grab something" or "hit back now". Slow down. Two questions first: what are they attacking, and do they have more attackers than you have defenders? The right defence is often the quiet move, not the flashy one.',
+      },
+      {
+        type: 'quiz',
+        fen: '6k1/5ppp/8/8/8/1q6/5PPP/1R2R1K1 w - - 0 1',
+        arrows: [['e1', 'e8'], ['b1', 'b3']],
+        question: 'Your rook can take the queen on b3 — or give check on e8. Which move is better?',
+        options: [
+          { text: 'Rook to e8 — it is checkmate', correct: true, why: 'Count first. The king is boxed in by its own pawns, and nothing can stop Re8. A free queen doesn\'t matter if the game is already over.' },
+          { text: 'Take the queen on b3', why: 'The queen is hanging, but Black would still be playing. Re8 ends the game on the spot.' },
+          { text: 'Push a pawn and hope', why: 'There is a mate in one. Don\'t hope — take it.' },
+        ],
+      },
+      {
+        type: 'talk',
+        fen: 'r4rk1/ppp2ppp/3b4/8/4P2q/2NP4/PPP2PPP/R1BQ1RK1 w - - 0 1',
+        arrows: [['h4', 'h2'], ['d6', 'h2']],
+        highlights: ['h2'],
+        text: 'Here they want the queen to take on h2. Count: two attackers (queen and bishop), one defender (your king). You are outnumbered. Add a defender, block the path, or chase the queen — don\'t ignore it and push a side pawn.',
+      },
+      {
+        type: 'quiz',
+        fen: 'r4rk1/ppp2ppp/3b4/8/4P2q/2NP4/PPP2PPP/R1BQ1RK1 w - - 0 1',
+        arrows: [['g2', 'g3'], ['a2', 'a4']],
+        question: 'They have more attackers on h2 than you have defenders. Which move is the defence?',
+        options: [
+          { text: 'g3 — chase the queen off the attack', correct: true, why: 'g3 attacks the queen and breaks the plan. a4 does nothing about h2.' },
+          { text: 'a4 — grab space on the queenside', why: 'That ignores the count. They are about to take on h2.' },
+          { text: 'Take on h4 with a pawn', why: 'No pawn can reach h4. The queen has to be chased or blocked.' },
+        ],
+      },
+      {
+        type: 'talk',
+        fen: '6k1/5ppp/8/8/4n3/8/P3PPP1/4R1K1 w - - 0 1',
+        highlights: ['e4'],
+        text: 'An enemy piece sitting in your half of the board is often the whole problem. Kick it, trade it, or cover the squares it wants. Leaving it there is how "a bit worse" turns into "almost lost".',
+      },
+      {
+        type: 'quiz',
+        fen: '6k1/5ppp/8/8/4n3/8/P3PPP1/4R1K1 w - - 0 1',
+        arrows: [['f2', 'f3'], ['a2', 'a4']],
+        question: 'That knight has walked into your half. This move or that one?',
+        options: [
+          { text: 'f3 — kick it out', correct: true, why: 'One pawn move and the invader has to leave. a4 lets it sit there and make threats.' },
+          { text: 'a4 — start your own plan on the edge', why: 'Your plan can wait. Their piece in your camp should not.' },
+          { text: 'Walk the king toward the knight', why: 'The king is not a defender here — a pawn does the job safely.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'The position feels almost lost. What do you do first?',
+        options: [
+          { text: 'Stop their threat — then keep pieces on and make it messy', correct: true, why: 'Defend the immediate danger. After that, when you\'re behind, keep pieces on and give them chances to go wrong.' },
+          { text: 'Trade everything and hope for a draw', why: 'When you\'re behind, trades usually make the win easier for them.' },
+          { text: 'Grab any hanging piece, even if they have mate next', why: 'A free piece doesn\'t help if the game ends this move.' },
+        ],
+      },
+      {
+        type: 'recap',
+        title: 'Hold the position',
+        text: 'When it looks bad, pick the calm move:',
+        items: [
+          { icon: 'mind', title: 'Count', text: 'Attackers versus defenders on the square they want. If they outnumber you, add a defender or stop the plan.' },
+          { icon: 'swords', title: 'Kick invaders', text: 'An enemy piece in your half is their plan. Chase it or trade it.' },
+          { icon: 'target', title: 'This or that', text: 'If one move ends the game (mate, or stopping mate) and the other wins a piece, take the game.' },
+        ],
       },
     ],
   },

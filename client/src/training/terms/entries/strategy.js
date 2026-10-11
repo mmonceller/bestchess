@@ -19,9 +19,24 @@ export default [
   },
   {
     name: 'Worst piece',
+    aka: ['least active piece', 'LAP'],
     level: 'intermediate',
     lesson: 'i-worst-piece',
     def: 'A simple plan when you don\'t know what to do: find your least useful piece and move it to a better square.',
+  },
+  {
+    name: 'Centralize',
+    aka: ['centralise'],
+    level: 'intermediate',
+    lesson: 'i-worst-piece',
+    def: 'Put a piece toward the middle (d4, d5, e4, e5), where it controls more squares. A knight on the rim is often the worst piece to fix first.',
+  },
+  {
+    name: 'Count attackers',
+    aka: ['count defenders', 'attackers and defenders'],
+    level: 'intermediate',
+    lesson: 'i-hold-on',
+    def: 'Before you take or defend a square, count how many pieces attack it and how many protect it. If they outnumber you, add a defender or stop the plan.',
   },
   {
     name: 'Imbalance',

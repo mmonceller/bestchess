@@ -4,6 +4,8 @@ import CoachAvatar from '../../../components/icons/CoachAvatar.jsx';
 import Stars from '../components/Stars.jsx';
 import { getCoach } from '../../../training/coaches.js';
 import { lessonXp } from '../../../training/xp.js';
+import { lessonUpdate } from '../../../training/progress/lessonFresh.js';
+import UpdatedNote from './UpdatedNote.jsx';
 
 const FEATURES = [
   { type: 'collect', icon: 'star', label: 'Star hunts' },
@@ -18,6 +20,7 @@ const FEATURES = [
 export default function LessonSheet({ lesson, progress, onClose }) {
   const coach = getCoach(lesson.coach);
   const p = progress[lesson.id];
+  const update = lessonUpdate(p, lesson);
   const features = FEATURES.filter((f) => lesson.steps.some((s) => s.type === f.type)).slice(0, 4);
   return (
     <Modal onClose={onClose}>
@@ -44,6 +47,7 @@ export default function LessonSheet({ lesson, progress, onClose }) {
             <Stars value={p.stars} />
           </div>
         )}
+        {update.stale && <UpdatedNote steps={update.steps} bonus={update.bonus} />}
         {p && lesson.bonus.length > 0 && (
           <div className="sheet-best">
             <span className="muted small icon-text"><Icon name="gem" size={14} /> Bonus round</span>
@@ -52,12 +56,20 @@ export default function LessonSheet({ lesson, progress, onClose }) {
         )}
         {p ? (
           <div className="sheet-actions">
-            <a className="btn primary block icon-text" href={`#/training/${lesson.id}`}>
-              <Icon name="book" size={18} /> Review answers &amp; bonus round
-            </a>
-            <a className="btn ghost block icon-text" href={`#/training/${lesson.id}?start=fresh`}>
-              <Icon name="retry" size={18} /> Replay from scratch
-            </a>
+            {update.steps ? (
+              <a className="btn primary block icon-text" href={`#/training/${lesson.id}?start=fresh`}>
+                <Icon name="retry" size={18} /> Play the new version
+              </a>
+            ) : (
+              <a className="btn primary block icon-text" href={`#/training/${lesson.id}`}>
+                <Icon name="book" size={18} /> Review answers &amp; bonus round
+              </a>
+            )}
+            {!update.steps && (
+              <a className="btn ghost block icon-text" href={`#/training/${lesson.id}?start=fresh`}>
+                <Icon name="retry" size={18} /> Replay from scratch
+              </a>
+            )}
           </div>
         ) : (
           <a className="btn primary block icon-text" href={`#/training/${lesson.id}`}>

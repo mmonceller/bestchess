@@ -8,9 +8,13 @@ router.use(requireAuth);
 
 const LESSON_ID = /^[a-z0-9-]{1,60}$/;
 const clampStars = (v) => Math.max(1, Math.min(3, Number(v) || 1));
+const clampInt = (v, max) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.max(0, Math.min(max, Math.round(n))) : undefined;
+};
 
 /* Combines a new lesson result with the saved one; answers from the latest full run win. */
-function mergeLesson(prev, { stars, attempts = 1, firstCompletedAt, answers, bonusStars, bonusAnswers }) {
+function mergeLesson(prev, { stars, attempts = 1, firstCompletedAt, answers, bonusStars, bonusAnswers, lessonRev, stepsAtFinish, bonusRev, bonusAtFinish }) {
   const next = {
     ...prev,
     stars: Math.max(clampStars(stars), prev?.stars || 0),
@@ -19,11 +23,19 @@ function mergeLesson(prev, { stars, attempts = 1, firstCompletedAt, answers, bon
     lastCompletedAt: Date.now(),
   };
   if (answers) next.answers = answers;
+  const rev = clampInt(lessonRev, 999);
+  const stepN = clampInt(stepsAtFinish, 40);
+  if (rev !== undefined) next.lessonRev = rev;
+  if (stepN !== undefined) next.stepsAtFinish = stepN;
   if (bonusStars) {
     next.bonusStars = Math.max(clampStars(bonusStars), prev?.bonusStars || 0);
     next.bonusCompletedAt = next.bonusCompletedAt || Date.now();
   }
   if (bonusAnswers) next.bonusAnswers = bonusAnswers;
+  const bRev = clampInt(bonusRev, 999);
+  const bN = clampInt(bonusAtFinish, 40);
+  if (bRev !== undefined) next.bonusRev = bRev;
+  if (bN !== undefined) next.bonusAtFinish = bN;
   return next;
 }
 
@@ -38,6 +50,8 @@ router.put('/:lessonId', (req, res) => {
   mine[lessonId] = mergeLesson(mine[lessonId], {
     stars: req.body?.stars,
     answers: sanitizeAnswers(req.body?.answers),
+    lessonRev: req.body?.lessonRev,
+    stepsAtFinish: req.body?.stepsAtFinish,
   });
   save();
   res.json({ progress: mine });
@@ -50,11 +64,15 @@ router.put('/:lessonId/bonus', (req, res) => {
   const mine = (db.progress[req.user.id] ||= {});
   const prev = mine[lessonId];
   if (!prev) return res.status(409).json({ error: 'Finish the lesson before the bonus round.' });
+  const bonusRev = clampInt(req.body?.bonusRev, 999);
+  const bonusAtFinish = clampInt(req.body?.bonusAtFinish, 40);
   mine[lessonId] = {
     ...prev,
     bonusStars: Math.max(clampStars(req.body?.stars), prev.bonusStars || 0),
     bonusCompletedAt: prev.bonusCompletedAt || Date.now(),
     bonusAnswers: sanitizeAnswers(req.body?.answers) || prev.bonusAnswers,
+    ...(bonusRev !== undefined ? { bonusRev } : {}),
+    ...(bonusAtFinish !== undefined ? { bonusAtFinish } : {}),
   };
   save();
   res.json({ progress: mine });
@@ -73,6 +91,10 @@ router.post('/merge', (req, res) => {
       answers: sanitizeAnswers(p.answers),
       bonusStars: p.bonusStars ? p.bonusStars : undefined,
       bonusAnswers: sanitizeAnswers(p.bonusAnswers),
+      lessonRev: p.lessonRev,
+      stepsAtFinish: p.stepsAtFinish,
+      bonusRev: p.bonusRev,
+      bonusAtFinish: p.bonusAtFinish,
     });
   }
   save();

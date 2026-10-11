@@ -38,10 +38,10 @@ export function useProgress() {
   }, [user]);
 
   /* Saves a full run of the lesson, including the answers given in it. */
-  const complete = useCallback(async (lessonId, stars, answers) => {
+  const complete = useCallback(async (lessonId, stars, answers, mark) => {
     if (user) {
       try {
-        const d = await progressApi.complete(lessonId, stars, answers);
+        const d = await progressApi.complete(lessonId, stars, answers, mark);
         setProgress(d.progress);
         return;
       } catch { /* fall back to the session copy */ }
@@ -53,14 +53,16 @@ export function useProgress() {
       firstCompletedAt: prev?.firstCompletedAt || Date.now(),
       lastCompletedAt: Date.now(),
       answers: answers || prev?.answers,
+      stepsAtFinish: mark?.stepsAtFinish ?? answers?.length ?? prev?.stepsAtFinish,
+      lessonRev: mark?.lessonRev ?? prev?.lessonRev ?? 0,
     })));
   }, [user]);
 
   /* Saves the bonus round without touching the original lesson answers. */
-  const completeBonus = useCallback(async (lessonId, stars, answers) => {
+  const completeBonus = useCallback(async (lessonId, stars, answers, mark) => {
     if (user) {
       try {
-        const d = await progressApi.completeBonus(lessonId, stars, answers);
+        const d = await progressApi.completeBonus(lessonId, stars, answers, mark);
         setProgress(d.progress);
         return;
       } catch { /* fall back to the session copy */ }
@@ -70,6 +72,8 @@ export function useProgress() {
       bonusStars: Math.max(stars, prev?.bonusStars || 0),
       bonusCompletedAt: prev?.bonusCompletedAt || Date.now(),
       bonusAnswers: answers || prev?.bonusAnswers,
+      bonusAtFinish: mark?.bonusAtFinish ?? answers?.length ?? prev?.bonusAtFinish,
+      bonusRev: mark?.bonusRev ?? prev?.bonusRev ?? 0,
     })));
   }, [user]);
 

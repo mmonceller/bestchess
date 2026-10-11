@@ -231,9 +231,9 @@ export const openingSidesLesson = {
     ),
     play(
       D4,
-      'You are Black. Play the King\'s Indian: knight, then ...g6 and bishop to g7.',
+      'You are Black. Build the King\'s Indian: knight to f6, then g6, then tuck the bishop on g7.',
       ['g8f6', 'c2c4', 'g7g6', 'b1c3', 'f8g7'],
-      'Knight first so White cannot play e4 for free. Then fianchetto the bishop.',
+      'King\'s knight to f6 first — that stops a free e4. Then g6, then bishop behind that pawn.',
       'King\'s Indian house. You look cramped — on purpose. The strike comes later.',
     ),
     play(

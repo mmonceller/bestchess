@@ -20,8 +20,8 @@ export const skillApi = {
 
 export const progressApi = {
   get: () => api('/progress'),
-  complete: (lessonId, stars, answers) => api(`/progress/${lessonId}`, { method: 'PUT', body: { stars, answers } }),
-  completeBonus: (lessonId, stars, answers) => api(`/progress/${lessonId}/bonus`, { method: 'PUT', body: { stars, answers } }),
+  complete: (lessonId, stars, answers, mark) => api(`/progress/${lessonId}`, { method: 'PUT', body: { stars, answers, ...mark } }),
+  completeBonus: (lessonId, stars, answers, mark) => api(`/progress/${lessonId}/bonus`, { method: 'PUT', body: { stars, answers, ...mark } }),
   merge: (progress) => api('/progress/merge', { method: 'POST', body: { progress } }),
 };
 

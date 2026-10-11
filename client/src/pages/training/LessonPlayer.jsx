@@ -103,8 +103,17 @@ export default function LessonPlayer({ lessonId, start }) {
     setResult({ stars, mistakes, hints, xp: Math.max(0, toXp(stars) - toXp(prevStars)), repeat: prevStars > 0 });
     if (savedRef.current) return;
     savedRef.current = true;
-    if (isBonus) completeBonus(lesson.id, stars, run);
-    else complete(lesson.id, stars, run);
+    if (isBonus) {
+      completeBonus(lesson.id, stars, run, {
+        bonusAtFinish: lesson.bonus.length,
+        bonusRev: lesson.bonusRev || 0,
+      });
+    } else {
+      complete(lesson.id, stars, run, {
+        stepsAtFinish: lesson.steps.length,
+        lessonRev: lesson.rev || 0,
+      });
+    }
     updateTrainer(touchDay);
   }
 

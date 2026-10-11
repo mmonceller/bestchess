@@ -40,6 +40,7 @@ const ENTRIES = [
   ['defender', ['defender', 'defenders', 'protector', 'guards', 'guarded'], 'A piece that protects another piece: if the protected piece is captured, the defender can capture back.'],
   ['back rank', ['back rank', 'back-rank'], 'The row nearest a player (rank 1 for White, rank 8 for Black). A king stuck there behind its own pawns can be checkmated by a rook or queen.'],
   ['open file', ['open file', 'open files'], 'A column with no pawns on it — a highway for rooks and queens.'],
+  ['half-open file', ['half-open file', 'half-open files', 'semi-open file'], 'A file with only the opponent\'s pawn on it. A rook there keeps pressing that pawn.'],
   ['passed pawn', ['passed pawn', 'passed pawns'], 'A pawn with no enemy pawns in front of it or beside it. Only pieces can stop it from promoting.'],
   ['opposition', ['opposition'], 'Kings facing each other with exactly one square between them. Whoever has to move must step aside.'],
   ['key square', ['key square', 'key squares'], 'A square that guarantees your pawn will promote once your king stands on it.'],

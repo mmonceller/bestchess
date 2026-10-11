@@ -178,7 +178,8 @@ export const strategyLessons = [
     title: 'Weak Pawns and Holes',
     coach: 'viktor',
     summary: 'Isolated, backward and doubled pawns — and the squares they leave behind.',
-    minutes: 6,
+    minutes: 7,
+    rev: 1,
     steps: [
       {
         type: 'talk',
@@ -219,6 +220,15 @@ export const strategyLessons = [
           { text: 'They can\'t protect each other, and the front one blocks the back one', correct: true, why: 'They also can\'t be used to create a passed pawn easily.' },
           { text: 'They\'re against the rules', why: 'They\'re legal — just usually a weakness.' },
           { text: 'They are always lost immediately', why: 'Not always. Sometimes they control useful squares or open a file. But they\'re often a long-term target.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'You\'re thinking of pushing a pawn. It would leave you with an isolated pawn and a hole. Should you?',
+        options: [
+          { text: 'Only if the push does a real job — opens a file, stops a threat, or makes a passer', correct: true, why: 'Pawn moves never go back. Don\'t give them a target just to "do something".' },
+          { text: 'Always push — pawns must advance', why: 'Every pawn move leaves squares behind it that the pawn can never guard again.' },
+          { text: 'Never push any pawn', why: 'Sometimes you must — a pawn break or a kick. Just don\'t create a weakness for no reason.' },
         ],
       },
     ],

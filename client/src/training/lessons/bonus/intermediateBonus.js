@@ -74,6 +74,31 @@ export const intermediateBonus = {
     },
   ],
 
+  'i-hold-on': [
+    {
+      type: 'talk',
+      text: 'Going deeper: counting works on any square, not just the king. Before you capture in their camp, count your attackers and their defenders. If the numbers are equal, the first capture often loses — they take back last. When you\'re worse, don\'t give them a free extra piece on top of the trouble you already have.',
+    },
+    {
+      type: 'quiz',
+      question: 'You can take a pawn in their half. You have two attackers, they have two defenders. Usually you should…',
+      options: [
+        { text: 'Leave it — the captures come out even, and you may just help them', correct: true, why: 'Equal numbers means they recapture last. You haven\'t won anything, and you may have opened lines toward your own king.' },
+        { text: 'Take it anyway — always capture', why: 'Captures that come out even are not "winning a pawn". Count first.' },
+        { text: 'Sacrifice a rook to take it', why: 'That\'s giving away more. Counting would have stopped you.' },
+      ],
+    },
+    {
+      type: 'quiz',
+      question: 'You\'re a piece down and they just parked a knight on d3. What\'s the calm order?',
+      options: [
+        { text: 'Deal with the knight, then keep pieces on and look for tricks', correct: true, why: 'Kick or trade the invader first. After that, mix it up — don\'t trade down into a lost ending.' },
+        { text: 'Trade queens and the rooks immediately', why: 'When you\'re behind, every trade makes their extra piece matter more.' },
+        { text: 'Ignore the knight and push every pawn', why: 'The knight in your camp is the problem. Pawns won\'t scare it away by themselves.' },
+      ],
+    },
+  ],
+
   'i-trade-logic': [
     {
       type: 'talk',
