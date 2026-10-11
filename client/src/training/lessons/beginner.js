@@ -12,6 +12,8 @@
  *  recap   – summary cards
  */
 
+import { openingSidesLesson } from './openings/bothSides.js';
+
 const LPDO = 'r2qk2r/ppp2ppp/3p3n/4p3/1b2P1b1/2NP1N2/PP3PPP/R1BQKB1R w KQkq - 0 1';
 const KQK = '8/8/8/4k3/8/8/8/4K2Q w - - 0 1';
 
@@ -233,8 +235,8 @@ export const beginnerLessons = [
     track: 'beginner',
     title: 'Openings Are a Race',
     coach: 'kai',
-    summary: 'No memorizing. Three questions that make every opening move good.',
-    minutes: 4,
+    summary: 'Three questions that make every opening move good — plus a map of common starting plans.',
+    minutes: 8,
     steps: [
       {
         type: 'talk',
@@ -277,8 +279,93 @@ export const beginnerLessons = [
         type: 'talk',
         text: 'Time math: a move that does nothing is like letting your opponent play two moves in a row. In the opening, treat every move like money — don\'t waste it.',
       },
+      {
+        type: 'talk',
+        text: 'You still don\'t need a book of names. But once those three questions feel easy, it helps to know a few starting plans — so you can pick one that matches how you like to fight, instead of inventing a new setup every game.',
+      },
+      {
+        type: 'recap',
+        title: 'Four styles of opening',
+        text: 'Openings are not just lists of moves. They are styles:',
+        items: [
+          { icon: 'pawn', title: 'Classical', text: 'Put pawns in the center (e4 or d4) and develop around them. Direct and easy to understand.' },
+          { icon: 'bishop', title: 'Hypermodern', text: 'Let the opponent take the center, then chip away at it from the sides with pieces and later pawn breaks.' },
+          { icon: 'book', title: 'System', text: 'Play nearly the same safe setup every game, no matter what they do. Less memory work.' },
+          { icon: 'swords', title: 'Gambit', text: 'Give up a pawn on purpose to race faster or open lines. You buy time with material.' },
+        ],
+      },
+      {
+        type: 'recap',
+        title: 'If you have White',
+        text: 'Four popular first plans. All of them pass the three questions:',
+        items: [
+          { label: 'Bc4', title: 'Italian Game', text: '1.e4 e5 2.Nf3 Nc6 3.Bc4. The bishop aims at f7. You can keep it calm, or get wild with the Fried Liver Attack.' },
+          { label: 'Bb5', title: 'Ruy Lopez', text: '1.e4 e5 2.Nf3 Nc6 3.Bb5. The bishop nags the knight that defends e5. Deep, long games — a favourite for centuries.' },
+          { label: 'c4', title: 'Queen\'s Gambit', text: '1.d4 d5 2.c4. You offer a side pawn to pull their d-pawn off the center. Great if you like slow, careful play.' },
+          { label: 'Bf4', title: 'London System', text: '1.d4, then Bf4 and e3. Almost the same house every time. Perfect when you don\'t want to memorize a book.' },
+        ],
+      },
+      {
+        type: 'talk',
+        text: 'Want something less common as White? 1.c4 is the English (a side-door grab of the center). 1.e4 e5 2.Nf3 Nc6 3.d4 is the Scotch — you blow the center open on move 3. Feeling bold? The King\'s Gambit (1.e4 e5 2.f4) offers a pawn to open a file toward their king.',
+      },
+      {
+        type: 'recap',
+        title: 'If they play 1.e4',
+        text: 'You are Black. Three main answers — and they feel very different:',
+        items: [
+          { label: 'c5', title: 'Sicilian Defense', text: '1...c5. You fight for the center from the side. Games get sharp and uneven — both sides can attack.' },
+          { label: 'c6', title: 'Caro-Kann', text: '1...c6, then ...d5. Solid. You hit the center without locking in your light-squared bishop the way the French sometimes does.' },
+          { label: 'e6', title: 'French Defense', text: '1...e6, then ...d5. A sturdy pawn chain and a counterpunch. You must plan how to free the bishop on c8.' },
+        ],
+      },
+      {
+        type: 'talk',
+        text: 'Other answers to 1.e4: the Scandinavian (1...d5) hits back at once. The Petrov (1...Nf6) copies White\'s idea and is very hard to crack. The Pirc and Modern let White take the center, then you strike later — hypermodern style.',
+      },
+      {
+        type: 'recap',
+        title: 'If they play 1.d4',
+        text: 'Two big families — rock-solid or wait-and-strike:',
+        items: [
+          { label: 'c6', title: 'Slav Defense', text: '1.d4 d5 2.c4 c6. You guard d5 and keep the door open for your light-squared bishop. Very sturdy.' },
+          { label: 'g6', title: 'King\'s Indian', text: '1.d4 Nf6 2.c4 g6. You let them build a big center, tuck a bishop on g7, then hit the flanks. Fireworks later.' },
+        ],
+      },
+      {
+        type: 'talk',
+        text: 'More 1.d4 ideas: the Nimzo-Indian pins their knight with ...Bb4. The Dutch (1...f5) grabs kingside space. The Grünfeld lets them take the center, then you blow it up with ...d5. You don\'t need all of these — pick one White plan and one Black plan vs e4 and vs d4, and play them until they feel like home.',
+      },
+      {
+        type: 'quiz',
+        question: 'Why do players like the London System?',
+        options: [
+          { text: 'You can use almost the same safe setup against many Black replies', correct: true, why: 'It\'s a system: the pieces go to familiar squares, so you spend less time remembering lines.' },
+          { text: 'It forces checkmate in ten moves', why: 'No opening does that against good defence.' },
+          { text: 'You give away a pawn on move two', why: 'That would be a gambit. The London keeps its pawns.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'Black plays the Sicilian (1.e4 c5). What is the idea?',
+        options: [
+          { text: 'Fight for the center from the side and keep the game unbalanced', correct: true, why: 'The c-pawn challenges d4 without copying 1...e5. Both sides get attacking chances.' },
+          { text: 'Copy White\'s e-pawn and keep everything symmetrical', why: 'That\'s 1...e5. The Sicilian is the opposite of copycat play.' },
+          { text: 'Give up the queen for a fast attack', why: 'No — you keep your queen! The fight is about the center and opposite-side chances.' },
+        ],
+      },
+      {
+        type: 'quiz',
+        question: 'A hypermodern opening is one where you…',
+        options: [
+          { text: 'Let the opponent take the center, then chip away at it later', correct: true, why: 'King\'s Indian, Pirc, Réti — you control the center with pieces first, then strike.' },
+          { text: 'Always castle on move four', why: 'Castling is a golden rule, not a style of opening.' },
+          { text: 'Push every pawn two squares on the first move', why: 'That would just hang pawns. Hypermodern play is patient, not reckless.' },
+        ],
+      },
     ],
   },
+  openingSidesLesson,
   {
     id: 'b-tactics-sprint',
     track: 'beginner',

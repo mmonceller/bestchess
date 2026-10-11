@@ -69,8 +69,15 @@ export default [
   {
     name: 'Fianchetto',
     level: 'intermediate',
+    lesson: 'b-opening-race',
     moves: '1.Nf3 d5 2.g3 Nf6 3.Bg2',
     def: 'Italian for "little flank": move the knight\'s pawn one square, then put the bishop behind it on the long diagonal.',
+  },
+  {
+    name: 'Pawn break',
+    level: 'intermediate',
+    lesson: 'b-opening-race',
+    def: 'A pawn move that challenges the opponent\'s pawn center or opens a file. Hypermodern openings wait for the right break.',
   },
   {
     name: 'Pawn structure',
