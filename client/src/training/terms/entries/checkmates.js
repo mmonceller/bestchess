@@ -74,7 +74,6 @@ export default [
   },
   {
     name: 'Opera mate',
-    aka: ['Morphy mate'],
     level: 'advanced',
     lesson: 't-more-mates',
     def: 'A rook or queen checkmates on the back row while a single bishop cuts the escape — the finish from Morphy\'s opera game.',
@@ -91,5 +90,79 @@ export default [
     level: 'advanced',
     lesson: 't-more-mates',
     def: 'The king is boxed in by its own pieces on both sides, like shoulder pads, and the queen checks it from the front.',
+  },
+  {
+    name: 'Balestra mate',
+    level: 'advanced',
+    def: 'A bishop and a queen trap the king on the edge: one works the diagonal, the other the row, and every escape is gone.',
+  },
+  {
+    name: "Blackburne's mate",
+    level: 'advanced',
+    def: 'Two bishops and a knight mate a king on the edge. The bishops cut the escapes; the knight finishes the job.',
+  },
+  {
+    name: "Damiano's bishop mate",
+    level: 'advanced',
+    def: 'The queen checkmates on the file next to the king, and a bishop on the diagonal protects her.',
+  },
+  {
+    name: "Damiano's mate",
+    level: 'advanced',
+    def: 'The queen mates on the edge file, backed by a pawn on the 6th (or 3rd) rank — often after a rook is given away to open that file.',
+  },
+  {
+    name: 'David and Goliath mate',
+    aka: ['pawn mate'],
+    level: 'advanced',
+    def: 'A pawn delivers checkmate. The heavy pieces pin the king down; the little pawn lands the blow.',
+  },
+  {
+    name: 'Dovetail mate',
+    level: 'advanced',
+    def: 'The queen checks from one square away on the diagonal. Two of the king\'s own pieces sit behind it and block the way out.',
+  },
+  {
+    name: "Greco's mate",
+    level: 'advanced',
+    def: 'A queen or rook mates on the open edge file — often the h-file — while a bishop cuts the king\'s diagonal escape.',
+  },
+  {
+    name: "Lolli's mate",
+    level: 'advanced',
+    def: 'A pawn on the 6th (or 3rd) rank holds the queen\'s mating square — an anchor the king cannot shake.',
+  },
+  {
+    name: "Max Lange's mate",
+    aka: ['Max Lange'],
+    level: 'advanced',
+    def: 'Queen and bishop share a file and a diagonal to mate the king, often after a pawn in the center opens the line.',
+  },
+  {
+    name: "Morphy's mate",
+    level: 'advanced',
+    def: 'A rook and a bishop trap the king, often after a discovered check opens the line and locks the last escapes.',
+  },
+  {
+    name: "Pillsbury's mate",
+    level: 'advanced',
+    def: 'A rook mates on an open file. A bishop on the flank cuts the king\'s escape into the corner.',
+  },
+  {
+    name: "Réti's mate",
+    aka: ["Reti's mate"],
+    level: 'advanced',
+    def: 'A bishop mates on the diagonal while a rook or queen takes away the king\'s step forward.',
+  },
+  {
+    name: 'Suffocation mate',
+    level: 'advanced',
+    def: 'A knight checks the king and a bishop, from far away, takes the last escapes. The king has no air.',
+  },
+  {
+    name: "Swallow's tail mate",
+    aka: ['guillotine mate'],
+    level: 'advanced',
+    def: 'The queen checks from one square away. Two pieces sit behind the king and block the way back — the shape of a swallow\'s tail.',
   },
 ];
