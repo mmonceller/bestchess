@@ -27,7 +27,7 @@ export function assessDanger({ cp = null, mate = null, threat = false } = {}) {
   if (cp != null && cp <= LOSING_CP) {
     return {
       level: 'losing',
-      title: "You're almost lost",
+      title: 'Step up your game',
       text: 'Your opponent is far ahead. Keep your pieces safe, look for tricks, and make the game messy — a strong opponent can still slip.',
     };
   }

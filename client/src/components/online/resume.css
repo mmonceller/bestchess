@@ -22,13 +22,16 @@
   background: var(--accent-2);
   box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 60%, transparent);
 }
-.resume-pill.your-turn .resume-dot { background: var(--warn); animation: resumePulse 1.6s ease-out infinite; }
+.resume-pill.your-turn .resume-dot,
+.resume-pill.rematch .resume-dot { background: var(--warn); animation: resumePulse 1.6s ease-out infinite; }
+.resume-pill.rematch { background: linear-gradient(135deg, #3ccf7a, #2fa8c9); }
+.resume-pill .resume-text { max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
 @keyframes resumePulse {
   from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--warn) 70%, transparent); }
   to { box-shadow: 0 0 0 9px transparent; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .resume-pill, .resume-pill.your-turn .resume-dot { animation: none; }
+  .resume-pill, .resume-pill.your-turn .resume-dot, .resume-pill.rematch .resume-dot { animation: none; }
 }
 @media (max-width: 520px) {
   .resume-pill { padding: 0 12px; }
@@ -37,19 +40,5 @@
 
 .active-games { margin-bottom: 16px; }
 .active-games h2 { margin: 0 0 4px; }
-.active-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-.active-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: var(--bg-2);
-}
-.active-row:hover { border-color: var(--accent); }
-.active-row.your-turn { border-color: color-mix(in srgb, var(--warn) 55%, var(--line)); }
-.active-main { display: flex; flex-direction: column; flex: 1; min-width: 0; }
-.active-row .player-dot { width: 14px; height: 14px; border-radius: 50%; flex: none; border: 2px solid var(--line); }
-.active-row .player-dot.white { background: #f5f5f5; }
-.active-row .player-dot.black { background: #111; }
+.active-games .resume-stack,
+.active-games .resume-banner { margin-bottom: 0; }

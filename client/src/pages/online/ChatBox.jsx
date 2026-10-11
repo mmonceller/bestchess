@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { online } from '../../api/onlineSocket.js';
 import Icon from '../../components/icons/Icon.jsx';
 
-const QUICK = ['Good luck!', 'Nice move!', 'Oops!', 'Good game!', 'Rematch?'];
+const QUICK = ["You're good", 'Nice move!', "Didn't see that coming", 'Good game!'];
 
 export default function ChatBox({ messages = [], canSend, you }) {
   const [text, setText] = useState('');

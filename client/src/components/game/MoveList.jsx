@@ -6,7 +6,8 @@ import { replayLine, START_FEN } from '../../chess/notation/line.js';
 import { scrollWithin } from '../../utils/scrollWithin.js';
 
 /*
- * SAN move list in numbered pairs, colour-coded with a plain-English tooltip per move.
+ * SAN move list in numbered pairs. When there's room, pairs fill down the left column
+ * then the right (1 over 2 over 3, then 4 over 5 over 6), not left-to-right.
  * `current` highlights a ply (0-based); onSelect makes it clickable.
  * `marks` optionally maps a ply to a review grade, shown as a coloured dot.
  */
@@ -19,10 +20,12 @@ export default function MoveList({ moves, current = moves.length - 1, onSelect, 
 
   if (!moves.length) return <div className="move-list empty muted">No moves yet.</div>;
 
+  const pairs = Math.ceil(moves.length / 2);
+  const colRows = Math.ceil(pairs / 2);
   const rows = [];
-  for (let i = 0; i < moves.length; i += 2) {
+  for (let i = 0, p = 0; i < moves.length; i += 2, p++) {
     rows.push(
-      <div className="mv-row" key={i}>
+      <div className={`mv-row${p % colRows % 2 === 1 ? ' alt' : ''}`} key={i}>
         <span className="mv-num">{i / 2 + 1}.</span>
         {[i, i + 1].map((ply) => {
           const m = line[ply];
@@ -49,7 +52,13 @@ export default function MoveList({ moves, current = moves.length - 1, onSelect, 
   }
   return (
     <div className="move-list-wrap">
-      <div className="move-list" ref={ref}>{rows}</div>
+      <div
+        className={`move-list${pairs > 1 ? ' two-col' : ''}`}
+        style={pairs > 1 ? { '--move-rows': colRows } : undefined}
+        ref={ref}
+      >
+        {rows}
+      </div>
       <NotationGuideButton className="move-list-guide" />
     </div>
   );

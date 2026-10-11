@@ -27,6 +27,10 @@ export const progressApi = {
 
 export const onlineApi = {
   active: (saved) => api('/online/active', { method: 'POST', body: { saved } }),
+  resign: (code, saved) => api('/online/resign', { method: 'POST', body: { code, saved } }),
+  acceptResign: (code, saved) => api('/online/resign-accept', { method: 'POST', body: { code, saved } }),
+  declineResign: (code, saved) => api('/online/resign-decline', { method: 'POST', body: { code, saved } }),
+  withdrawResign: (code, saved) => api('/online/resign-withdraw', { method: 'POST', body: { code, saved } }),
 };
 
 export const trainerApi = {

@@ -68,6 +68,9 @@ export function sweepRooms() {
       if (now - room.inviteExpiresAt > EXPIRED_KEEP_MS) rooms.delete(code);
       continue;
     }
+    if (room.acceptResignIfDue(now)) continue;
+    /* A pending resignation must live the full 24 hours, even if both players left. */
+    if (room.resignOffer) continue;
     const empty = ![room.seats.w, room.seats.b].some((s) => s?.sockets.size) && !room.spectators.size;
     if (now - room.lastActivity > config.roomIdleMs || (empty && now - room.lastActivity > 30 * 60_000)) {
       rooms.delete(code);

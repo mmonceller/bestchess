@@ -3,11 +3,12 @@ import { onlineApi } from '../api/endpoints.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { savedSeats, SEATS_CHANGED } from './savedSeats.js';
 
-const POLL_MS = 30_000;
+const POLL_MS = 10_000;
 
 /*
- * Unfinished online games the player can go back to: the ones their account is seated in
- * plus the seats this browser remembers. Saved seats the server no longer knows are dropped.
+ * Online games the player holds a seat in (unfinished, or finished with a possible rematch):
+ * the ones their account is seated in plus the seats this browser remembers. Saved seats the
+ * server no longer knows are dropped. Polled often enough that rematch requests show up quickly.
  */
 export function useActiveGames(refreshKey) {
   const { user } = useAuth();

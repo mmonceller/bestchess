@@ -1,6 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { createRoom, getRoom, allRooms, sweepRooms } from './roomRegistry.js';
 import { userFromToken } from '../auth/sessions.js';
+import { setRoomNotify } from './notify.js';
 
 const ABANDON_MS = 60_000;
 const UCI = /^[a-h][1-8][a-h][1-8][qrbn]?$/;
@@ -88,9 +89,18 @@ const actions = {
     room.move(ws.color, msg.uci);
   },
   resign: (ws, msg, room) => room.resign(ws.color),
+  'resign-offer': (ws, msg, room) => room.offerResign(ws.color),
+  'resign-accept': (ws, msg, room) => room.acceptResign(ws.color),
+  'resign-decline': (ws, msg, room) => room.declineResign(ws.color),
+  'resign-withdraw': (ws, msg, room) => room.withdrawResign(ws.color),
   'draw-offer': (ws, msg, room) => room.offerDraw(ws.color),
   'draw-decline': (ws, msg, room) => room.declineDraw(ws.color),
-  rematch: (ws, msg, room) => room.requestRematch(ws.color),
+  rematch(ws, msg, room) {
+    if (!room.requestRematch(ws.color)) return;
+    /* Colors were swapped, so every connection must act for its new seat. */
+    for (const c of ['w', 'b']) for (const sock of room.seats[c].sockets) sock.color = c;
+  },
+  'rematch-decline': (ws, msg, room) => room.declineRematch(ws.color),
   claim(ws, msg, room) {
     if (canClaim(room, ws.color)) room.finish(ws.color, 'abandonment');
   },
@@ -103,6 +113,7 @@ const actions = {
 
 export function attachSocketServer(server) {
   const wss = new WebSocketServer({ server, path: '/ws' });
+  setRoomNotify(broadcast);
 
   wss.on('connection', (ws) => {
     ws.isAlive = true;
@@ -128,7 +139,7 @@ export function attachSocketServer(server) {
 
   const tick = setInterval(() => {
     for (const room of allRooms()) {
-      if (room.checkFlag() || room.expireInvite()) broadcast(room);
+      if (room.checkFlag() || room.expireInvite() || room.acceptResignIfDue()) broadcast(room);
     }
   }, 500);
 

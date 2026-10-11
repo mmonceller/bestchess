@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react';
-import { LEVELS } from '../../engine/levels.js';
+import { LEVELS, getLevel } from '../../engine/levels.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { recommendedLevel } from '../../training/skill/tiers.js';
 import Icon from '../../components/icons/Icon.jsx';
 import ColorPicker from '../../components/game/ColorPicker.jsx';
+import ResumeList from '../../components/resume/ResumeList.jsx';
+import { useNow } from '../../hooks/useNow.js';
 import SkillNote from './SkillNote.jsx';
+import { expiryClock } from './expiry/inactivity.js';
 import './computer.css';
 
 const LEVEL_KEY = 'bc.lastLevel';
 
-export default function ComputerSetup({ onStart, onResume, saved }) {
+export default function ComputerSetup({ onStart, onResume, onResign, saved = [], notice }) {
   const { user } = useAuth();
   const recommended = user ? recommendedLevel(user.skill) : null;
   const [level, setLevel] = useState(() => recommended || Number(localStorage.getItem(LEVEL_KEY)) || 3);
   const [picked, setPicked] = useState(false);
   const [color, setColor] = useState('w');
+  const now = useNow(1000);
 
   useEffect(() => { if (recommended && !picked) setLevel(recommended); }, [recommended, picked]);
 
@@ -29,17 +33,27 @@ export default function ComputerSetup({ onStart, onResume, saved }) {
     onStart({ color: c, level });
   }
 
+  const items = saved.map((g) => {
+    const bot = getLevel(g.level);
+    const clock = expiryClock(g, now);
+    return {
+      id: g.id,
+      name: bot.name,
+      detail: `Lv ${g.level} · ${clock}`,
+      blurb: <>You have an unfinished game against <b>{bot.name}</b> (level {g.level}). Expires in {clock}.</>,
+      onClick: () => onResume(g),
+      onResign: () => onResign(g),
+      resignConfirm: `This counts as a loss against ${bot.name}.`,
+    };
+  });
+
   return (
     <div className="setup card fade-in">
       <h1>Play with a Bot</h1>
       <p className="muted">Pick how strong your opponent should be. The bot runs right in your browser, so there's no waiting.</p>
 
-      {saved && (
-        <div className="resume-banner">
-          <span>You have an unfinished game against level {saved.level}.</span>
-          <button className="btn small primary" onClick={onResume}><Icon name="play" size={14} /> Resume</button>
-        </div>
-      )}
+      {notice}
+      <ResumeList items={items} label="Unfinished games" />
 
       {user && <SkillNote skill={user.skill} recommended={recommended} chosen={level} />}
 

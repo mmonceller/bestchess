@@ -84,6 +84,16 @@
 .move-list.empty { display: block; padding: 14px; text-align: center; }
 .mv-row { display: grid; grid-template-columns: 28px 1fr 1fr; align-items: center; border-radius: 6px; }
 .mv-num { color: var(--muted); font-size: 0.8rem; padding-left: 3px; }
+.mv-row.alt { background: rgba(255, 255, 255, 0.025); }
+/* Wide lists keep two columns, filled down the left then the right (1 / 4, 2 / 5, 3 / 6). */
+@container moves (min-width: 270px) {
+  .move-list.two-col {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(var(--move-rows, 1), auto);
+    column-gap: 4px;
+  }
+}
 .mv {
   position: relative;
   text-align: left;
@@ -93,11 +103,6 @@
   border-radius: 6px;
   font-weight: 600;
   white-space: nowrap;
-}
-/* Two move pairs per row whenever the list is wide enough. */
-@container moves (min-width: 270px) {
-  .move-list { grid-template-columns: 1fr 1fr; column-gap: 4px; }
-  .mv-row:nth-child(4n + 3), .mv-row:nth-child(4n + 4) { background: rgba(255, 255, 255, 0.025); }
 }
 button.mv { cursor: pointer; color: var(--text); font: inherit; font-weight: 600; }
 .mv:hover { background: var(--panel-2); }

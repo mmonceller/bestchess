@@ -1,5 +1,6 @@
 import { Chess } from 'chess.js';
 import { inviteMinutes } from './invite.js';
+import { RESIGN_ACCEPT_MS } from './resign.js';
 
 const TIME_CONTROLS = new Set([0, 1, 3, 5, 10, 15, 30]);
 const other = (c) => (c === 'w' ? 'b' : 'w');
@@ -20,6 +21,8 @@ export class Room {
     this.spectators = new Set();
     this.chat = [];
     this.lastActivity = Date.now();
+    this.createdAt = this.lastActivity;
+    this.startedAt = null;
     this.inviteExpiresAt = this.lastActivity + this.options.inviteMinutes * 60_000;
     this.onFinish = null;
     this.resetGame();
@@ -38,6 +41,9 @@ export class Room {
     this.result = null;
     this.drawOffer = null;
     this.rematch = { w: false, b: false };
+    this.rematchDeclined = null;
+    this.resignOffer = null;
+    this.resignOfferedAt = null;
     this.lastMove = null;
     this.recorded = false;
     this.recordIds = { w: null, b: null };
@@ -45,6 +51,7 @@ export class Room {
     const ms = this.options.minutes * 60_000;
     this.clocks = { w: ms, b: ms };
     this.turnStartedAt = null;
+    this.startedAt = null;
     if (this.seats.w && this.seats.b) this.start();
   }
 
@@ -90,6 +97,7 @@ export class Room {
   start() {
     this.status = 'playing';
     this.turnStartedAt = Date.now();
+    this.startedAt = this.turnStartedAt;
     this.chess.setHeader('Event', 'BestChess online');
     this.chess.setHeader('White', this.seats.w.name);
     this.chess.setHeader('Black', this.seats.b.name);
@@ -150,6 +158,53 @@ export class Room {
     this.finish(other(color), 'resignation');
   }
 
+  /* From the games list: ask to resign. The opponent accepts, or it goes through after 24 hours. */
+  offerResign(color) {
+    if (this.status !== 'playing' || !this.seats[color]) return false;
+    if (this.resignOffer === other(color)) {
+      this.finish(color, 'resignation');
+      return true;
+    }
+    if (this.resignOffer === color) return false;
+    this.resignOffer = color;
+    this.resignOfferedAt = Date.now();
+    this.lastActivity = this.resignOfferedAt;
+    return false;
+  }
+
+  acceptResign(color) {
+    if (this.status !== 'playing' || this.resignOffer !== other(color)) return false;
+    this.finish(color, 'resignation');
+    return true;
+  }
+
+  declineResign(color) {
+    if (this.resignOffer !== other(color)) return;
+    this.resignOffer = null;
+    this.resignOfferedAt = null;
+    this.lastActivity = Date.now();
+  }
+
+  withdrawResign(color) {
+    if (this.resignOffer !== color) return;
+    this.resignOffer = null;
+    this.resignOfferedAt = null;
+    this.lastActivity = Date.now();
+  }
+
+  /* Ends the game when a resignation offer has waited long enough. */
+  acceptResignIfDue(now = Date.now()) {
+    if (this.status !== 'playing' || !this.resignOffer || now - this.resignOfferedAt < RESIGN_ACCEPT_MS) return false;
+    this.finish(other(this.resignOffer), 'resignation');
+    return true;
+  }
+
+  resignFor(color) {
+    if (this.status !== 'playing' || !this.resignOffer) return null;
+    if (this.resignOffer === color) return 'sent';
+    return 'incoming';
+  }
+
   offerDraw(color) {
     if (this.status !== 'playing') return;
     if (this.drawOffer === other(color)) this.finish(null, 'agreement');
@@ -160,14 +215,32 @@ export class Room {
     if (this.drawOffer === other(color)) this.drawOffer = null;
   }
 
+  /* Returns true when both players agreed and a new game started (with colors swapped). */
   requestRematch(color) {
-    if (this.status !== 'over') return;
+    if (this.status !== 'over') return false;
     this.rematch[color] = true;
-    if (this.rematch.w && this.rematch.b) {
-      const { w, b } = this.seats;
-      this.seats = { w: b, b: w };
-      this.resetGame();
-    }
+    this.rematchDeclined = null;
+    this.lastActivity = Date.now();
+    if (!(this.rematch.w && this.rematch.b)) return false;
+    const { w, b } = this.seats;
+    this.seats = { w: b, b: w };
+    this.resetGame();
+    return true;
+  }
+
+  declineRematch(color) {
+    const asker = other(color);
+    if (this.status !== 'over' || !this.rematch[asker]) return;
+    this.rematch[asker] = false;
+    this.rematchDeclined = asker;
+    this.lastActivity = Date.now();
+  }
+
+  /* 'incoming' when the opponent asked for a rematch and `color` hasn't answered, 'sent' when `color` asked. */
+  rematchFor(color) {
+    if (this.status !== 'over') return null;
+    if (this.rematch[color]) return 'sent';
+    return this.rematch[other(color)] ? 'incoming' : null;
   }
 
   finish(winner, reason) {
@@ -179,6 +252,8 @@ export class Room {
     this.result = { winner, reason };
     this.chess.setHeader('Result', winner === 'w' ? '1-0' : winner === 'b' ? '0-1' : '1/2-1/2');
     this.drawOffer = null;
+    this.resignOffer = null;
+    this.resignOfferedAt = null;
     if (this.onFinish) this.onFinish(this);
   }
 
@@ -214,7 +289,10 @@ export class Room {
       clocks: this.hasClock() ? { w: this.liveClock('w'), b: this.liveClock('b') } : null,
       clockRunning: this.status === 'playing' && this.hasClock() && this.chess.history().length >= 2,
       drawOffer: this.drawOffer,
+      resignOffer: this.resignOffer,
+      resignOfferedAt: this.resignOfferedAt,
       rematch: this.rematch,
+      rematchDeclined: this.rematchDeclined,
       chat: this.chat.slice(-30),
       gameId: this.recordIds[you] || null,
       hintPlies: this.hintPlies[you] ? [...this.hintPlies[you]] : [],

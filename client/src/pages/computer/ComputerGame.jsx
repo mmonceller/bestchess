@@ -33,7 +33,7 @@ import './computer.css';
 
 const COACH_KEY = 'bc.coachMode';
 
-export default function ComputerGame({ color, level, initialPgn, initialHints, onNewGame, onRematch }) {
+export default function ComputerGame({ gameId, color, level, initialPgn, initialHints, onNewGame, onRematch }) {
   const game = useChessGame(undefined, initialPgn);
   const { user, refresh } = useAuth();
   const { settings } = useSettings();
@@ -88,7 +88,7 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
     c.setHeader('Event', 'BestChess vs Computer');
     c.setHeader('White', color === 'w' ? user?.username || 'You' : `${lvl.name} (Lv ${lvl.id})`);
     c.setHeader('Black', color === 'b' ? user?.username || 'You' : `${lvl.name} (Lv ${lvl.id})`);
-    if (game.history.length) saveGame({ pgn: c.pgn(), color, level, hints: hintLog.plies() });
+    if (game.history.length) saveGame({ id: gameId, pgn: c.pgn(), color, level, hints: hintLog.plies() });
   }, [game.fen, over, hintLog.count]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -96,7 +96,7 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
     savedRef.current = true;
     sounds.end();
     setShowEnd(true);
-    clearSavedGame();
+    clearSavedGame(gameId);
     if (!user) { setSaveState('guest'); return; }
     const c = game.chess;
     const outcome = result.winner === null ? 'draw' : result.winner === color ? 'win' : 'loss';
@@ -218,9 +218,12 @@ export default function ComputerGame({ color, level, initialPgn, initialHints, o
         {feedback?.bestHint && <LessonReminder lesson={lessonFor(feedback.bestHint)} />}
 
         <div className="card moves-card">
-          <h3>Moves</h3>
-          <div className="moves-body">
+          <div className="row">
+            <h3 style={{ margin: 0 }}>Moves</h3>
+            <span className="spacer" />
             {view.browsing && <BrowsingNotice ply={view.goal} onBack={view.backToGame} />}
+          </div>
+          <div className="moves-body">
             <MoveList moves={sanList} current={view.goal} onSelect={view.select} />
           </div>
         </div>

@@ -1,13 +1,29 @@
 .danger-notice, .comment-note.danger {
   --danger: #ff5d6c;
+  position: relative;
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  padding: 10px 12px;
+  padding: 10px 32px 10px 12px;
   border-radius: 12px;
   border: 1px solid color-mix(in srgb, var(--danger) 55%, transparent);
   background: color-mix(in srgb, var(--danger) 12%, transparent);
 }
+.tip-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.tip-close:hover { color: var(--text); background: rgba(255, 255, 255, 0.08); }
 .danger-notice.level-threat, .comment-note.danger.level-threat { --danger: #ffa94d; }
 .danger-notice.level-losing, .comment-note.danger.level-losing { --danger: #ffb547; }
 .danger-notice > .icon, .comment-note.danger > .icon { flex: none; margin-top: 2px; color: var(--danger); }

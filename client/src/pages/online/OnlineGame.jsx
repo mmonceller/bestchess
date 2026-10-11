@@ -9,6 +9,8 @@ import Notice from '../../components/game/Notice.jsx';
 import Icon from '../../components/icons/Icon.jsx';
 import WaitingRoom from './WaitingRoom.jsx';
 import ChatBox from './ChatBox.jsx';
+import RematchNotice, { rematchLabel } from './rematch/RematchNotice.jsx';
+import ResignNotice from './resign/ResignNotice.jsx';
 import { online } from '../../api/onlineSocket.js';
 import { useOnlineGame } from './useOnlineGame.js';
 import { useHint } from '../../hooks/useHint.js';
@@ -185,6 +187,8 @@ export default function OnlineGame({ code }) {
           </div>
         )}
 
+        {seated && playing && <ResignNotice state={state} you={you} them={them} />}
+        {seated && <RematchNotice state={state} you={you} them={them} chime />}
         {res && (
           <div className="card center">
             <div className="result-big">{res.title}</div>
@@ -193,7 +197,7 @@ export default function OnlineGame({ code }) {
               <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
                 {reviewButton}
                 <button className="btn primary" onClick={online.rematch} disabled={state.rematch?.[you]}>
-                  {state.rematch?.[you] ? 'Waiting for opponent…' : state.rematch?.[them] ? 'Accept rematch' : 'Rematch'}
+                  {rematchLabel(state, you, them)}
                 </button>
               </div>
             )}
@@ -219,9 +223,13 @@ export default function OnlineGame({ code }) {
         <HintCard hint={hint.hint} loading={hint.loading} onClose={hint.clear} lesson={lessonFor(hint.hint)} reviewLink={false} />
 
         <div className="card moves-card">
-          <div className="row"><h3 style={{ margin: 0 }}>Moves</h3><span className="spacer" /><span className="badge">Code {code}</span></div>
-          <div className="moves-body" style={{ marginTop: 8 }}>
+          <div className="row">
+            <h3 style={{ margin: 0 }}>Moves</h3>
+            <span className="spacer" />
             {view.browsing && <BrowsingNotice ply={view.goal} onBack={view.backToGame} />}
+            <span className="badge">Code {code}</span>
+          </div>
+          <div className="moves-body" style={{ marginTop: 8 }}>
             <MoveList moves={state.history} current={view.goal} onSelect={view.select} />
           </div>
         </div>
@@ -246,9 +254,12 @@ export default function OnlineGame({ code }) {
             <div className="result-big">{res.title}</div>
             <p className="muted">{res.detail}</p>
             {!user && <p className="small muted">Log in next time to save games and earn a rating.</p>}
+            <RematchNotice state={state} you={you} them={them} />
             <div className="row" style={{ justifyContent: 'center', marginTop: 10, flexWrap: 'wrap' }}>
               {reviewButton}
-              <button className="btn primary" onClick={() => { online.rematch(); setDismissedResult(true); }}>Rematch</button>
+              <button className="btn primary" onClick={() => { online.rematch(); setDismissedResult(true); }} disabled={state.rematch?.[you]}>
+                {rematchLabel(state, you, them)}
+              </button>
               <button className="btn" onClick={() => setDismissedResult(true)}>Close</button>
             </div>
           </div>
