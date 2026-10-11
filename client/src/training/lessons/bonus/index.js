@@ -3,6 +3,7 @@ import { beginnerBonus } from './beginnerBonus.js';
 import { intermediateBonus } from './intermediateBonus.js';
 import { advancedBonus } from './advancedBonus.js';
 import { strategyBonus } from './strategyBonus.js';
+import { tacticsBonus } from './tacticsBonus.js';
 import { masterBonus } from './masterBonus.js';
 import { endgameBonus, ENDGAME_EXTRAS } from './endgameBonus.js';
 import { BOOK_EXTRAS } from './bookExtras.js';
@@ -13,6 +14,7 @@ const BASE = {
   ...intermediateBonus,
   ...advancedBonus,
   ...strategyBonus,
+  ...tacticsBonus,
   ...endgameBonus,
   ...masterBonus,
 };

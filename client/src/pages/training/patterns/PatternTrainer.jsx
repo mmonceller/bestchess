@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../../../components/icons/Icon.jsx';
 import { useAuth } from '../../../context/AuthContext.jsx';
 import { useTrainer } from '../../../training/trainerStore.js';
-import { applyResult, pickPuzzle, unlockedPatterns } from '../../../training/patterns/trainerLogic.js';
+import { applyResult, pickPuzzle, unlockedFocuses } from '../../../training/patterns/trainerLogic.js';
 import { engine } from '../../../engine/engineClient.js';
 import GuestBanner from '../hub/GuestBanner.jsx';
 import PuzzlePlay from './PuzzlePlay.jsx';
@@ -50,7 +50,7 @@ export default function PatternTrainer() {
 
   if (!trainer || !puzzle) return <div className="center muted" style={{ padding: 40 }}>Finding a puzzle for you…</div>;
 
-  const unlocked = unlockedPatterns(trainer.rating);
+  const unlocked = unlockedFocuses(trainer.rating);
 
   return (
     <div className="pattern-trainer fade-in">

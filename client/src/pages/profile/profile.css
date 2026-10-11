@@ -18,8 +18,7 @@
   flex: none;
 }
 .profile-stats { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 640px) { .profile-stats { grid-template-columns: 1fr 1fr; } .stat-group-games { grid-column: 1 / -1; } }
-@media (min-width: 1000px) { .profile-stats { grid-template-columns: 4fr 2fr 3fr; } .stat-group-games { grid-column: auto; } }
+@media (min-width: 640px) { .profile-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .stat-group { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .stat-group-title { margin: 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .stat-group-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); flex: 1; }

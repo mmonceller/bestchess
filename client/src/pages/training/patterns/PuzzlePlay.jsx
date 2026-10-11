@@ -7,12 +7,21 @@ import { useChessGame } from '../../../hooks/useChessGame.js';
 import { engine } from '../../../engine/engineClient.js';
 import { toUci, uciLineToSan } from '../../../chess/status.js';
 import { PATTERNS, isMatePattern } from '../../../training/patterns/patterns.js';
+import { GROUPS, focusInfo, mateName } from '../../../training/patterns/groups.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
 import { solvesPuzzle } from '../../../training/puzzles/judgeMove.js';
 import { findRefutation, refutationText } from '../../../training/puzzles/refutation/index.js';
 
 const PRAISE = ['Solved!', 'Nicely spotted!', 'That\'s the one!', 'Sharp eyes!'];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+const withMate = (text, name) => (name ? `${text} That was ${name}.` : text);
+const failArrow = (name) => (name
+  ? `The blue arrow is ${name} — play it to see why.`
+  : 'The blue arrow shows the answer — play it to see why.');
+const reviewedNote = (name) => (name
+  ? `That was ${name}. Now you've seen the idea — it will be easier to spot next time.`
+  : 'Now you\'ve seen the idea — it will be easier to spot next time.');
 
 /*
  * One puzzle. The student plays the even moves of `puzzle.moves`; replies are automatic.
@@ -23,6 +32,7 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
   const game = useChessGame(puzzle.fen);
   const me = puzzle.fen.split(' ')[1];
   const pattern = PATTERNS[puzzle.pattern];
+  const named = mateName(puzzle.pattern);
   const [ply, setPly] = useState(0);
   const [status, setStatus] = useState('solving');
   const [busy, setBusy] = useState(false);
@@ -50,9 +60,9 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
     if (!onMainLine || !reply) {
       if (status === 'failed') {
         setStatus('reviewed');
-        setNote({ tone: 'ok', text: 'Now you\'ve seen the idea — it will be easier to spot next time.' });
+        setNote({ tone: 'ok', text: reviewedNote(named) });
       } else {
-        settle(true, 'good', pick(PRAISE));
+        settle(true, 'good', withMate(pick(PRAISE), named));
       }
       return;
     }
@@ -92,14 +102,14 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
     if (!alive.current) return;
     if (solvesPuzzle(graded, { mate: isMatePattern(puzzle.pattern) })) {
       setBusy(false);
-      settle(true, 'good', `That works too! (The puzzle's main idea was [[${uciLineToSan(Chess, before, [expected])[0]}]].)`);
+      settle(true, 'good', withMate(`That works too! (The puzzle's main idea was [[${uciLineToSan(Chess, before, [expected])[0]}]].)`, named));
       return;
     }
     const refutation = await findRefutation(game.fen, mv);
     if (!alive.current) return;
     setBusy(false);
     const opponent = me === 'w' ? 'Black' : 'White';
-    settle(false, 'bad', `[[${mv.san}]] isn't it.${refutationText(refutation, opponent)} The blue arrow shows the answer — play it to see why.`);
+    settle(false, 'bad', `[[${mv.san}]] isn't it.${refutationText(refutation, opponent)} ${failArrow(named)}`);
     setBusy(true);
     later(() => { game.undo(); setBusy(false); }, 700);
   }
@@ -156,7 +166,7 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
             </span>
             <span className="xp"><Icon name="bolt" size={14} /> +{result.xp} XP</span>
             {result.newlyUnlocked.map((id) => (
-              <span key={id} className="unlock"><Icon name="sparkle" size={14} /> New pattern: {PATTERNS[id].name}</span>
+              <span key={id} className="unlock"><Icon name="sparkle" size={14} /> New pattern: {focusInfo(id).name}</span>
             ))}
           </div>
         )}
@@ -178,11 +188,12 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
 }
 
 function PatternBadge({ pattern, reveal }) {
+  const group = pattern.group ? GROUPS[pattern.group] : null;
   return (
     <div className="pattern-badge pop-in" style={{ '--c': pattern.color }}>
       <span className="pattern-icon"><Icon name={pattern.icon} size={24} /></span>
       <div>
-        <span className="muted small">Pattern</span>
+        <span className="muted small">{group ? group.name : 'Pattern'}</span>
         <b>{pattern.name}</b>
         <p>{reveal ? pattern.lesson : pattern.clue}</p>
       </div>

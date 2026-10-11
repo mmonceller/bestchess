@@ -14,7 +14,7 @@ export const MOTIFS = {
   fork: { name: 'Fork', icon: 'knight', lessons: ['b-forks'], tip: 'One move attacks two things at once.' },
   pin: { name: 'Pin', icon: 'lock', lessons: ['i-pin-pile'], tip: 'A piece can\'t move without exposing something bigger behind it.' },
   promotion: { name: 'Promotion', icon: 'queen', lessons: ['f-pawns', 's-passed-pawns'], tip: 'A pawn is close to becoming a queen.' },
-  mate: { name: 'Checkmate', icon: 'crown', lessons: ['f-check', 't-mating-patterns'], tip: 'Look at every check first — one of them may end the game.' },
+  mate: { name: 'Checkmate', icon: 'crown', lessons: ['f-check', 't-mating-patterns', 't-more-mates'], tip: 'Look at every check first — one of them may end the game.' },
   sacrifice: { name: 'Sacrifice', icon: 'fire', lessons: ['t-decoy-deflection'], tip: 'Giving material away can be the start of something bigger.' },
   quiet: { name: 'Quiet key move', icon: 'mind', lessons: ['t-woodpecker-way'], tip: 'The first move is no check and no capture — it makes a threat that can\'t be stopped.' },
 };

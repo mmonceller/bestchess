@@ -31,6 +31,7 @@ export default [
   {
     name: "Scholar's Mate",
     level: 'beginner',
+    lesson: 't-more-mates',
     moves: '1.e4 e5 2.Bc4 Nc6 3.Qh5 Nf6 4.Qxf7#',
     def: 'A four-move checkmate: the queen and bishop team up on f7, the weakest square at the start of the game. Easy to stop once you know it.',
   },
@@ -50,21 +51,45 @@ export default [
   {
     name: 'Arabian mate',
     level: 'intermediate',
+    lesson: 't-more-mates',
     def: 'A rook and a knight team up to checkmate a king in the corner. One of the oldest checkmate patterns known.',
   },
   {
     name: "Anastasia's mate",
     level: 'advanced',
+    lesson: 't-more-mates',
     def: 'A knight and a rook (or queen) trap the king on the side of the board, behind one of its own pawns.',
   },
   {
     name: "Boden's mate",
     level: 'advanced',
+    lesson: 't-more-mates',
     def: 'Two bishops on crossing diagonals checkmate a king, usually one that castled queenside, often after a queen sacrifice.',
+  },
+  {
+    name: 'Hook mate',
+    level: 'advanced',
+    lesson: 't-more-mates',
+    def: 'A rook, a knight and a pawn mate a king on the edge. The pawn is the hook that protects the rook.',
+  },
+  {
+    name: 'Opera mate',
+    aka: ['Morphy mate'],
+    level: 'advanced',
+    lesson: 't-more-mates',
+    def: 'A rook or queen checkmates on the back row while a single bishop cuts the escape — the finish from Morphy\'s opera game.',
+  },
+  {
+    name: 'Blind swine mate',
+    aka: ['pigs on the seventh'],
+    level: 'advanced',
+    lesson: 't-more-mates',
+    def: 'Two rooks on the 7th rank lock the enemy king against the edge and deliver mate.',
   },
   {
     name: 'Epaulette mate',
     level: 'advanced',
+    lesson: 't-more-mates',
     def: 'The king is boxed in by its own pieces on both sides, like shoulder pads, and the queen checks it from the front.',
   },
 ];

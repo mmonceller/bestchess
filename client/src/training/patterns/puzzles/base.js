@@ -86,4 +86,36 @@ export const BASE_PUZZLES = [
   { id: 'dc-bishop-queen', pattern: 'doubleCheck', rating: 1050, fen: '4k3/8/8/8/q7/8/4BPPP/4R1K1 w - - 0 1', moves: ['e2b5', 'e8f7', 'b5a4'] },
   { id: 'dc-corner-mate', pattern: 'doubleCheck', rating: 1100, fen: '6rk/7p/8/4N3/8/8/1B3PPP/6K1 w - - 0 1', moves: ['e5f7'] },
   { id: 'dc-knight-mate', pattern: 'doubleCheck', rating: 1150, fen: '3qkb2/3p1pp1/8/8/4N3/8/5PPP/4R1K1 w - - 0 1', moves: ['e4f6'] },
+
+  // Scholar's Mate
+  { id: 'sc-qh5', pattern: 'scholar', rating: 550, fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4', moves: ['h5f7'] },
+  { id: 'sc-qf3', pattern: 'scholar', rating: 550, fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 4 4', moves: ['f3f7'] },
+
+  // Anastasia's Mate
+  { id: 'an-hfile', pattern: 'anastasia', rating: 850, fen: '7k/4N1p1/8/8/4R3/8/5PPP/6K1 w - - 0 1', moves: ['e4h4'] },
+  { id: 'an-afile', pattern: 'anastasia', rating: 850, fen: 'k7/1p6/2N5/8/8/8/5PPP/1R2K3 w - - 0 1', moves: ['b1a1'] },
+
+  // Arabian Mate
+  { id: 'ar-h7', pattern: 'arabian', rating: 750, fen: '7k/8/5N2/8/8/8/7R/6K1 w - - 0 1', moves: ['h2h7'] },
+  { id: 'ar-g8', pattern: 'arabian', rating: 800, fen: '7k/8/5N2/8/8/8/6R1/6K1 w - - 0 1', moves: ['g2g8'] },
+
+  // Boden's Mate
+  { id: 'bo-a6', pattern: 'boden', rating: 950, fen: '2kr4/3p4/2p5/8/5B2/8/8/4KB2 w - - 0 1', moves: ['f1a6'] },
+  { id: 'bo-c8', pattern: 'boden', rating: 1000, fen: '2kr4/3p4/2p5/8/5B2/8/8/3K1B2 w - - 0 1', moves: ['f1a6'] },
+
+  // Hook Mate
+  { id: 'hk-h7', pattern: 'hook', rating: 900, fen: '7k/8/5NP1/8/8/8/7R/6K1 w - - 0 1', moves: ['h2h7'] },
+  { id: 'hk-a7', pattern: 'hook', rating: 900, fen: 'k7/8/1PN5/8/8/8/R7/1K6 w - - 0 1', moves: ['a2a7'] },
+
+  // Opera Mate
+  { id: 'op-rook', pattern: 'opera', rating: 850, fen: '4kb1r/5ppp/8/6B1/8/8/5PPP/3R2K1 w - - 0 1', moves: ['d1d8'] },
+  { id: 'op-queen', pattern: 'opera', rating: 900, fen: '4kb1r/5ppp/8/6B1/8/8/5PPP/3Q2K1 w - - 0 1', moves: ['d1d8'] },
+
+  // Blind Swine Mate
+  { id: 'sw-h7', pattern: 'swine', rating: 800, fen: '6rk/5RRp/8/8/8/8/8/5K2 w - - 0 1', moves: ['g7h7'] },
+  { id: 'sw-h7b', pattern: 'swine', rating: 850, fen: '6rk/R5Rp/8/8/8/8/8/5K2 w - - 0 1', moves: ['g7h7'] },
+
+  // Epaulette Mate
+  { id: 'ep-e6', pattern: 'epaulette', rating: 900, fen: '3rkr2/8/8/3Q4/8/8/8/4K3 w - - 0 1', moves: ['d5e6'] },
+  { id: 'ep-g6', pattern: 'epaulette', rating: 950, fen: '5rkr/8/8/5Q2/8/8/8/4K3 w - - 0 1', moves: ['f5g6'] },
 ];

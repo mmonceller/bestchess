@@ -38,7 +38,7 @@ function woodpecker(w = {}) {
 
 function sanitize(t = {}) {
   const patterns = {};
-  for (const [id, s] of Object.entries(t.patterns || {}).slice(0, 40)) {
+  for (const [id, s] of Object.entries(t.patterns || {}).slice(0, 80)) {
     if (!ID.test(id)) continue;
     const seen = int(s?.seen, 0, 1e6);
     patterns[id] = { seen, solved: int(s?.solved, 0, seen) };

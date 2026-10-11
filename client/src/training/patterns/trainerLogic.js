@@ -1,9 +1,11 @@
 import { PATTERNS, PATTERN_IDS } from './patterns.js';
+import { focusCatalog, patternsInFocus } from './groups.js';
 import { PUZZLES, baseOf } from './puzzles/index.js';
 import { touchDay } from '../trainerStore.js';
 
 /* Adaptive puzzle selection and Elo-style rating for the pattern trainer. */
 export const unlockedPatterns = (rating) => PATTERN_IDS.filter((id) => PATTERNS[id].unlock <= rating);
+export const unlockedFocuses = (rating) => focusCatalog().filter((f) => f.unlock <= rating).map((f) => f.id);
 
 const solveRate = (trainer, pattern) => {
   const s = trainer.patterns?.[pattern];
@@ -31,15 +33,16 @@ function weightedPick(items, weight) {
  * An idea (a puzzle and its mirrored, colour-swapped or shifted versions) doesn't come back
  * until most other ideas have been shown, the same pattern never comes three times in a row,
  * and a returning idea is shown in a version the player hasn't seen recently.
- * `focus` restricts to a single pattern.
+ * `focus` restricts to a single pattern or a group (e.g. checkmate).
  */
 export function pickPuzzle(trainer, focus = null) {
   const rating = trainer.rating;
   const unlocked = new Set(unlockedPatterns(rating));
+  const wanted = focus ? new Set(patternsInFocus(focus)) : null;
   const recent = trainer.recent || [];
   const groups = new Map();
   for (const p of PUZZLES) {
-    if (focus ? p.pattern !== focus : !unlocked.has(p.pattern)) continue;
+    if (wanted ? !wanted.has(p.pattern) || !unlocked.has(p.pattern) : !unlocked.has(p.pattern)) continue;
     const b = baseOf(p.id);
     if (!groups.has(b)) groups.set(b, []);
     groups.get(b).push(p);
@@ -90,6 +93,6 @@ export function applyResult(trainer, puzzle, { solved, usedHint }) {
     patterns: { ...trainer.patterns, [puzzle.pattern]: { seen: stats.seen + 1, solved: stats.solved + (solved ? 1 : 0) } },
     recent: [...(trainer.recent || []).filter((id) => id !== puzzle.id), puzzle.id].slice(-RECENT_LIMIT),
   });
-  const newlyUnlocked = unlockedPatterns(next.rating).filter((id) => !unlockedPatterns(trainer.rating).includes(id));
+  const newlyUnlocked = unlockedFocuses(next.rating).filter((id) => !unlockedFocuses(trainer.rating).includes(id));
   return { trainer: next, delta, xp, newlyUnlocked };
 }
