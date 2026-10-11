@@ -62,14 +62,3 @@ export function focusStats(patterns, focusId) {
     return acc;
   }, emptyStats());
 }
-
-/* Member rows that already have attempts — older mate1 / back-rank / named-mate scores. */
-export function recordedMembers(patterns, groupId) {
-  return membersOf(groupId)
-    .map((id) => {
-      const s = patterns?.[id] || emptyStats();
-      return { id, name: PATTERNS[id].name, seen: s.seen || 0, solved: s.solved || 0 };
-    })
-    .filter((s) => s.seen > 0)
-    .sort((a, b) => b.seen - a.seen || a.name.localeCompare(b.name));
-}

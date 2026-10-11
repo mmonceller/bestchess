@@ -1,5 +1,5 @@
 import Icon from '../../../components/icons/Icon.jsx';
-import { focusCatalog, focusStats, recordedMembers } from '../../../training/patterns/groups.js';
+import { focusCatalog, focusStats } from '../../../training/patterns/groups.js';
 
 /* Per-pattern success rates, plus the rating each locked pattern unlocks at. */
 export default function MasteryPanel({ trainer }) {
@@ -10,11 +10,10 @@ export default function MasteryPanel({ trainer }) {
       <ul className="mastery-list">
         {focusCatalog().map((p) => {
           const s = focusStats(trainer.patterns, p.id);
-          const members = p.kind === 'group' ? recordedMembers(trainer.patterns, p.id) : [];
           const locked = p.unlock > trainer.rating;
           const pct = s.seen ? Math.round((s.solved / s.seen) * 100) : 0;
           return (
-            <li key={p.id} className={`${locked ? 'locked' : ''}${members.length ? ' has-subs' : ''}`} style={{ '--c': p.color }}>
+            <li key={p.id} className={locked ? 'locked' : ''} style={{ '--c': p.color }}>
               <span className="mastery-icon"><Icon name={locked ? 'lock' : p.icon} size={18} /></span>
               <div className="mastery-body">
                 <div className="mastery-line">
@@ -24,16 +23,6 @@ export default function MasteryPanel({ trainer }) {
                   </span>
                 </div>
                 {!locked && <div className="mastery-bar"><span style={{ width: `${pct}%` }} /></div>}
-                {members.length > 0 && (
-                  <ul className="mastery-subs">
-                    {members.map((m) => (
-                      <li key={m.id}>
-                        <span>{m.name}</span>
-                        <span>{m.solved}/{m.seen}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             </li>
           );

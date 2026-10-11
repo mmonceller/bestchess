@@ -71,9 +71,8 @@
 .mastery h3 { margin: 0 0 4px; }
 .mastery > p { margin: 0 0 10px; }
 .mastery-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-.mastery-list > li { display: flex; gap: 10px; align-items: flex-start; }
+.mastery-list > li { display: flex; gap: 10px; align-items: center; }
 .mastery-list > li.locked { opacity: 0.55; }
-.mastery-list > li.has-subs { grid-column: 1 / -1; }
 .mastery-icon {
   width: 34px;
   height: 34px;
@@ -89,19 +88,3 @@
 .mastery-line { display: flex; justify-content: space-between; gap: 6px; font-size: 0.9rem; }
 .mastery-bar { height: 6px; margin-top: 5px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
 .mastery-bar span { display: block; height: 100%; background: var(--c); border-radius: inherit; transition: width 0.5s ease; }
-.mastery-subs {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 4px;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-}
-.mastery-subs li {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-.mastery-subs li span:last-child { font-variant-numeric: tabular-nums; }
