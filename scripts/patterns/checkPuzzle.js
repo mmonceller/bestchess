@@ -19,6 +19,11 @@ export function checkPuzzle(p, { timeMs = 1500 } = {}) {
   const notes = [];
   let c;
   try { c = new Chess(p.fen); } catch (e) { return { errors: [`bad fen: ${e.message}`], notes }; }
+  const parts = p.fen.split(' ');
+  const flipped = [parts[0], parts[1] === 'w' ? 'b' : 'w', ...parts.slice(2)].join(' ');
+  try {
+    if (new Chess(flipped).inCheck()) errors.push('the other king is already in check');
+  } catch { errors.push('the other king is already in check'); }
   for (let k = 0; k < p.moves.length; k++) {
     const uci = p.moves[k];
     if (k % 2 === 0) {

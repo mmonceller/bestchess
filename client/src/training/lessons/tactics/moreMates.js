@@ -66,13 +66,13 @@ export const moreMates = {
     see(
       ARABIAN,
       'Arabian Mate. Oldest picture in the book: a knight and a rook trap a king in the corner. The knight covers the escape and protects the rook.',
-      { arrows: [['h2', 'h7'], ['f6', 'h7'], ['f6', 'g8']], highlights: ['h8', 'h7'] },
+      { arrows: [['g7', 'h7'], ['f6', 'h7'], ['f6', 'g8']], highlights: ['h8', 'h7'] },
     ),
     mate(
       ARABIAN,
       'Corner the king: rook next to it, knight standing guard.',
-      ['h2h7'],
-      'Put the rook on h7. Your knight on f6 protects it and covers g8.',
+      ['g7h7'],
+      'Slide the rook to h7. Your knight on f6 protects it and covers g8.',
       'Arabian Mate. Rook in the king\'s face, knight as the bodyguard.',
     ),
 
@@ -92,12 +92,12 @@ export const moreMates = {
     see(
       HOOK,
       'Hook Mate. A rook, a knight and a pawn on the edge. The pawn is the hook: it protects the rook. The knight takes away the last squares.',
-      { arrows: [['h2', 'h7'], ['g6', 'h7'], ['f6', 'g8']], highlights: ['h8', 'g6'] },
+      { arrows: [['e7', 'h7'], ['g6', 'h7'], ['f6', 'g8']], highlights: ['h8', 'g6'] },
     ),
     mate(
       HOOK,
       'Hang the rook on the hook — the pawn on g6 will hold it.',
-      ['h2h7'],
+      ['e7h7'],
       'Rook to h7. The g-pawn and the knight both look after that square.',
       'Hook Mate. Pawn holds the rook. Knight holds the king.',
     ),
