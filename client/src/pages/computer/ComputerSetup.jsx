@@ -8,6 +8,7 @@ import ResumeList from '../../components/resume/ResumeList.jsx';
 import { useNow } from '../../hooks/useNow.js';
 import SkillNote from './SkillNote.jsx';
 import { expiryClock } from './expiry/inactivity.js';
+import { MAX_BOT_GAMES } from './savedGame.js';
 import './computer.css';
 
 const LEVEL_KEY = 'bc.lastLevel';
@@ -27,7 +28,10 @@ export default function ComputerSetup({ onStart, onResume, onResign, saved = [],
     setLevel(id);
   }
 
+  const atLimit = saved.length >= MAX_BOT_GAMES;
+
   function start() {
+    if (atLimit) return;
     localStorage.setItem(LEVEL_KEY, String(level));
     const c = color === 'random' ? (Math.random() < 0.5 ? 'w' : 'b') : color;
     onStart({ color: c, level });
@@ -53,7 +57,10 @@ export default function ComputerSetup({ onStart, onResume, onResign, saved = [],
       <p className="muted">Pick how strong your opponent should be. The bot runs right in your browser, so there's no waiting.</p>
 
       {notice}
-      <ResumeList items={items} label="Unfinished games" />
+      <ResumeList items={items} label={`Unfinished games (${saved.length}/${MAX_BOT_GAMES})`} />
+      {atLimit && (
+        <p className="muted small">You already have {MAX_BOT_GAMES} unfinished bot games. Resume or resign one to start another.</p>
+      )}
 
       {user && <SkillNote skill={user.skill} recommended={recommended} chosen={level} />}
 
@@ -72,7 +79,9 @@ export default function ComputerSetup({ onStart, onResume, onResign, saved = [],
       <span className="label">Play as</span>
       <ColorPicker value={color} onChange={setColor} />
 
-      <button className="btn primary block" style={{ marginTop: 18 }} onClick={start}><Icon name="play" size={16} /> Start game</button>
+      <button className="btn primary block" style={{ marginTop: 18 }} onClick={start} disabled={atLimit}>
+        <Icon name="play" size={16} /> Start game
+      </button>
     </div>
   );
 }

@@ -28,6 +28,7 @@ import { getGuestName } from './guestName.js';
 import { stashGame } from '../../review/pendingReview.js';
 import { navigate } from '../../router/router.js';
 import BrowsingNotice from '../../components/game/replay/BrowsingNotice.jsx';
+import WatchNotice from './resume/WatchNotice.jsx';
 import { useHistoryView } from '../../components/game/replay/useHistoryView.js';
 
 const NO_MOVES = [];
@@ -57,6 +58,15 @@ export default function OnlineGame({ code }) {
   const evaluation = useEvaluation(fen, showMeter);
   const view = useHistoryView(state?.history || NO_MOVES);
 
+  if (error?.code === 'too-many') {
+    return (
+      <div className="card center fade-in" style={{ maxWidth: 420, margin: '30px auto' }}>
+        <h2>Too many games</h2>
+        <p className="muted">{error.message}</p>
+        <a className="btn primary" href="#/online">Back to lobby</a>
+      </div>
+    );
+  }
   if (error?.code === 'not-found') {
     return (
       <div className="card center fade-in" style={{ maxWidth: 420, margin: '30px auto' }}>
@@ -169,7 +179,7 @@ export default function OnlineGame({ code }) {
       <aside className="side-panel">
         {connection !== 'open' && <Notice tone="ok" icon="retry">Reconnecting…</Notice>}
         {state.status === 'waiting' && <WaitingRoom code={code} options={state.options} expiresIn={state.inviteExpiresIn} />}
-        {!seated && <Notice tone="ok" icon="eye">You are watching this game.</Notice>}
+        {!seated && <WatchNotice state={state} />}
 
         {opponentOfferedDraw && (
           <div className="feedback ok row">

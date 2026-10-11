@@ -4,6 +4,8 @@ import { navigate } from '../../router/router.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getGuestName, setGuestName } from './guestName.js';
 import ActiveGamesCard from '../../components/online/ActiveGamesCard.jsx';
+import { useActiveGames } from '../../online/useActiveGames.js';
+import { isOngoing, MAX_ONLINE_GAMES } from '../../online/limits.js';
 import CreateGameCard from './lobby/CreateGameCard.jsx';
 import JoinGameCard from './lobby/JoinGameCard.jsx';
 import PlayerCard from './lobby/PlayerCard.jsx';
@@ -14,6 +16,8 @@ export default function OnlineLobby() {
   const [name, setName] = useState(getGuestName);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
+  const ongoing = useActiveGames().filter(isOngoing);
+  const atLimit = ongoing.length >= MAX_ONLINE_GAMES;
 
   useEffect(() => online.subscribe((msg) => {
     if (msg.t === 'created') navigate(`/online/${msg.code}`);
@@ -44,7 +48,7 @@ export default function OnlineLobby() {
       <ActiveGamesCard title="Your unfinished games" />
 
       <div className="lobby-grid">
-        <CreateGameCard creating={creating} onCreate={create} />
+        <CreateGameCard creating={creating} onCreate={create} atLimit={atLimit} limit={MAX_ONLINE_GAMES} />
         <div className="lobby-side">
           <JoinGameCard onJoin={join} />
           <PlayerCard user={user} name={name} onNameChange={setName} />

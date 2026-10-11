@@ -70,8 +70,11 @@ export class Room {
     if (held) return held;
     return ['w', 'b'].find((c) => {
       const s = this.seats[c];
-      return s && !s.sockets.size
-        && ((player.resumeKey && s.playerKey === player.resumeKey) || (player.userId && s.userId === player.userId));
+      if (!s || s.sockets.size) return false;
+      if (player.resumeKey && s.playerKey === player.resumeKey) return true;
+      if (player.userId && s.userId === player.userId) return true;
+      /* Guest who reopened the link in another tab: same name, empty unregistered seat. */
+      return !s.userId && !player.userId && player.name && s.name === player.name;
     }) || null;
   }
 

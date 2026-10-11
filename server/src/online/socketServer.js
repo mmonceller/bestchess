@@ -2,6 +2,7 @@ import { WebSocketServer } from 'ws';
 import { createRoom, getRoom, allRooms, sweepRooms } from './roomRegistry.js';
 import { userFromToken } from '../auth/sessions.js';
 import { setRoomNotify } from './notify.js';
+import { atOnlineLimit, tooManyGamesMessage } from './limits.js';
 
 const ABANDON_MS = 60_000;
 const UCI = /^[a-h][1-8][a-h][1-8][qrbn]?$/;
@@ -71,6 +72,8 @@ function detach(ws) {
 
 const actions = {
   create(ws, msg) {
+    const player = identify(msg);
+    if (atOnlineLimit(player)) return send(ws, { t: 'error', code: 'too-many', message: tooManyGamesMessage });
     const room = createRoom(msg.options);
     send(ws, { t: 'created', code: room.code });
     attach(ws, room, msg);
@@ -79,8 +82,14 @@ const actions = {
     const room = getRoom(msg.code);
     if (!room) return send(ws, { t: 'error', code: 'not-found', message: 'No game with that code. Check the code and try again.' });
     room.expireInvite();
-    if (room.status === 'expired' && !room.ownSeat(identify(msg))) {
+    const player = identify(msg);
+    if (room.status === 'expired' && !room.ownSeat(player)) {
       return send(ws, { t: 'error', code: 'expired', message: 'This invite has expired. Ask your friend to create a new game.' });
+    }
+    const own = room.ownSeat(player);
+    const wouldTakeSeat = !own && (!room.seats.w || !room.seats.b);
+    if (wouldTakeSeat && atOnlineLimit(player)) {
+      return send(ws, { t: 'error', code: 'too-many', message: tooManyGamesMessage });
     }
     attach(ws, room, msg);
   },

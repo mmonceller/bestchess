@@ -14,11 +14,11 @@ let retry = 0;
 let status = 'idle';
 
 function playerKey() {
-  let key = sessionStorage.getItem(PLAYER_KEY);
+  let key = localStorage.getItem(PLAYER_KEY) || sessionStorage.getItem(PLAYER_KEY);
   if (!key) {
     key = crypto.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36);
-    sessionStorage.setItem(PLAYER_KEY, key);
   }
+  localStorage.setItem(PLAYER_KEY, key);
   return key;
 }
 

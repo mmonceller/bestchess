@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ComputerSetup from './ComputerSetup.jsx';
 import ComputerGame from './ComputerGame.jsx';
-import { loadSavedGames, clearSavedGame } from './savedGame.js';
+import { loadSavedGames, clearSavedGame, MAX_BOT_GAMES } from './savedGame.js';
 import { useExpiredGame } from './expiry/useExpiredGame.js';
 import { isExpired } from './expiry/inactivity.js';
 import ExpiredNote from './expiry/ExpiredNote.jsx';
@@ -22,7 +22,11 @@ export default function PlayComputerPage() {
         notice={expired.notes.map((note, i) => (
           <ExpiredNote key={`${note.level}-${note.movedAt}-${i}`} note={note} onDismiss={() => expired.dismiss(i)} />
         ))}
-        onStart={(c) => { expired.dismiss(); setConfig({ ...c, id: Date.now().toString(36), key: Date.now() }); }}
+        onStart={(c) => {
+          if (saved.length >= MAX_BOT_GAMES) return;
+          expired.dismiss();
+          setConfig({ ...c, id: Date.now().toString(36), key: Date.now() });
+        }}
         onResume={(g) => setConfig({ color: g.color, level: g.level, pgn: g.pgn, hints: g.hints, id: g.id, key: Date.now() })}
         onResign={async (g) => { await resignBotGame(g, user, refresh); setRev((n) => n + 1); }}
       />

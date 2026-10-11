@@ -6,6 +6,7 @@ import { onlineApi } from '../../api/endpoints.js';
 import { formatHms } from '../../utils/format.js';
 import { useNow } from '../../hooks/useNow.js';
 import { hasSameOpponent, needsPlayer, opponentLabel, startedLabel, statusLabel, timeControl } from './gameLabel.js';
+import { isOngoing, MAX_ONLINE_GAMES } from '../../online/limits.js';
 import { resignLeft } from '../../pages/online/resign/resign.js';
 import './resume.css';
 
@@ -21,6 +22,7 @@ async function act(fn, code) {
 /* Lists unfinished online games (and rematch requests) with a button to jump back in. Renders nothing when there are none. */
 export default function ActiveGamesCard({ title = 'Games in progress' }) {
   const games = useActiveGames().filter(needsPlayer);
+  const ongoing = games.filter(isOngoing).length;
   const now = useNow(1000);
   if (!games.length) return null;
   const items = games.map((g) => {
@@ -50,7 +52,7 @@ export default function ActiveGamesCard({ title = 'Games in progress' }) {
   });
   return (
     <section className="card active-games">
-      <h2 className="icon-text"><Icon name="friends" size={20} /> {title}</h2>
+      <h2 className="icon-text"><Icon name="friends" size={20} /> {title} ({ongoing}/{MAX_ONLINE_GAMES})</h2>
       {items.length === 1 && (
         <p className="muted small">
           Closed the tab by accident? Jump back in. If you stay away for more than a minute, your opponent can claim the win.

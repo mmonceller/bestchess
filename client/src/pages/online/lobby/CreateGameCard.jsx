@@ -7,7 +7,7 @@ import InviteExpirySlider from '../../../components/online/inviteExpiry/InviteEx
 import { DEFAULT_INVITE_MINUTES } from '../../../components/online/inviteExpiry/inviteExpiry.js';
 
 /* Settings for a new friend game. `onCreate` receives the room options. */
-export default function CreateGameCard({ creating, onCreate }) {
+export default function CreateGameCard({ creating, onCreate, atLimit = false, limit = 10 }) {
   const [tc, setTc] = useState(DEFAULT_TIME_CONTROL);
   const [color, setColor] = useState('random');
   const [allowHints, setAllowHints] = useState(false);
@@ -40,7 +40,10 @@ export default function CreateGameCard({ creating, onCreate }) {
         </div>
       </div>
 
-      <button className="btn primary block" onClick={create} disabled={creating}>
+      {atLimit && (
+        <p className="muted small">You already have {limit} unfinished games. Finish or resign one to create another.</p>
+      )}
+      <button className="btn primary block" onClick={create} disabled={creating || atLimit}>
         {creating ? <span className="spinner" /> : <><Icon name="link" size={18} /> Create game and get a code</>}
       </button>
     </section>

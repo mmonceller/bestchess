@@ -1,6 +1,8 @@
 const LEGACY_KEY = 'bc.computerGame';
 const KEY = 'bc.computerGames';
 
+export const MAX_BOT_GAMES = 5;
+
 function readList() {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || '[]');
@@ -50,7 +52,8 @@ export function saveGame(g) {
   const movedAt = prev?.pgn === g.pgn ? prev.movedAt : Date.now();
   const next = { ...g, id, movedAt };
   if (i >= 0) list[i] = next;
-  else list.push(next);
+  else if (list.length < MAX_BOT_GAMES) list.push(next);
+  else return;
   write(list);
 }
 
