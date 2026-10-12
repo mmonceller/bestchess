@@ -41,6 +41,7 @@ function story(puzzle) {
       san: mv.san,
       piece: mv.promotion || mv.piece,
       captured: mv.captured || null,
+      to: mv.to,
       check: chess.inCheck(),
       mate: chess.isCheckmate(),
     };
@@ -52,15 +53,50 @@ function story(puzzle) {
     }
   }
   const end = material(chess, me) - material(chess, me === 'w' ? 'b' : 'w');
+  const poison = last?.to ? poisonRecapture(chess, last.to) : null;
   return {
     last,
     gave,
+    poison,
     sacrifice: gave.length > 0 || (puzzle.motifs || []).includes('sacrifice'),
     gain: end - start,
     loot: lootName(end - start),
     motifs: puzzle.motifs || [],
     mate: puzzle.goal === 'mate' || last?.mate,
   };
+}
+
+/* After we take something, can they recapture — and does that open a killer check? */
+function poisonRecapture(chess, to) {
+  const recaptures = chess.moves({ verbose: true }).filter((m) => m.to === to && m.captured);
+  if (!recaptures.length) return null;
+  for (const rec of recaptures) {
+    const next = new Chess(chess.fen());
+    next.move(rec);
+    const punches = next.moves({ verbose: true }).filter((m) => m.san.includes('#') || m.san.includes('+'));
+    punches.sort((a, b) => {
+      if (a.san.includes('#')) return -1;
+      if (b.san.includes('#')) return 1;
+      if ((a.piece === 'q') !== (b.piece === 'q')) return a.piece === 'q' ? -1 : 1;
+      return 0;
+    });
+    if (punches[0]) {
+      const after = new Chess(next.fen());
+      after.move(punches[0]);
+      const only = after.moves();
+      let forced = null;
+      let hunt = null;
+      if (only.length === 1) {
+        forced = only[0];
+        after.move(forced);
+        const more = after.moves({ verbose: true }).filter((m) => m.san.includes('#') || (m.piece === 'q' && m.san.includes('+')));
+        more.sort((a, b) => (a.san.includes('#') ? -1 : b.san.includes('#') ? 1 : 0));
+        hunt = more[0]?.san || null;
+      }
+      return { recapture: rec.san, follow: punches[0].san, forced, hunt };
+    }
+  }
+  return { recapture: recaptures[0].san, follow: null };
 }
 
 function because(motifs) {
@@ -86,6 +122,15 @@ export function aimText(puzzle) {
   const prizeFits = s.loot && s.gain >= 3 && s.gain + 1 >= giftValue;
   const lastTakes = s.last?.captured ? NAME[s.last.captured] : null;
   const quietLast = s.last && !s.last.check && !s.last.captured;
+
+  if (s.poison?.hunt && s.last?.captured === 'p') {
+    const taker = NAME[s.last.piece] || 'piece';
+    return `The ${taker} is not given for a lone check. If they recapture ([[${s.poison.recapture}]]), [[${s.poison.follow}]] leaves only [[${s.poison.forced}]], then [[${s.poison.hunt}]] drives the king into the centre — a hunt, not a trade.`;
+  }
+  if (s.poison?.follow && s.last?.captured === 'p') {
+    const taker = NAME[s.last.piece] || 'piece';
+    return `The ${taker} takes a pawn that looks protected. If they recapture ([[${s.poison.recapture}]]), [[${s.poison.follow}]] hits the king — so they cannot take back, and you keep the pawn.`;
+  }
 
   if (s.mate) {
     if (s.sacrifice) {

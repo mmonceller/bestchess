@@ -1,12 +1,15 @@
 import Icon from '../../../../components/icons/Icon.jsx';
 
 /* Hint / take-back / solution / next, depending on where the exercise stands. */
-export default function PlayActions({ done, busy, hinted, retry, onHint, onGiveUp, onTryAgain, onNext }) {
+export default function PlayActions({ done, busy, hinted, retry, onHint, onGiveUp, onTryAgain, onNext, extra = null }) {
   if (done) {
     return (
-      <button className="btn primary block icon-text" onClick={onNext} autoFocus>
-        Next exercise <Icon name="arrowRight" size={18} />
-      </button>
+      <div className="wp-done-actions">
+        {extra}
+        <button className="btn primary block icon-text" onClick={onNext} autoFocus>
+          Next exercise <Icon name="arrowRight" size={18} />
+        </button>
+      </div>
     );
   }
   if (retry) {

@@ -128,6 +128,7 @@ export const ICONS = {
     <path {...line} d="M7.5 12.3l3 3 6-6.3" />
   </>),
   play: <path d="M7 4.2v15.6a1 1 0 0 0 1.5.9l12.4-7.8a1 1 0 0 0 0-1.8L8.5 3.3A1 1 0 0 0 7 4.2Z" />,
+  pause: (<><rect x="6" y="5" width="4.2" height="14" rx="1.2" /><rect x="13.8" y="5" width="4.2" height="14" rx="1.2" /></>),
   first: (<><rect x="4" y="5" width="2.6" height="14" rx="1.1" /><path d="M20 5.8v12.4a1 1 0 0 1-1.6.8L9.6 12.8a1 1 0 0 1 0-1.6l8.8-6.2a1 1 0 0 1 1.6.8Z" /></>),
   chevron: <path {...line} d="M9 6l6 6-6 6" />,
   prev: <path d="M17 5.8v12.4a1 1 0 0 1-1.6.8L6.6 12.8a1 1 0 0 1 0-1.6l8.8-6.2a1 1 0 0 1 1.6.8Z" />,

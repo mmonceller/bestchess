@@ -56,6 +56,51 @@
   background: var(--bg-2);
   border: 1px solid var(--line);
 }
+.wp-solution.is-folded { padding: 6px 10px; }
+.wp-solution-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+}
+.wp-solution-toggle:hover .wp-solution-label,
+.wp-solution-toggle:hover .wp-fold-chevron { color: var(--text); }
+.wp-fold-chevron {
+  flex: none;
+  color: var(--muted);
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+}
+.wp-solution.is-folded .wp-fold-chevron { transform: rotate(0deg); }
+.wp-solution-label {
+  flex: none;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wp-fold-preview {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.84rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+.wp-fold-preview .move-line { display: inline; }
+.wp-solution-body { display: flex; flex-direction: column; gap: 3px; }
 .wp-solution b { font-size: 1rem; line-height: 1.6; }
 .wp-solution .move-line { display: inline; white-space: normal; }
 .wp-aim { margin: 6px 0 0; font-size: 0.88rem; line-height: 1.45; color: var(--text); }
@@ -63,6 +108,29 @@
 .wp-guide { align-self: flex-start; margin-left: -8px; }
 .wp-actions { display: flex; gap: 8px; }
 .wp-actions > .btn:not(.block) { flex: 1; }
+.wp-done-actions { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.wp-sim-toggle {
+  align-self: stretch;
+  text-align: center;
+  font-size: 0.86rem;
+  padding: 2px 0 4px;
+  color: var(--accent-2);
+}
+.wp-sim {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+}
+.wp-sim-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.wp-sim-san { font-size: 0.95rem; }
+.wp-sim-note { margin: 0; font-size: 0.84rem; line-height: 1.4; }
+.wp-sim-why { margin: 2px 0 0; font-size: 0.82rem; line-height: 1.4; color: var(--accent-2); }
+.wp-sim-nav { display: flex; gap: 4px; }
+.wp-sim-nav .btn { flex: 1; padding: 4px 0; }
 
 .wp-summary { max-width: 620px; margin: 10px auto; padding: 24px; text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .wp-summary h2 { margin: 0; }

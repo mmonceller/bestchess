@@ -9,16 +9,15 @@ import { toUci, uciLineToSan } from '../../../chess/status.js';
 import { solvesPuzzle } from '../../../training/puzzles/judgeMove.js';
 import { graceNote, inGraceWindow } from '../../../training/woodpecker/grace.js';
 import { alternativeCaption, alternativeNote } from '../../../training/woodpecker/alternativeNote.js';
-import MoveLine from '../../../components/notation/MoveLine.jsx';
-import MoveText from '../../../components/notation/MoveText.jsx';
-import NotationGuideButton from '../../../components/notation/NotationGuideButton.jsx';
 import { firstMoveHint, goalText } from '../../../training/woodpecker/describe.js';
 import { goalAside } from '../../../training/woodpecker/aim.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
 import PuzzleThemes from './themes/PuzzleThemes.jsx';
 import PlayActions from './play/PlayActions.jsx';
-import AimNote from './play/AimNote.jsx';
 import StepProgress from './play/StepProgress.jsx';
+import SimulateStrip from './play/SimulateStrip.jsx';
+import SolutionCard from './play/SolutionCard.jsx';
+import { useSimulate } from './play/useSimulate.js';
 
 /*
  * One Woodpecker exercise. Any move the engine says also solves it counts (any mate in a mate
@@ -39,11 +38,14 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const [xp, setXp] = useState(null);
   const timers = useRef([]);
   const alive = useRef(true);
+  const sim = useSimulate(puzzle);
+  const [solutionOpen, setSolutionOpen] = useState(true);
 
   useEffect(() => {
     alive.current = true;
     return () => { alive.current = false; timers.current.forEach(clearTimeout); };
   }, []);
+  useEffect(() => { setSolutionOpen(!sim.open); }, [sim.open]);
   const later = (fn, ms) => timers.current.push(setTimeout(() => { if (alive.current) fn(); }, ms));
 
   function clearTimers() {
@@ -164,20 +166,22 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const arrows = showAnswer ? [{ from: expected.slice(0, 2), to: expected.slice(2, 4), color: 'blue' }] : undefined;
   const canMove = !busy && (status === 'solving' || status === 'failed') && game.turn === me;
   const done = status !== 'solving';
+  const view = sim.open ? sim.view : null;
   const altCaption = alt ? alternativeCaption(alt.played, alt.book) : null;
 
   return (
     <div className="game-layout puzzle-play fade-in">
       <div className="board-column">
         <Board
-          fen={game.fen}
+          fen={view?.fen || game.fen}
           orientation={me === 'w' ? 'white' : 'black'}
-          movableColor={canMove ? me : null}
+          movableColor={canMove && !sim.open ? me : null}
           getMoves={game.getMoves}
           onMove={onMove}
-          lastMove={game.lastMove}
-          checkSquare={game.checkSquare}
-          arrows={arrows}
+          lastMove={view ? view.lastMove : game.lastMove}
+          checkSquare={view ? view.checkSquare : game.checkSquare}
+          arrows={view ? view.arrows : arrows}
+          moveMs={view?.moveMs}
         />
       </div>
       <aside className="side-panel puzzle-panel">
@@ -197,17 +201,12 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
         {note && <Notice tone={note.tone} key={note.text}>{note.text}</Notice>}
 
         {done && (
-          <div className="wp-solution pop-in">
-            <span className="muted small">Solution</span>
-            {altCaption && (
-              <p className="wp-alt"><MoveText>{altCaption}</MoveText></p>
-            )}
-            <b><MoveLine fen={puzzle.fen} moves={puzzle.moves} /></b>
-            <AimNote puzzle={puzzle} />
-            {puzzle.game && <span className="muted small">{puzzle.game}</span>}
-            <PuzzleThemes puzzle={puzzle} />
-            <NotationGuideButton className="wp-guide" />
-          </div>
+          <SolutionCard
+            puzzle={puzzle}
+            altCaption={altCaption}
+            folded={!solutionOpen}
+            onToggle={() => setSolutionOpen((v) => !v)}
+          />
         )}
         {xp !== null && (
           <div className="puzzle-result pop-in"><span className="xp"><Icon name="bolt" size={14} /> +{xp} XP</span></div>
@@ -223,6 +222,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
             onGiveUp={giveUp}
             onTryAgain={tryAgain}
             onNext={onNext}
+            extra={done ? <SimulateStrip sim={sim} /> : null}
           />
         </div>
       </aside>
