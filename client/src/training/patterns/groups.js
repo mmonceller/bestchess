@@ -62,3 +62,14 @@ export function focusStats(patterns, focusId) {
     return acc;
   }, emptyStats());
 }
+
+/* Named members of a group the player has solved at least once. */
+export function solvedMembers(patterns, groupId) {
+  const store = patterns || {};
+  return membersOf(groupId)
+    .filter((id) => (store[id]?.solved || 0) > 0)
+    .map((id) => {
+      const s = store[id];
+      return { id, name: PATTERNS[id].name, seen: s.seen || 0, solved: s.solved || 0 };
+    });
+}

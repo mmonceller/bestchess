@@ -73,6 +73,8 @@
 .mastery-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .mastery-list > li { display: flex; gap: 10px; align-items: center; }
 .mastery-list > li.locked { opacity: 0.55; }
+.mastery-list > li.has-subs { flex-wrap: wrap; }
+.mastery-list > li.open { grid-column: 1 / -1; }
 .mastery-icon {
   width: 34px;
   height: 34px;
@@ -88,3 +90,34 @@
 .mastery-line { display: flex; justify-content: space-between; gap: 6px; font-size: 0.9rem; }
 .mastery-bar { height: 6px; margin-top: 5px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
 .mastery-bar span { display: block; height: 100%; background: var(--c); border-radius: inherit; transition: width 0.5s ease; }
+.mastery-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.mastery-chevron { flex: none; color: var(--muted); transition: transform 0.15s ease; }
+.mastery-chevron.open { transform: rotate(90deg); }
+.mastery-subs {
+  flex: 1 1 100%;
+  list-style: none;
+  margin: 0 0 0 44px;
+  padding: 2px 0 0;
+  display: grid;
+  gap: 2px;
+}
+.mastery-subs li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.82rem;
+}
