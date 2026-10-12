@@ -31,7 +31,7 @@ export const woodpeckerWay = {
     },
     {
       type: 'quiz',
-      question: 'The Woodpecker Method asks you to solve the same puzzles again and again, faster each time. Why?',
+      question: 'Woodpecker Mode asks you to solve the same puzzles again and again, faster each time. Why?',
       options: [
         { text: 'So the patterns become automatic and you spot them in your own games', correct: true, why: 'Repetition moves patterns from "I have to work it out" to "I just see it" — which is exactly what you need with the clock running.' },
         { text: 'To memorise the exact positions for tournaments', why: 'The same positions almost never appear again. It\'s the patterns that repeat.' },

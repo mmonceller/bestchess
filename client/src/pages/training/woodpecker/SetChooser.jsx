@@ -12,8 +12,8 @@ export default function SetChooser({ trainer }) {
       <header className="trainer-head">
         <a className="orb small" href="#/training" aria-label="Back to Learn Chess"><Icon name="back" size={18} /></a>
         <div>
-          <h2 className="wp-title">Woodpecker Method</h2>
-          <p className="muted small wp-sub">Tactics from the book by Axel Smith and Hans Tikkanen, solved in cycles.</p>
+          <h2 className="wp-title">Woodpecker Mode</h2>
+          <p className="muted small wp-sub">Spaced repetition tactics training based on cycle-halving.</p>
         </div>
       </header>
 
@@ -51,6 +51,8 @@ export default function SetChooser({ trainer }) {
       </div>
 
       <WoodpeckerPrep recommended={recommended} />
+
+      <p className="wp-disclaimer">Inspired by the Woodpecker Method cycle training system. Not affiliated with or endorsed by Quality Chess or the book's authors.</p>
     </>
   );
 }

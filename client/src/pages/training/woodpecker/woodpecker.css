@@ -1,6 +1,13 @@
 .woodpecker { display: flex; flex-direction: column; gap: 12px; }
 .wp-title { margin: 0; font-size: 1.35rem; }
 .wp-sub { margin: 2px 0 0; }
+.wp-disclaimer {
+  margin: 4px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+  opacity: 0.85;
+}
 
 .wp-method { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; }
 .wp-method > .icon { color: var(--accent-2); flex: none; margin-top: 2px; }

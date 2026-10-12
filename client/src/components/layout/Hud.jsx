@@ -44,7 +44,7 @@ export default function Hud({ section, param }) {
               <Logo size={38} />
             </button>
             {SECTION_TITLE[section] && (
-              <span className="hud-title">{section === 'puzzles' && param === 'woodpecker' ? 'Woodpecker Method' : SECTION_TITLE[section]}</span>
+              <span className="hud-title">{section === 'puzzles' && param === 'woodpecker' ? 'Woodpecker Mode' : SECTION_TITLE[section]}</span>
             )}
           </div>
         )}

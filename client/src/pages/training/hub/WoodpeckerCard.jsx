@@ -11,11 +11,11 @@ export default function WoodpeckerCard({ trainer }) {
     <a className="puzzle-card card woodpecker-card" href={active ? `#/puzzles/woodpecker/${active.id}` : '#/puzzles/woodpecker'}>
       <span className="puzzle-card-icon"><Icon name="retry" size={30} /></span>
       <div className="puzzle-card-body">
-        <h3>Woodpecker Method</h3>
+        <h3>Woodpecker Mode</h3>
         <p className="muted small">
           {active
             ? `${active.name} set · cycle ${run.cycle} · ${run.index} of ${active.count} done.`
-            : `${total} classic tactics from the book by Smith and Tikkanen. Solve a set, then solve it again faster. Suggested start: ${recommendedSet(trainer.rating).name}.`}
+            : `${total} tactics with spaced repetition. Solve a set, then solve it again faster. Suggested start: ${recommendedSet(trainer.rating).name}.`}
         </p>
       </div>
       <span className="puzzle-card-cta">
