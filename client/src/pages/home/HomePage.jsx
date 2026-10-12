@@ -1,4 +1,8 @@
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useDaily } from '../../daily/DailyContext.jsx';
+import { usePendingGames } from '../../messages/usePendingGames.js';
+import { inboxUnread } from '../../messages/inbox.js';
+import { gameIsRead, useGameReadVersion } from '../../messages/readGames.js';
 import Icon from '../../components/icons/Icon.jsx';
 import Logo from '../../components/icons/Logo.jsx';
 import { MODES } from '../../components/layout/modes.js';
@@ -8,6 +12,10 @@ const FLOATING = ['knight', 'rook', 'pawn', 'bishop', 'queen', 'king'];
 
 export default function HomePage() {
   const { user } = useAuth();
+  const daily = useDaily();
+  useGameReadVersion();
+  const pending = usePendingGames('home').map((game) => ({ ...game, read: gameIsRead(game.id) }));
+  const messages = inboxUnread(daily?.data?.messages, pending);
   return (
     <div className="landing">
       <div className="landing-deco" aria-hidden="true">
@@ -33,7 +41,12 @@ export default function HomePage() {
 
       <footer className="landing-foot">
         {user
-          ? <>Signed in as <a href="#/profile">{user.username}</a></>
+          ? (
+            <span className="signed-in">
+              Signed in as <a href="#/profile">{user.username}</a>
+              {messages > 0 && <a className="home-msg" href="#/messages" aria-label={`${messages} unread message${messages === 1 ? '' : 's'}`}>{messages}</a>}
+            </span>
+          )
           : <a href="#/login">Log in</a>}
       </footer>
     </div>

@@ -1,0 +1,88 @@
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 640px;
+  margin: 0 auto;
+  height: calc(100dvh - var(--nav-h) - 56px);
+  min-height: 280px;
+}
+.messages h1, .message.pinned { margin: 0; flex: none; }
+.message.pinned h2 a:link,
+.message.pinned h2 a:visited { color: inherit; }
+.message.pinned h2 a:hover { color: var(--accent-2); }
+.message-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+.message h2 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.message h2 span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.message p { margin: 8px 0 0; }
+.message-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.message-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.message-chevron { flex: none; color: var(--muted); transition: transform 0.15s ease; }
+.message.open .message-chevron { transform: rotate(90deg); }
+.message-body { margin-top: 8px; }
+.message-when { display: block; color: var(--accent-2); font-size: 0.78rem; font-weight: 700; }
+.read-flag { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent-2); }
+.read-flag.is-read { color: var(--muted); }
+.message.fresh { border-color: color-mix(in srgb, var(--accent-2) 50%, var(--line)); }
+.message-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(79, 209, 197, 0.14);
+  border: 1px solid color-mix(in srgb, var(--accent-2) 55%, var(--line));
+  color: var(--accent-2);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+.message-action:link,
+.message-action:visited,
+.message-action:hover,
+.message-action:active { color: var(--accent-2); }
+.message-action:hover { background: rgba(79, 209, 197, 0.26); }
+.pin-goals { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.pin-goals a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 64px;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+  font-size: 0.86rem;
+  line-height: 1.2;
+}
+.pin-goals a:hover .pin-title { color: var(--accent-2); }
+.pin-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pin-count { color: var(--muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+.pin-goals a.done .pin-count { color: var(--good); font-weight: 700; }
+.pin-bar { height: 6px; border-radius: 99px; background: var(--bg-2); overflow: hidden; }
+.pin-bar span { display: block; height: 100%; border-radius: inherit; background: var(--accent-2); }
+.pin-goals a.done .pin-bar span { background: var(--good); }
+.pending-game { align-items: flex-start; }
+.pending-game .btn { margin-top: 10px; }
+@media (max-width: 560px) {
+  .message-top { flex-direction: column; gap: 4px; }
+  .message-when { text-align: left; }
+}

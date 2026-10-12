@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { SettingsProvider } from './context/SettingsContext.jsx';
+import { DailyProvider } from './daily/DailyContext.jsx';
 import './styles/base.css';
 import './styles/ui.css';
 
@@ -10,7 +11,9 @@ createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <SettingsProvider>
       <AuthProvider>
-        <App />
+        <DailyProvider>
+          <App />
+        </DailyProvider>
       </AuthProvider>
     </SettingsProvider>
   </React.StrictMode>,

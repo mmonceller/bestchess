@@ -1,4 +1,5 @@
 import { db } from '../../db/store.js';
+import { boardPatternList } from './boardMisses.js';
 import { gameValues, performanceRating, ratedGames, skillFor } from './skillRating.js';
 import { hintPercent } from './hintUsage.js';
 
@@ -26,10 +27,11 @@ function points(userId) {
  * (`applied`); on slips they describe the better move the player missed (`missed`).
  */
 function patterns(userId) {
-  const reviewed = db.games
-    .filter((g) => g.userId === userId && g.review?.moves?.length)
-    .sort((a, b) => b.date - a.date)
-    .slice(0, MAX_REVIEWS);
+  const mine = db.games
+    .filter((g) => g.userId === userId)
+    .sort((a, b) => b.date - a.date);
+  const reviewed = mine.filter((g) => g.review?.moves?.length).slice(0, MAX_REVIEWS);
+  const board = boardPatternList(mine.filter((g) => !g.review?.moves?.length && g.pgn));
   const stats = {};
   for (const g of reviewed) {
     const usedHere = new Set();
@@ -46,7 +48,32 @@ function patterns(userId) {
       }
     }
   }
-  return { reviewedGames: reviewed.length, list: Object.values(stats) };
+  return {
+    reviewedGames: reviewed.length,
+    scannedGames: board.games,
+    playedGames: mine.length,
+    board: board.list,
+    list: Object.values(stats),
+  };
+}
+
+function mergeLists(reviewed, board) {
+  const map = new Map();
+  for (const row of [...reviewed, ...board]) {
+    const prev = map.get(row.tag);
+    if (!prev) map.set(row.tag, { tag: row.tag, applied: row.applied || 0, missed: row.missed || 0 });
+    else {
+      prev.applied += row.applied || 0;
+      prev.missed += row.missed || 0;
+    }
+  }
+  return [...map.values()];
+}
+
+/* Pattern counts the daily report compares: reviewed-game tags plus loose pieces from unfinished reviews. */
+export function masterySnapshot(userId) {
+  const { list, board } = patterns(userId);
+  return mergeLists(list, board || []);
 }
 
 export function skillBreakdown(userId) {

@@ -1,5 +1,6 @@
 const LEGACY_KEY = 'bc.computerGame';
 const KEY = 'bc.computerGames';
+export const SAVED_GAMES_CHANGED = 'bc.computerGames.changed';
 
 export const MAX_BOT_GAMES = 5;
 
@@ -14,6 +15,7 @@ function readList() {
 
 function write(list) {
   localStorage.setItem(KEY, JSON.stringify(list));
+  window.dispatchEvent(new Event(SAVED_GAMES_CHANGED));
 }
 
 function withId(g) {

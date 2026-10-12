@@ -13,11 +13,11 @@ import './computer.css';
 
 const LEVEL_KEY = 'bc.lastLevel';
 
-export default function ComputerSetup({ onStart, onResume, onResign, saved = [], notice }) {
+export default function ComputerSetup({ onStart, onResume, onResign, saved = [], notice, preferredLevel = null }) {
   const { user } = useAuth();
   const recommended = user ? recommendedLevel(user.skill) : null;
-  const [level, setLevel] = useState(() => recommended || Number(localStorage.getItem(LEVEL_KEY)) || 3);
-  const [picked, setPicked] = useState(false);
+  const [level, setLevel] = useState(() => preferredLevel || recommended || Number(localStorage.getItem(LEVEL_KEY)) || 3);
+  const [picked, setPicked] = useState(() => preferredLevel != null);
   const [color, setColor] = useState('w');
   const now = useNow(1000);
 

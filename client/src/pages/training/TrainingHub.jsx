@@ -30,10 +30,10 @@ const MAX_TABS_PER_ROW = 7;
  * The track the player should focus on: the first track that fits their skill level (or,
  * without a skill rating, their chosen path), or the next one with unfinished lessons.
  */
-function recommendedTrack(startTrack, progress, tracks) {
+function recommendedTrack(startTrack, progress, tracks, lessonsFor) {
   const start = Math.max(0, tracks.findIndex((t) => t.id === startTrack));
   const ordered = [...tracks.slice(start), ...tracks.slice(0, start)];
-  return (ordered.find((t) => lessonsInTrack(t.id).some((l) => !progress[l.id])) || ordered[0]).id;
+  return (ordered.find((t) => lessonsFor(t.id).some((l) => !progress[l.id])) || ordered[0]).id;
 }
 
 export default function TrainingHub() {
@@ -49,24 +49,25 @@ export default function TrainingHub() {
     if (trainer && !trainer.path && !guestStorage.read(WELCOME_SEEN, false)) setWelcome(true);
   }, [trainer]);
 
+  const lessonsFor = lessonsInTrack;
   const tracks = TRACKS.filter((t) => !t.gated || mastery.visible);
   const playable = TRACKS.filter((t) => !t.gated || mastery.unlocked);
   const skillTracks = tracksForSkill(user?.skill);
   const startTrack = skillTracks?.find((id) => playable.some((t) => t.id === id)) || PATHS[trainer?.path]?.track;
   const recommended = useMemo(
-    () => (trainer && !progressLoading ? recommendedTrack(startTrack, progress, playable) : null),
+    () => (trainer && !progressLoading ? recommendedTrack(startTrack, progress, playable, lessonsFor) : null),
     [trainer, progress, progressLoading, playable.length, startTrack], // eslint-disable-line react-hooks/exhaustive-deps
   );
   const activeTrack = (trackId && tracks.some((t) => t.id === trackId) && trackId) || recommended || TRACKS[0].id;
   const track = TRACKS.find((t) => t.id === activeTrack);
   const locked = track.gated && !mastery.unlocked;
-  const lessons = lessonsInTrack(activeTrack);
+  const lessons = lessonsFor(activeTrack);
   const nextId = lessons.find((l) => !progress[l.id])?.id;
 
   if (!trainer) return <div className="center muted" style={{ padding: 40 }}>Loading your training…</div>;
 
   const stars = Object.values(progress).reduce((n, p) => n + (p.stars || 0), 0);
-  const maxStars = playable.reduce((n, t) => n + lessonsInTrack(t.id).length * 3, 0);
+  const maxStars = playable.reduce((n, t) => n + lessonsFor(t.id).length * 3, 0);
   const level = levelInfo(totalXp(progress, trainer));
 
   function closeWelcome() {
@@ -97,7 +98,7 @@ export default function TrainingHub() {
       <section className="worlds">
         <div className="world-tabs" role="tablist" style={{ '--tabs': tracks.length > MAX_TABS_PER_ROW ? Math.ceil(tracks.length / 2) : tracks.length }}>
           {tracks.map((t) => {
-            const list = lessonsInTrack(t.id);
+            const list = lessonsFor(t.id);
             const done = list.filter((l) => progress[l.id]).length;
             const isLocked = t.gated && !mastery.unlocked;
             return (

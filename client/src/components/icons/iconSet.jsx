@@ -36,6 +36,10 @@ export const ICONS = {
     <path {...line} strokeWidth="1.7" d="M20.6 9.6v5.8" />
     <circle cx="20.6" cy="16.6" r="1.4" />
   </>),
+  mail: (<>
+    <Duo d="M3.2 6.2A1.6 1.6 0 0 1 4.8 4.6h14.4a1.6 1.6 0 0 1 1.6 1.6v11.2a1.6 1.6 0 0 1-1.6 1.6H4.8a1.6 1.6 0 0 1-1.6-1.6Z" />
+    <path {...line} d="m4.2 7 7.8 5.6L19.8 7" />
+  </>),
   settings: (<>
     {gearTeeth}
     <path fillRule="evenodd" d="M12 4.6a7.4 7.4 0 1 0 0 14.8 7.4 7.4 0 0 0 0-14.8Zm0 4.4a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z" />

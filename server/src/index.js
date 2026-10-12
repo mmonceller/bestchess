@@ -10,9 +10,12 @@ import progressRoutes from './routes/progress.js';
 import trainerRoutes from './routes/trainer.js';
 import onlineRoutes from './routes/online.js';
 import skillRoutes from './routes/skill.js';
+import dailyRoutes from './routes/daily.js';
 import { attachSocketServer } from './online/socketServer.js';
+import { announceGoalPoints } from './services/daily/notices.js';
 
 const storage = await initStore();
+announceGoalPoints();
 
 const app = express();
 app.disable('x-powered-by');
@@ -25,6 +28,7 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/trainer', trainerRoutes);
 app.use('/api/online', onlineRoutes);
 app.use('/api/skill', skillRoutes);
+app.use('/api/daily', dailyRoutes);
 const startedAt = new Date().toISOString();
 app.get('/api/health', (req, res) => res.json({ ok: true, commit: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null, startedAt }));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));

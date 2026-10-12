@@ -55,7 +55,9 @@ export default function LessonComplete({ lesson, coach, result, nextLesson, onRe
             </a>
           )}
           <button className="btn icon-text" onClick={onRetry}><Icon name="retry" size={18} /> Play again</button>
-          <a className="btn ghost icon-text" href="#/training"><Icon name="map" size={18} /> Lesson map</a>
+          {lesson.track === 'tuneup'
+            ? <a className="btn ghost icon-text" href="#/goals"><Icon name="arrowRight" size={18} /> Back to today</a>
+            : <a className="btn ghost icon-text" href="#/training"><Icon name="map" size={18} /> Lesson map</a>}
         </div>
       </div>
     </GlossaryProvider>

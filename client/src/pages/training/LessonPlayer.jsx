@@ -1,5 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getLesson, LESSONS, TRACKS } from '../../training/lessons/index.js';
+import { TUNE_UP_ID } from '../../training/lessons/tuneup/shell.js';
+import { buildTuneUpLesson } from '../../training/lessons/tuneup/build.js';
+import { useGameMisses } from '../../training/lessons/tuneup/useGameMisses.js';
+import { useDaily } from '../../daily/DailyContext.jsx';
 import { getCoach } from '../../training/coaches.js';
 import { useProgress } from '../../training/progressStore.js';
 import { touchDay, useTrainer } from '../../training/trainerStore.js';
@@ -31,9 +35,16 @@ function initialMode(start, record) {
 }
 
 export default function LessonPlayer({ lessonId, start }) {
-  const lesson = getLesson(lessonId);
+  const isTune = lessonId === TUNE_UP_ID;
   const { progress, loading, complete, completeBonus } = useProgress();
   const { trainer, update: updateTrainer } = useTrainer();
+  const misses = useGameMisses(isTune);
+  const daily = useDaily();
+  const lesson = useMemo(() => {
+    if (!isTune) return getLesson(lessonId);
+    if (!trainer || !misses) return null;
+    return buildTuneUpLesson(trainer, misses, daily?.data?.report?.mastery);
+  }, [isTune, lessonId, trainer, misses, daily?.data?.report?.mastery]);
   const gated = Boolean(lesson && TRACKS.find((t) => t.id === lesson.track)?.gated);
   const mastery = useMastery(progress, trainer, gated);
   const [mode, setMode] = useState(null);
@@ -49,17 +60,21 @@ export default function LessonPlayer({ lessonId, start }) {
 
   useEffect(() => () => engine.cancel(), []);
   useEffect(() => {
-    if (!loading && lesson && mode === null) setMode(initialMode(start, progress[lesson.id]));
+    if (loading || mode !== null || !lesson) return;
+    setMode(initialMode(start, progress[lesson.id]));
   }, [loading, lesson, mode, start, progress]);
 
   const onMistake = useCallback(() => setMistakes((m) => m + 1), []);
   const onHint = useCallback(() => setHints((h) => h + 1), []);
 
+  if (isTune && !lesson) {
+    return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>;
+  }
   if (!lesson) {
     return (
       <div className="card center" style={{ maxWidth: 420, margin: '30px auto' }}>
         <h2>Lesson not found</h2>
-        <a className="btn primary" href="#/training">Back to training</a>
+        <a className="btn primary" href="#/goals">Back to today</a>
       </div>
     );
   }

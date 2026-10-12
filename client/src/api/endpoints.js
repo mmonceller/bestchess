@@ -33,6 +33,11 @@ export const onlineApi = {
   withdrawResign: (code, saved) => api('/online/resign-withdraw', { method: 'POST', body: { code, saved } }),
 };
 
+export const dailyApi = {
+  today: (day, since) => api(`/daily?day=${day}&since=${since}`),
+  read: (id) => api('/daily/read', { method: 'POST', body: { id } }),
+};
+
 export const trainerApi = {
   get: () => api('/trainer'),
   save: (trainer) => api('/trainer', { method: 'PUT', body: { trainer } }),

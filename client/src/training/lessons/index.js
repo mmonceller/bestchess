@@ -25,8 +25,13 @@ export const TRACKS = [
 export const LESSONS = [...firstStepsLessons, ...beginnerLessons, ...intermediateLessons, ...tacticsLessons, ...advancedLessons, ...strategyLessons, ...endgameLessons, ...masterLessons, ...masterThinkingLessons]
   .map((lesson) => ({ ...lesson, bonus: BONUS[lesson.id] || [] }));
 
-/* Every lesson outside the gated tracks — finishing all of them is the first step to Master Class. */
-export const CORE_LESSONS = LESSONS.filter((l) => !TRACKS.find((t) => t.id === l.track)?.gated);
+const trackOf = (id) => TRACKS.find((t) => t.id === id);
+
+/* Every lesson outside the gated and supplementary tracks — finishing all of them is the first step to Master Class. */
+export const CORE_LESSONS = LESSONS.filter((l) => {
+  const track = trackOf(l.track);
+  return !track?.gated && !track?.supplement;
+});
 
 export const getLesson = (id) => LESSONS.find((l) => l.id === id);
 export const lessonsInTrack = (trackId) => LESSONS.filter((l) => l.track === trackId);

@@ -21,13 +21,18 @@ export function formatDate(ts) {
   return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-/* Time of day, plus the date when it isn't today: "3:21 PM" or "Oct 11, 3:21 PM". */
-export function formatDateTime(ts, { seconds = false } = {}) {
+/* Time of day, plus the date when it isn't today: "3:21 PM" or "Oct 11, 3:21 PM". `date: 'always'` keeps the year too. */
+export function formatDateTime(ts, { seconds = false, date = 'auto' } = {}) {
   if (!ts) return '';
   const d = new Date(ts);
   const time = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', ...(seconds ? { second: '2-digit' } : {}) });
-  if (d.toDateString() === new Date().toDateString()) return time;
-  return `${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${time}`;
+  if (date !== 'always' && d.toDateString() === new Date().toDateString()) return time;
+  const day = d.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    ...(date === 'always' ? { year: 'numeric' } : {}),
+  });
+  return `${day}, ${time}`;
 }
 
 export function formatScore(score, turn) {

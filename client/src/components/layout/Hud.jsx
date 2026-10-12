@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useDaily } from '../../daily/DailyContext.jsx';
+import { usePendingGames } from '../../messages/usePendingGames.js';
+import { inboxUnread } from '../../messages/inbox.js';
+import { gameIsRead, useGameReadVersion } from '../../messages/readGames.js';
 import Icon from '../icons/Icon.jsx';
 import Logo from '../icons/Logo.jsx';
 import SettingsModal from './SettingsModal.jsx';
@@ -14,6 +18,8 @@ const SECTION_TITLE = {
   training: 'Learn Chess',
   puzzles: 'Pattern Trainer',
   profile: 'My Profile',
+  goals: 'Today',
+  messages: 'Messages',
   review: 'Game Review',
   replay: 'Game Review',
   login: 'Account',
@@ -23,6 +29,10 @@ const SECTION_TITLE = {
 /* Floating game-style controls instead of a website header: a home orb with a quick-jump menu, plus settings and profile. */
 export default function Hud({ section, param }) {
   const { user } = useAuth();
+  const daily = useDaily();
+  useGameReadVersion();
+  const pending = usePendingGames(`${section}/${param}`).map((game) => ({ ...game, read: gameIsRead(game.id) }));
+  const notices = user ? inboxUnread(daily?.data?.messages, pending) : 0;
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const isHome = !section;
@@ -50,6 +60,12 @@ export default function Hud({ section, param }) {
         )}
         <div className="hud-right">
           <ResumeGameButton currentCode={section === 'online' ? param?.toUpperCase() : null} refreshKey={`${section}/${param}`} />
+          {user && (
+            <a className="orb orb-mail" href="#/messages" aria-label={notices ? `Messages, ${notices} unread` : 'Messages'}>
+              <Icon name="mail" size={20} />
+              {notices > 0 && <span className="orb-count">{notices > 9 ? '9+' : notices}</span>}
+            </a>
+          )}
           <button className="orb" onClick={() => setShowSettings(true)} aria-label="Settings"><Icon name="settings" size={20} /></button>
           {user && <UserEmblem user={user} href="#/profile" />}
         </div>

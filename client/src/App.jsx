@@ -11,6 +11,8 @@ const LessonPlayer = lazy(() => import('./pages/training/LessonPlayer.jsx'));
 const PatternTrainer = lazy(() => import('./pages/training/patterns/PatternTrainer.jsx'));
 const WoodpeckerPage = lazy(() => import('./pages/training/woodpecker/WoodpeckerPage.jsx'));
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage.jsx'));
+const GoalsPage = lazy(() => import('./pages/goals/GoalsPage.jsx'));
+const MessagesPage = lazy(() => import('./pages/messages/MessagesPage.jsx'));
 const GameReviewPage = lazy(() => import('./pages/review/GameReviewPage.jsx'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage.jsx'));
 const TermsPage = lazy(() => import('./pages/terms/TermsPage.jsx'));
@@ -18,15 +20,19 @@ const TermsPage = lazy(() => import('./pages/terms/TermsPage.jsx'));
 function Page({ route }) {
   const [section, param] = route.path;
   switch (section) {
-    case 'computer': return <PlayComputerPage />;
+    case 'computer': return <PlayComputerPage resumeId={route.query.get('resume')} levelId={route.query.get('level')} />;
     case 'online': return <OnlinePage code={param} key={param || 'lobby'} />;
     case 'training': {
       const start = route.query.get('start');
       return param ? <LessonPlayer lessonId={param} start={start} key={`${param}-${start || ''}`} /> : <TrainingHub />;
     }
     case 'puzzles':
-      return param === 'woodpecker' ? <WoodpeckerPage setId={route.path[2]} /> : <PatternTrainer />;
+      return param === 'woodpecker'
+        ? <WoodpeckerPage setId={route.path[2]} />
+        : <PatternTrainer focusId={route.query.get('focus')} key={route.query.get('focus') || 'all'} />;
     case 'profile': return <ProfilePage />;
+    case 'goals': return <GoalsPage />;
+    case 'messages': return <MessagesPage />;
     case 'review':
     case 'replay':
       return (

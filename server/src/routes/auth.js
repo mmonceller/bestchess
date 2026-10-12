@@ -5,6 +5,7 @@ import { userView } from '../services/userView.js';
 import { hashPassword, verifyPassword } from '../auth/password.js';
 import { createSession, destroySession } from '../auth/sessions.js';
 import { requireAuth, bearerToken } from '../middleware/auth.js';
+import { ensureGoalPointNotice } from '../services/daily/notices.js';
 
 const router = Router();
 const USERNAME = /^[a-zA-Z0-9_]{3,20}$/;
@@ -39,6 +40,8 @@ router.post('/register', (req, res) => {
     createdAt: Date.now(),
   };
   db.users.push(user);
+  if (!db.daily) db.daily = {};
+  ensureGoalPointNotice((db.daily[user.id] ||= { points: 0, messages: [], days: {} }));
   save();
   res.json({ token: createSession(user.id), user: userView(user) });
 });
