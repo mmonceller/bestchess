@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Chess } from 'chess.js';
 import { kingSquare } from '../../../../components/board/pieces.js';
 import { useSteppedPly } from '../../../../components/game/replay/useSteppedPly.js';
-import { fetchContinuation, wantsSimulation } from '../../../../training/woodpecker/simulate/index.js';
+import { fetchContinuation, needsBookLine, wantsSimulation, withPlannedLine } from '../../../../training/woodpecker/simulate/index.js';
 
 const STEP_MS = 2200;
 const OPEN_MS = 1400;
@@ -11,13 +11,19 @@ const OPEN_MS = 1400;
  * After a Woodpecker solve, optionally walks one continuation on the same board.
  * Continuation is fetched on the eval worker so grading is not delayed.
  */
-export function useSimulate(puzzle) {
+export function useSimulate(puzzle, playerFen) {
   const [data, setData] = useState(null);
   const [open, setOpen] = useState(false);
   const [ply, setPly] = useState(0);
   const [playing, setPlaying] = useState(false);
   const { shown, moveMs, jump } = useSteppedPly(ply);
-  const last = (data?.frames.length || 1) - 1;
+  const includeBook = needsBookLine(playerFen, puzzle);
+  const bundled = useMemo(() => {
+    if (!data) return null;
+    if (!includeBook) return { ...data, includesBook: false };
+    return withPlannedLine(puzzle, data);
+  }, [data, includeBook, puzzle]);
+  const last = (bundled?.frames.length || 1) - 1;
 
   useEffect(() => {
     setData(null);
@@ -32,7 +38,7 @@ export function useSimulate(puzzle) {
   }, [puzzle, jump]);
 
   useEffect(() => {
-    if (!open || !playing || !data) return undefined;
+    if (!open || !playing || !bundled) return undefined;
     if (shown !== ply) return undefined;
     if (ply >= last) {
       setPlaying(false);
@@ -40,7 +46,7 @@ export function useSimulate(puzzle) {
     }
     const timer = setTimeout(() => setPly((p) => p + 1), ply === 0 ? OPEN_MS : STEP_MS);
     return () => clearTimeout(timer);
-  }, [open, playing, ply, shown, last, data]);
+  }, [open, playing, ply, shown, last, bundled]);
 
   const openIt = useCallback(() => {
     jump(0);
@@ -67,7 +73,7 @@ export function useSimulate(puzzle) {
     setPlaying(true);
   }, [jump]);
 
-  const frame = data?.frames[shown];
+  const frame = bundled?.frames[shown];
   const view = useMemo(() => {
     if (!open || !frame) return null;
     const chess = new Chess(frame.fen);
@@ -82,7 +88,8 @@ export function useSimulate(puzzle) {
   }, [open, frame, moveMs]);
 
   return {
-    ready: Boolean(data),
+    ready: Boolean(bundled),
+    includesBook: Boolean(bundled?.includesBook),
     open,
     playing,
     ply,

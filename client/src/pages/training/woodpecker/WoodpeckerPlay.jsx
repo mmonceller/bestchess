@@ -38,7 +38,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const [xp, setXp] = useState(null);
   const timers = useRef([]);
   const alive = useRef(true);
-  const sim = useSimulate(puzzle);
+  const sim = useSimulate(puzzle, alt?.fen || null);
   const [solutionOpen, setSolutionOpen] = useState(true);
 
   useEffect(() => {
@@ -142,7 +142,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
     if (solvesPuzzle(graded, { mate: puzzle.goal === 'mate' })) {
       setBusy(false);
       const [bookSan] = uciLineToSan(Chess, before, [expected]);
-      setAlt({ played: mv.san, book: bookSan });
+      setAlt({ played: mv.san, book: bookSan, fen: game.chess.fen() });
       settleAlternative(alternativeNote(mv.san, bookSan));
       return;
     }

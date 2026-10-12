@@ -23,7 +23,7 @@ export default function SimulateStrip({ sim }) {
   return (
     <div className="wp-sim">
       <div className="wp-sim-head">
-        <span className="muted small">One possible continuation</span>
+        <span className="muted small">{sim.includesBook ? 'The planned idea, then one continuation' : 'One possible continuation'}</span>
         <button type="button" className="btn link" onClick={sim.close}>Close</button>
       </div>
       {mv && (

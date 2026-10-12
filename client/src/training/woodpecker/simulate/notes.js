@@ -1,5 +1,16 @@
 const PIECE = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
 
+export function altStartNote() {
+  return 'You found another way. Here is the planned idea, then one possible continuation:';
+}
+
+export function bookMoveNote(move, { ours, first, onlyBefore }) {
+  if (first && ours) return `The planned idea starts with [[${move.san}]].`;
+  if (!ours && onlyBefore) return `Forced. They play [[${move.san}]].`;
+  if (!ours) return `They answer [[${move.san}]].`;
+  return `Then [[${move.san}]] is the planned follow-up.`;
+}
+
 export function startNote(last, willRecapture) {
   if (willRecapture) {
     const gift = PIECE[last?.piece] || 'piece';
