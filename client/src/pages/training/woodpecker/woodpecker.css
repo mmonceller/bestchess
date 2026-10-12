@@ -35,6 +35,18 @@
 .wp-progress { height: 5px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
 .wp-progress span { display: block; height: 100%; border-radius: inherit; transition: width 0.4s ease; }
 
+.wp-steps { display: flex; flex-direction: column; gap: 5px; }
+.wp-steps-bar { display: flex; gap: 4px; }
+.wp-steps-bar span {
+  flex: 1;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--panel-2);
+  transition: background 0.3s ease;
+}
+.wp-steps-bar span.done { background: var(--good, #3ccf7a); }
+.wp-steps-bar span.current { background: linear-gradient(90deg, var(--good, #3ccf7a), var(--panel-2)); }
+
 .wp-solution {
   display: flex;
   flex-direction: column;
@@ -47,6 +59,7 @@
 .wp-solution b { font-size: 1rem; line-height: 1.6; }
 .wp-solution .move-line { display: inline; white-space: normal; }
 .wp-aim { margin: 6px 0 0; font-size: 0.88rem; line-height: 1.45; color: var(--text); }
+.wp-alt { margin: 0 0 4px; font-size: 0.88rem; line-height: 1.45; font-weight: 400; }
 .wp-guide { align-self: flex-start; margin-left: -8px; }
 .wp-actions { display: flex; gap: 8px; }
 .wp-actions > .btn:not(.block) { flex: 1; }

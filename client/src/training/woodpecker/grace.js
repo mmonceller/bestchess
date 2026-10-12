@@ -10,9 +10,9 @@ export const isMultiStep = (puzzle) => playerMoveCount(puzzle?.moves) >= 2;
 
 export const inGraceWindow = (puzzle, ply) => isMultiStep(puzzle) && ply < GRACE_PLAYER_MOVES * 2;
 
-export function graceNote(san, ply, why = '') {
+export function graceNote(san, ply) {
   const slip = ply === 0
-    ? `[[${san}]] isn't the key move.`
-    : `[[${san}]] lets the advantage slip.`;
-  return `${slip}${why} Take it back — try again, or show the solution.`;
+    ? `[[${san}]] isn't the idea.`
+    : `[[${san}]] isn't the idea — the advantage slips.`;
+  return `${slip} Take it back — try again, or show the solution.`;
 }

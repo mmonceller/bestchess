@@ -7,9 +7,10 @@ import { engine } from '../../../engine/engineClient.js';
 import { Chess } from 'chess.js';
 import { toUci, uciLineToSan } from '../../../chess/status.js';
 import { solvesPuzzle } from '../../../training/puzzles/judgeMove.js';
-import { findRefutation, refutationText } from '../../../training/puzzles/refutation/index.js';
 import { graceNote, inGraceWindow } from '../../../training/woodpecker/grace.js';
+import { alternativeCaption, alternativeNote } from '../../../training/woodpecker/alternativeNote.js';
 import MoveLine from '../../../components/notation/MoveLine.jsx';
+import MoveText from '../../../components/notation/MoveText.jsx';
 import NotationGuideButton from '../../../components/notation/NotationGuideButton.jsx';
 import { firstMoveHint, goalText } from '../../../training/woodpecker/describe.js';
 import { goalAside } from '../../../training/woodpecker/aim.js';
@@ -17,6 +18,7 @@ import { playMoveSound, sounds } from '../../../utils/sound.js';
 import PuzzleThemes from './themes/PuzzleThemes.jsx';
 import PlayActions from './play/PlayActions.jsx';
 import AimNote from './play/AimNote.jsx';
+import StepProgress from './play/StepProgress.jsx';
 
 /*
  * One Woodpecker exercise. Any move the engine says also solves it counts (any mate in a mate
@@ -33,6 +35,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const [hinted, setHinted] = useState(false);
   const [retry, setRetry] = useState(false);
   const [note, setNote] = useState(null);
+  const [alt, setAlt] = useState(null);
   const [xp, setXp] = useState(null);
   const timers = useRef([]);
   const alive = useRef(true);
@@ -136,24 +139,18 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
     if (!alive.current) return;
     if (solvesPuzzle(graded, { mate: puzzle.goal === 'mate' })) {
       setBusy(false);
-      if (ply === 0) {
-        const [key] = uciLineToSan(Chess, before, [expected]);
-        settleAlternative(`That works too! The book's key move was [[${key}]] — have a look at the solution.`);
-      } else {
-        finishLine();
-      }
+      const [bookSan] = uciLineToSan(Chess, before, [expected]);
+      setAlt({ played: mv.san, book: bookSan });
+      settleAlternative(alternativeNote(mv.san, bookSan));
       return;
     }
-    const refutation = await findRefutation(game.fen, mv);
-    if (!alive.current) return;
-    const why = refutationText(refutation, me === 'w' ? 'Black' : 'White');
     if (inGraceWindow(puzzle, ply)) {
-      takeBack(graceNote(mv.san, ply, why));
+      takeBack(graceNote(mv.san, ply));
       return;
     }
     miss(ply === 0
-      ? `[[${mv.san}]] isn't the key move.${why} The blue arrow shows it — play it through.`
-      : `[[${mv.san}]] lets the advantage slip.${why} The blue arrow shows the continuation.`);
+      ? `[[${mv.san}]] isn't the idea. The blue arrow shows the move — play it through.`
+      : `[[${mv.san}]] isn't the idea. The blue arrow shows the continuation.`);
   }
 
   function giveUp() {
@@ -167,6 +164,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const arrows = showAnswer ? [{ from: expected.slice(0, 2), to: expected.slice(2, 4), color: 'blue' }] : undefined;
   const canMove = !busy && (status === 'solving' || status === 'failed') && game.turn === me;
   const done = status !== 'solving';
+  const altCaption = alt ? alternativeCaption(alt.played, alt.book) : null;
 
   return (
     <div className="game-layout puzzle-play fade-in">
@@ -191,6 +189,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
           </div>
           <span className="badge puzzle-level" title="Rough difficulty">{puzzle.rating}</span>
         </div>
+        <StepProgress puzzle={puzzle} ply={ply} complete={status === 'solved' || status === 'reviewed'} />
 
         {hinted && !done && (
           <div className="puzzle-question"><Icon name="hint" size={22} /><div><p>{firstMoveHint(puzzle)}</p><PuzzleThemes puzzle={puzzle} hint /></div></div>
@@ -200,6 +199,9 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
         {done && (
           <div className="wp-solution pop-in">
             <span className="muted small">Solution</span>
+            {altCaption && (
+              <p className="wp-alt"><MoveText>{altCaption}</MoveText></p>
+            )}
             <b><MoveLine fen={puzzle.fen} moves={puzzle.moves} /></b>
             <AimNote puzzle={puzzle} />
             {puzzle.game && <span className="muted small">{puzzle.game}</span>}
