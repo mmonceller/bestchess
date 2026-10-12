@@ -8,16 +8,19 @@ import { Chess } from 'chess.js';
 import { toUci, uciLineToSan } from '../../../chess/status.js';
 import { solvesPuzzle } from '../../../training/puzzles/judgeMove.js';
 import { findRefutation, refutationText } from '../../../training/puzzles/refutation/index.js';
+import { graceNote, inGraceWindow } from '../../../training/woodpecker/grace.js';
 import MoveLine from '../../../components/notation/MoveLine.jsx';
 import NotationGuideButton from '../../../components/notation/NotationGuideButton.jsx';
 import { firstMoveHint, goalText } from '../../../training/woodpecker/describe.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
 import PuzzleThemes from './themes/PuzzleThemes.jsx';
+import PlayActions from './play/PlayActions.jsx';
 
 /*
  * One Woodpecker exercise. Any move the engine says also solves it counts (any mate in a mate
  * puzzle); a different key move ends the exercise as solved and shows the book's line. A hint
- * or a miss counts as unsolved for the cycle, and the solution can then be played through.
+ * or a miss counts as unsolved for the cycle. On a multi-step line, a wrong move in the first
+ * few turns is taken back so the player can try again or show the solution.
  */
 export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const game = useChessGame(puzzle.fen);
@@ -26,6 +29,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   const [status, setStatus] = useState('solving');
   const [busy, setBusy] = useState(false);
   const [hinted, setHinted] = useState(false);
+  const [retry, setRetry] = useState(false);
   const [note, setNote] = useState(null);
   const [xp, setXp] = useState(null);
   const timers = useRef([]);
@@ -37,7 +41,13 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   }, []);
   const later = (fn, ms) => timers.current.push(setTimeout(() => { if (alive.current) fn(); }, ms));
 
+  function clearTimers() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  }
+
   function settle(solved, tone, text, final = solved ? 'solved' : 'failed') {
+    setRetry(false);
     setXp(onResult({ solved }).xp);
     setStatus(final);
     setNote({ tone, text });
@@ -63,6 +73,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
   function advance(onMainLine) {
     const reply = puzzle.moves[ply + 1];
     if (!onMainLine || !reply) { finishLine(); return; }
+    setRetry(false);
     setBusy(true);
     if (status === 'solving') setNote({ tone: 'good', text: 'Right! Keep going…' });
     later(() => {
@@ -72,10 +83,28 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
     }, 500);
   }
 
-  function miss(text) {
-    settle(false, 'bad', text);
+  function undoSoon() {
     setBusy(true);
     later(() => { game.undo(); setBusy(false); }, 700);
+  }
+
+  function miss(text) {
+    settle(false, 'bad', text);
+    undoSoon();
+  }
+
+  function takeBack(text) {
+    setRetry(true);
+    setNote({ tone: 'ok', text });
+    sounds.bad();
+    undoSoon();
+  }
+
+  function tryAgain() {
+    clearTimers();
+    if (game.turn !== me) game.undo();
+    setBusy(false);
+    setNote({ tone: 'ok', text: 'Have another look. The winning idea is still there.' });
   }
 
   async function onMove(m) {
@@ -98,6 +127,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
       return;
     }
     setBusy(true);
+    setRetry(false);
     setNote({ tone: 'ok', text: 'Checking your move…' });
     let graded = null;
     try { graded = await engine.grade(before, uci, 1500, expected); } catch { /* treat as a miss */ }
@@ -114,14 +144,19 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
     }
     const refutation = await findRefutation(game.fen, mv);
     if (!alive.current) return;
-    setBusy(false);
     const why = refutationText(refutation, me === 'w' ? 'Black' : 'White');
+    if (inGraceWindow(puzzle, ply)) {
+      takeBack(graceNote(mv.san, ply, why));
+      return;
+    }
     miss(ply === 0
       ? `[[${mv.san}]] isn't the key move.${why} The blue arrow shows it — play it through.`
       : `[[${mv.san}]] lets the advantage slip.${why} The blue arrow shows the continuation.`);
   }
 
   function giveUp() {
+    clearTimers();
+    if (status === 'solving' && game.turn !== me) game.undo();
     settle(false, 'bad', 'Here is the solution — play the blue arrows.');
   }
 
@@ -174,21 +209,16 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
         )}
 
         <div className="step-actions wp-actions">
-          {done ? (
-            <button className="btn primary block icon-text" onClick={onNext} autoFocus>
-              Next exercise <Icon name="arrowRight" size={18} />
-            </button>
-          ) : (
-            <>
-              <button className="btn icon-text" onClick={() => setHinted(true)} disabled={hinted || busy}
-                title="Using the hint counts this exercise as a miss">
-                <Icon name="hint" size={18} /> Hint
-              </button>
-              <button className="btn icon-text" onClick={giveUp} disabled={busy}>
-                <Icon name="eye" size={18} /> Show solution
-              </button>
-            </>
-          )}
+          <PlayActions
+            done={done}
+            busy={busy}
+            hinted={hinted}
+            retry={retry}
+            onHint={() => setHinted(true)}
+            onGiveUp={giveUp}
+            onTryAgain={tryAgain}
+            onNext={onNext}
+          />
         </div>
       </aside>
     </div>
