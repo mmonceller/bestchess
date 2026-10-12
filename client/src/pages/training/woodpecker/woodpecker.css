@@ -46,6 +46,7 @@
 }
 .wp-solution b { font-size: 1rem; line-height: 1.6; }
 .wp-solution .move-line { display: inline; white-space: normal; }
+.wp-aim { margin: 6px 0 0; font-size: 0.88rem; line-height: 1.45; color: var(--text); }
 .wp-guide { align-self: flex-start; margin-left: -8px; }
 .wp-actions { display: flex; gap: 8px; }
 .wp-actions > .btn:not(.block) { flex: 1; }

@@ -10,7 +10,7 @@ export const sideName = (fen) => (fen.split(' ')[1] === 'w' ? 'White' : 'Black')
 export function goalText(puzzle) {
   const side = sideName(puzzle.fen);
   if (puzzle.goal === 'mate') return `${side} to play and mate.`;
-  return puzzle.moves.length > 1 ? `${side} to play — find the strongest line.` : `${side} to play — find the strongest move.`;
+  return puzzle.moves.length > 1 ? `${side} to play — find the winning line.` : `${side} to play — find the winning move.`;
 }
 
 export const firstMoveHint = (puzzle) => FIRST_MOVE[puzzle.first] || FIRST_MOVE.quiet;

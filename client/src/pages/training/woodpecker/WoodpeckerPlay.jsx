@@ -12,9 +12,11 @@ import { graceNote, inGraceWindow } from '../../../training/woodpecker/grace.js'
 import MoveLine from '../../../components/notation/MoveLine.jsx';
 import NotationGuideButton from '../../../components/notation/NotationGuideButton.jsx';
 import { firstMoveHint, goalText } from '../../../training/woodpecker/describe.js';
+import { goalAside } from '../../../training/woodpecker/aim.js';
 import { playMoveSound, sounds } from '../../../utils/sound.js';
 import PuzzleThemes from './themes/PuzzleThemes.jsx';
 import PlayActions from './play/PlayActions.jsx';
+import AimNote from './play/AimNote.jsx';
 
 /*
  * One Woodpecker exercise. Any move the engine says also solves it counts (any mate in a mate
@@ -185,7 +187,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
           <span className={`turn-dot ${me === 'w' ? 'white' : 'black'}`} />
           <div>
             <b>{goalText(puzzle)}</b>
-            <div className="muted small">Exercise {puzzle.n}</div>
+            <div className="muted small">{goalAside(puzzle)}</div>
           </div>
           <span className="badge puzzle-level" title="Rough difficulty">{puzzle.rating}</span>
         </div>
@@ -199,6 +201,7 @@ export default function WoodpeckerPlay({ puzzle, onResult, onNext }) {
           <div className="wp-solution pop-in">
             <span className="muted small">Solution</span>
             <b><MoveLine fen={puzzle.fen} moves={puzzle.moves} /></b>
+            <AimNote puzzle={puzzle} />
             {puzzle.game && <span className="muted small">{puzzle.game}</span>}
             <PuzzleThemes puzzle={puzzle} />
             <NotationGuideButton className="wp-guide" />
