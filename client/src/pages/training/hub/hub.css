@@ -85,6 +85,13 @@ button.link { background: none; border: 0; padding: 0; cursor: pointer; font: in
 }
 .terms-card .puzzle-card-icon { color: #0b2a18; background: linear-gradient(135deg, #3ccf7a, #9be8b4); }
 .terms-card .puzzle-card-cta { color: var(--good); }
+.puzzle-card-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
 .puzzle-card-body { flex: 1; min-width: 0; }
 .puzzle-card-body h3 { margin: 0 0 2px; }
 .puzzle-card-body p { margin: 0 0 8px; }
@@ -100,8 +107,9 @@ button.link { background: none; border: 0; padding: 0; cursor: pointer; font: in
   opacity: 0.6;
 }
 .pattern-dots span.on { opacity: 1; color: var(--c); background: color-mix(in srgb, var(--c) 18%, var(--bg-2)); }
-.puzzle-card-cta { display: flex; flex-direction: column; align-items: center; color: var(--accent-2); }
+.puzzle-card-cta { display: flex; flex-direction: column; align-items: center; flex: none; color: var(--accent-2); }
 .puzzle-card-cta b { font-size: 1.3rem; color: var(--text); }
+a.puzzle-card-cta { padding: 4px 2px 4px 8px; }
 
 /* ---------- Worlds (tracks) ---------- */
 .worlds { display: flex; flex-direction: column; align-items: center; container: worlds / inline-size; }
@@ -334,4 +342,5 @@ button.link { background: none; border: 0; padding: 0; cursor: pointer; font: in
 @media (max-width: 560px) {
   .hud-path { position: static; grid-column: 1 / -1; justify-self: start; }
   .puzzle-card-cta { display: none; }
+  .woodpecker-card .puzzle-card-cta { display: flex; }
 }
