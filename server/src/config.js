@@ -11,4 +11,11 @@ export const config = {
   clientDist: path.resolve(root, '..', 'client', 'dist'),
   sessionTtlMs: 1000 * 60 * 60 * 24 * 30,
   roomIdleMs: 1000 * 60 * 60 * 6,
+  adminUser: oneAdminUser(process.env.ADMIN_USER),
 };
+
+/* One username. A list, or anything that is not a real username, leaves the page locked. */
+function oneAdminUser(value) {
+  const name = String(value || '').trim().toLowerCase();
+  return /^[a-z0-9_]{3,20}$/.test(name) ? name : '';
+}

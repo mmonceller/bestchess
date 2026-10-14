@@ -2,8 +2,9 @@ import { MongoClient } from 'mongodb';
 
 /*
  * Stores each record of the in-memory database as its own MongoDB document ({ _id, v }).
- * Lists are keyed by their `id`, maps by their object key. Each write only sends the
- * records that changed since the last successful write.
+ * Lists are keyed by their `id`, maps by their object key. `daily` is one document per
+ * account: the goal-point balance, each day's plan, and the inbox. Each write only
+ * sends the records that changed since the last successful write.
  */
 const COLLECTIONS = {
   users: { list: true, order: 'createdAt' },
@@ -11,6 +12,7 @@ const COLLECTIONS = {
   sessions: { list: false },
   progress: { list: false },
   trainer: { list: false },
+  daily: { list: false },
 };
 
 const entriesOf = (spec, value) => (spec.list
@@ -41,6 +43,8 @@ export async function createMongoBackend(uri, dbName) {
     },
 
     async write(data) {
+      const skipped = Object.keys(data).filter((key) => !COLLECTIONS[key]);
+      if (skipped.length) console.error('MongoDB skipped unsaved data:', skipped.join(', '));
       for (const [name, spec] of Object.entries(COLLECTIONS)) {
         const prev = saved[name];
         const next = new Map();

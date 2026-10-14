@@ -11,6 +11,7 @@ import trainerRoutes from './routes/trainer.js';
 import onlineRoutes from './routes/online.js';
 import skillRoutes from './routes/skill.js';
 import dailyRoutes from './routes/daily.js';
+import adminRoutes from './routes/admin.js';
 import { attachSocketServer } from './online/socketServer.js';
 import { announceGoalPoints } from './services/daily/notices.js';
 
@@ -29,6 +30,7 @@ app.use('/api/trainer', trainerRoutes);
 app.use('/api/online', onlineRoutes);
 app.use('/api/skill', skillRoutes);
 app.use('/api/daily', dailyRoutes);
+app.use('/api/admin', adminRoutes);
 const startedAt = new Date().toISOString();
 app.get('/api/health', (req, res) => res.json({ ok: true, commit: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null, startedAt }));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));

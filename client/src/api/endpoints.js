@@ -38,6 +38,11 @@ export const dailyApi = {
   read: (id) => api('/daily/read', { method: 'POST', body: { id } }),
 };
 
+export const adminApi = {
+  users: () => api('/admin/users'),
+  setGoalPoints: (id, points) => api(`/admin/users/${id}/goal-points`, { method: 'PUT', body: { points } }),
+};
+
 export const trainerApi = {
   get: () => api('/trainer'),
   save: (trainer) => api('/trainer', { method: 'PUT', body: { trainer } }),

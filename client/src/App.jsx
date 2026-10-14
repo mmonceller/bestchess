@@ -16,6 +16,7 @@ const MessagesPage = lazy(() => import('./pages/messages/MessagesPage.jsx'));
 const GameReviewPage = lazy(() => import('./pages/review/GameReviewPage.jsx'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage.jsx'));
 const TermsPage = lazy(() => import('./pages/terms/TermsPage.jsx'));
+const AdminPage = lazy(() => import('./pages/admin/AdminPage.jsx'));
 
 function Page({ route }) {
   const [section, param] = route.path;
@@ -45,6 +46,7 @@ function Page({ route }) {
       );
     case 'login': return <AuthPage next={route.query.get('next')} />;
     case 'terms': return <TermsPage termId={param} query={route.query.get('q') || ''} key={`${param || ''}-${route.query.get('q') || ''}`} />;
+    case 'admin': return <AdminPage />;
     default: return <HomePage />;
   }
 }

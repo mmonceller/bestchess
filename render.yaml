@@ -15,3 +15,5 @@ services:
         sync: false
       - key: MONGODB_DB
         value: bestchess
+      - key: ADMIN_USER
+        sync: false

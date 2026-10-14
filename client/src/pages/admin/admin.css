@@ -1,0 +1,36 @@
+.admin { display: flex; flex-direction: column; gap: 14px; max-width: 920px; margin: 0 auto; }
+.admin-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+.admin-head h1, .admin-user h2, .admin-gate h1 { margin: 0; }
+.admin-search { display: flex; flex-direction: column; gap: 4px; min-width: min(100%, 220px); }
+.admin-user { display: flex; flex-direction: column; gap: 12px; }
+.admin-user-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.admin-user-head p { margin: 2px 0 0; }
+.admin-level {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.18);
+  color: #c4b5ff;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.admin-stat {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+}
+.admin-stat dt { color: var(--muted); font-size: 0.75rem; }
+.admin-stat dd { margin: 2px 0 0; font-size: 1.05rem; font-weight: 700; }
+.admin-goal label { display: block; color: var(--muted); font-size: 0.75rem; margin-bottom: 4px; }
+.admin-goal-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.admin-goal-row .input { width: 8rem; padding: 8px 10px; }
+.admin-error { margin: 6px 0 0; color: var(--bad); font-size: 0.85rem; }
+.admin-gate { max-width: 420px; margin: 30px auto; display: flex; flex-direction: column; gap: 10px; align-items: center; }
