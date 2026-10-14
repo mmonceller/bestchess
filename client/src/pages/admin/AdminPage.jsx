@@ -2,21 +2,24 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useDaily } from '../../daily/DailyContext.jsx';
 import { adminApi } from '../../api/endpoints.js';
-import UserCard from './users/UserCard.jsx';
+import UserTable from './users/UserTable.jsx';
+import HistoryDialog from './history/HistoryDialog.jsx';
 import './admin.css';
 
 export default function AdminPage() {
   const { user, ready } = useAuth();
   const daily = useDaily();
   const [users, setUsers] = useState(null);
+  const [log, setLog] = useState([]);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
+  const [openId, setOpenId] = useState(null);
 
   useEffect(() => {
-    if (!user) { setUsers(null); return undefined; }
+    if (!user) { setUsers(null); setLog([]); return undefined; }
     let live = true;
     adminApi.users()
-      .then((data) => { if (live) setUsers(data.users); })
+      .then((data) => { if (live) { setUsers(data.users); setLog(data.log || []); } })
       .catch((err) => { if (live) setError(err.message); });
     return () => { live = false; };
   }, [user]);
@@ -27,9 +30,17 @@ export default function AdminPage() {
     return (users || []).filter((row) => row.username.toLowerCase().includes(needle));
   }, [users, query]);
 
+  const openUser = users?.find((row) => row.id === openId) || null;
+  const openLog = useMemo(
+    () => log.filter((row) => row.userId === openId),
+    [log, openId],
+  );
+
   async function saveGoalPoints(id, points) {
-    const saved = await adminApi.setGoalPoints(id, points);
-    setUsers((list) => list.map((row) => (row.id === id ? { ...row, goalPoints: saved.points } : row)));
+    await adminApi.setGoalPoints(id, points);
+    const data = await adminApi.users();
+    setUsers(data.users);
+    setLog(data.log || []);
     if (id === user.id) daily?.refresh();
   }
 
@@ -58,16 +69,22 @@ export default function AdminPage() {
       <header className="admin-head">
         <div>
           <h1>Users</h1>
-          <p className="muted">Progress points come from lessons. Training points come from the Pattern Trainer. Goal points can be edited for now.</p>
+          <p className="muted">Totals for each account. The eye opens that player’s point history.</p>
         </div>
         <label className="admin-search">
           <span className="muted small">Find a user</span>
           <input className="input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Username" />
         </label>
       </header>
-      <p className="muted small">{shown.length} {shown.length === 1 ? 'account' : 'accounts'}</p>
-      {shown.map((row) => <UserCard key={row.id} user={row} onGoalPoints={saveGoalPoints} />)}
-      {!shown.length && <p className="muted">No account matches that name.</p>}
+      <UserTable key={query} users={shown} onOpen={setOpenId} />
+      {openUser && (
+        <HistoryDialog
+          user={openUser}
+          rows={openLog}
+          onClose={() => setOpenId(null)}
+          onGoalPoints={saveGoalPoints}
+        />
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { canAssignPlan, planBlurb, planFor } from './plan.js';
 import { lessonsDone, patternSeen } from './stats.js';
 import { spendablePoints } from './wallet.js';
 import { ensureGoalPointNotice } from './notices.js';
+import { logGoalEarn } from '../pointLog/track.js';
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const HOUR = 60 * 60 * 1000;
@@ -84,8 +85,11 @@ export function openDay(userId, day, since) {
   for (const goal of measured.goals) {
     if (!goal.done || rec.days[day].awarded[goal.id]) continue;
     rec.days[day].awarded[goal.id] = true;
+    const before = rec.points;
+    const title = goalCopy(goal).title;
     rec.points += goal.points;
-    pushMessage(rec, 'Goal complete', `${goalCopy(goal).title}. You earned ${goal.points} goal points.`);
+    logGoalEarn(userId, before, rec.points, title, goal.points);
+    pushMessage(rec, 'Goal complete', `${title}. You earned ${goal.points} goal points.`);
     changed = true;
   }
   if (changed) save();

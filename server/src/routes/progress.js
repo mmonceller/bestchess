@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db, save } from '../db/store.js';
 import { requireAuth } from '../middleware/auth.js';
 import { sanitizeAnswers } from '../services/answerSanitizer.js';
+import { trackLessonProgress } from '../services/pointLog/track.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -46,15 +47,17 @@ router.get('/', (req, res) => {
 router.put('/:lessonId', (req, res) => {
   const { lessonId } = req.params;
   if (!LESSON_ID.test(lessonId)) return res.status(400).json({ error: 'Bad lesson id.' });
-  const mine = (db.progress[req.user.id] ||= {});
-  mine[lessonId] = mergeLesson(mine[lessonId], {
-    stars: req.body?.stars,
-    answers: sanitizeAnswers(req.body?.answers),
-    lessonRev: req.body?.lessonRev,
-    stepsAtFinish: req.body?.stepsAtFinish,
+  trackLessonProgress(req.user.id, () => {
+    const mine = (db.progress[req.user.id] ||= {});
+    mine[lessonId] = mergeLesson(mine[lessonId], {
+      stars: req.body?.stars,
+      answers: sanitizeAnswers(req.body?.answers),
+      lessonRev: req.body?.lessonRev,
+      stepsAtFinish: req.body?.stepsAtFinish,
+    });
   });
   save();
-  res.json({ progress: mine });
+  res.json({ progress: db.progress[req.user.id] || {} });
 });
 
 /* The bonus round is only offered once the lesson itself is finished. */
@@ -66,39 +69,44 @@ router.put('/:lessonId/bonus', (req, res) => {
   if (!prev) return res.status(409).json({ error: 'Finish the lesson before the bonus round.' });
   const bonusRev = clampInt(req.body?.bonusRev, 999);
   const bonusAtFinish = clampInt(req.body?.bonusAtFinish, 40);
-  mine[lessonId] = {
-    ...prev,
-    bonusStars: Math.max(clampStars(req.body?.stars), prev.bonusStars || 0),
-    bonusCompletedAt: prev.bonusCompletedAt || Date.now(),
-    bonusAnswers: sanitizeAnswers(req.body?.answers) || prev.bonusAnswers,
-    ...(bonusRev !== undefined ? { bonusRev } : {}),
-    ...(bonusAtFinish !== undefined ? { bonusAtFinish } : {}),
-  };
+  trackLessonProgress(req.user.id, () => {
+    const current = db.progress[req.user.id][lessonId];
+    db.progress[req.user.id][lessonId] = {
+      ...current,
+      bonusStars: Math.max(clampStars(req.body?.stars), current.bonusStars || 0),
+      bonusCompletedAt: current.bonusCompletedAt || Date.now(),
+      bonusAnswers: sanitizeAnswers(req.body?.answers) || current.bonusAnswers,
+      ...(bonusRev !== undefined ? { bonusRev } : {}),
+      ...(bonusAtFinish !== undefined ? { bonusAtFinish } : {}),
+    };
+  });
   save();
-  res.json({ progress: mine });
+  res.json({ progress: db.progress[req.user.id] || {} });
 });
 
 /* Merges progress recorded while logged out. */
 router.post('/merge', (req, res) => {
   const incoming = req.body?.progress || {};
-  const mine = (db.progress[req.user.id] ||= {});
-  for (const [id, p] of Object.entries(incoming).slice(0, 200)) {
-    if (!LESSON_ID.test(id) || !p || typeof p !== 'object') continue;
-    mine[id] = mergeLesson(mine[id], {
-      stars: p.stars,
-      attempts: Math.max(1, Math.min(1000, Number(p.attempts) || 1)),
-      firstCompletedAt: Number(p.firstCompletedAt) || undefined,
-      answers: sanitizeAnswers(p.answers),
-      bonusStars: p.bonusStars ? p.bonusStars : undefined,
-      bonusAnswers: sanitizeAnswers(p.bonusAnswers),
-      lessonRev: p.lessonRev,
-      stepsAtFinish: p.stepsAtFinish,
-      bonusRev: p.bonusRev,
-      bonusAtFinish: p.bonusAtFinish,
-    });
-  }
+  trackLessonProgress(req.user.id, () => {
+    const mine = (db.progress[req.user.id] ||= {});
+    for (const [id, p] of Object.entries(incoming).slice(0, 200)) {
+      if (!LESSON_ID.test(id) || !p || typeof p !== 'object') continue;
+      mine[id] = mergeLesson(mine[id], {
+        stars: p.stars,
+        attempts: Math.max(1, Math.min(1000, Number(p.attempts) || 1)),
+        firstCompletedAt: Number(p.firstCompletedAt) || undefined,
+        answers: sanitizeAnswers(p.answers),
+        bonusStars: p.bonusStars ? p.bonusStars : undefined,
+        bonusAnswers: sanitizeAnswers(p.bonusAnswers),
+        lessonRev: p.lessonRev,
+        stepsAtFinish: p.stepsAtFinish,
+        bonusRev: p.bonusRev,
+        bonusAtFinish: p.bonusAtFinish,
+      });
+    }
+  });
   save();
-  res.json({ progress: mine });
+  res.json({ progress: db.progress[req.user.id] || {} });
 });
 
 export default router;

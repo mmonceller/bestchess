@@ -14,9 +14,11 @@ import dailyRoutes from './routes/daily.js';
 import adminRoutes from './routes/admin.js';
 import { attachSocketServer } from './online/socketServer.js';
 import { announceGoalPoints } from './services/daily/notices.js';
+import { openPointHistory } from './services/pointLog/opening.js';
 
 const storage = await initStore();
 announceGoalPoints();
+openPointHistory();
 
 const app = express();
 app.disable('x-powered-by');

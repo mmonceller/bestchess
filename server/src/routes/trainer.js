@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { db, save } from '../db/store.js';
+import { db } from '../db/store.js';
 import { requireAuth } from '../middleware/auth.js';
+import { trackTrainer } from '../services/pointLog/track.js';
 
 /* Training profile: starting path, pattern-trainer rating, XP, streaks, per-pattern stats and Woodpecker cycles. */
 const router = Router();
@@ -64,8 +65,7 @@ router.get('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-  db.trainer[req.user.id] = sanitize(req.body?.trainer);
-  save();
+  trackTrainer(req.user.id, sanitize(req.body?.trainer));
   res.json({ trainer: db.trainer[req.user.id] });
 });
 

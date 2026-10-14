@@ -7,7 +7,7 @@ import { createMongoBackend } from './backends/mongoBackend.js';
  * changes are written to the backend (MongoDB when MONGODB_URI is set, otherwise a
  * JSON file) shortly afterwards.
  */
-const EMPTY = { users: [], sessions: {}, games: [], progress: {}, trainer: {} };
+const EMPTY = { users: [], sessions: {}, games: [], progress: {}, trainer: {}, daily: {}, pointLog: [], flags: {} };
 
 export const db = structuredClone(EMPTY);
 

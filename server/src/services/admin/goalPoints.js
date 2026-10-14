@@ -1,4 +1,5 @@
 import { db, save, findUserById } from '../../db/store.js';
+import { logGoalEdit } from '../pointLog/track.js';
 
 const MAX_POINTS = 1_000_000;
 
@@ -20,7 +21,9 @@ export function setGoalPoints(userId, points) {
   const record = (db.daily[userId] ||= { points: 0, messages: [], days: {} });
   if (!Array.isArray(record.messages)) record.messages = [];
   if (!record.days || typeof record.days !== 'object') record.days = {};
+  const before = Math.max(0, Number(record.points) || 0);
   record.points = points;
+  logGoalEdit(userId, before, points);
   save();
   return points;
 }

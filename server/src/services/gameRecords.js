@@ -1,6 +1,8 @@
 import crypto from 'node:crypto';
 import { db, save, findUserById } from '../db/store.js';
 import { sanitizeHintPlies } from './skill/hintUsage.js';
+import { skillFor } from './skill/skillRating.js';
+import { logGamePoints } from './pointLog/track.js';
 
 const MAX_GAMES_PER_USER = 300;
 
@@ -10,6 +12,7 @@ export function recordGame(userId, game) {
   if (!user) return null;
   const color = game.color === 'b' ? 'b' : 'w';
   const moves = Number(game.moves) || 0;
+  const skillBefore = skillFor(userId).rating;
   const record = {
     id: crypto.randomUUID(),
     userId,
@@ -35,6 +38,10 @@ export function recordGame(userId, game) {
     const drop = new Set(mine.slice(0, mine.length - MAX_GAMES_PER_USER).map((g) => g.id));
     db.games = db.games.filter((g) => !drop.has(g.id));
   }
+  logGamePoints(userId, 'skill', skillBefore, skillFor(userId).rating, {
+    result: record.result,
+    opponent: record.opponent,
+  });
   save();
   return record;
 }
@@ -47,8 +54,14 @@ export function updateRatings(whiteId, blackId, score) {
   const K = 24;
   const expected = 1 / (1 + 10 ** ((b.rating - w.rating) / 400));
   const delta = Math.round(K * (score - expected));
+  const whiteBefore = w.rating;
+  const blackBefore = b.rating;
   w.rating += delta;
   b.rating -= delta;
+  const whiteResult = score === 1 ? 'win' : score === 0 ? 'loss' : 'draw';
+  const blackResult = score === 1 ? 'loss' : score === 0 ? 'win' : 'draw';
+  logGamePoints(w.id, 'online', whiteBefore, w.rating, { result: whiteResult, opponent: b.username });
+  logGamePoints(b.id, 'online', blackBefore, b.rating, { result: blackResult, opponent: w.username });
   save();
   return { w: delta, b: -delta };
 }

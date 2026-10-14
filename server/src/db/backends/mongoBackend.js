@@ -13,6 +13,8 @@ const COLLECTIONS = {
   progress: { list: false },
   trainer: { list: false },
   daily: { list: false },
+  pointLog: { list: true, order: 'at' },
+  flags: { list: false },
 };
 
 const entriesOf = (spec, value) => (spec.list

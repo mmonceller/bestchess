@@ -1,36 +1,77 @@
-.admin { display: flex; flex-direction: column; gap: 14px; max-width: 920px; margin: 0 auto; }
+.admin { display: flex; flex-direction: column; gap: 14px; max-width: 1120px; margin: 0 auto; }
 .admin-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
-.admin-head h1, .admin-user h2, .admin-gate h1 { margin: 0; }
+.admin-head h1, .admin-gate h1, .admin-history-head h2 { margin: 0; }
 .admin-search { display: flex; flex-direction: column; gap: 4px; min-width: min(100%, 220px); }
-.admin-user { display: flex; flex-direction: column; gap: 12px; }
-.admin-user-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
-.admin-user-head p { margin: 2px 0 0; }
-.admin-level {
-  flex: none;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(124, 92, 255, 0.18);
-  color: #c4b5ff;
-  font-size: 0.82rem;
-  font-weight: 700;
+.admin-users { overflow: hidden; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.admin-table th, .admin-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
-.admin-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
-  margin: 0;
+.admin-table thead th {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
 }
-.admin-stat {
-  margin: 0;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: var(--bg-2);
-  border: 1px solid var(--line);
+.admin-table th:first-child, .admin-table td:first-child { text-align: left; font-weight: 700; }
+.admin-act { width: 52px; text-align: center; }
+.admin-act-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
 }
-.admin-stat dt { color: var(--muted); font-size: 0.75rem; }
-.admin-stat dd { margin: 2px 0 0; font-size: 1.05rem; font-weight: 700; }
+.admin-table .icon-btn { margin-left: auto; }
+.admin-pager { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .admin-goal label { display: block; color: var(--muted); font-size: 0.75rem; margin-bottom: 4px; }
 .admin-goal-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .admin-goal-row .input { width: 8rem; padding: 8px 10px; }
 .admin-error { margin: 6px 0 0; color: var(--bad); font-size: 0.85rem; }
 .admin-gate { max-width: 420px; margin: 30px auto; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.modal.admin-history-modal { width: min(760px, 100%); }
+.admin-history-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.admin-history-head p { margin: 2px 0 0; }
+.admin-history-modal h3 { margin: 16px 0 8px; font-size: 1rem; }
+.history-table { display: flex; flex-direction: column; }
+.history-head, .history-row {
+  display: grid;
+  grid-template-columns: 10.5rem 8rem 4.2rem 4.2rem minmax(0, 1fr);
+  gap: 8px 10px;
+  align-items: baseline;
+}
+.history-head { color: var(--muted); font-size: 0.75rem; padding-bottom: 6px; }
+.history-row { border-top: 1px solid var(--line); padding: 8px 0; }
+.point-note { margin: 0; min-width: 0; }
+.point-up { color: var(--good); font-weight: 700; }
+.point-down { color: var(--bad); font-weight: 700; }
+.is-opening { color: var(--muted); }
+.is-opening .point-up, .is-opening .point-down { color: inherit; font-weight: 600; }
+@media (max-width: 860px) {
+  .admin-table thead { display: none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table th, .admin-table td { display: block; width: auto; text-align: left; white-space: normal; }
+  .admin-table tr { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; padding: 8px 10px; }
+  .admin-table td, .admin-table th[scope="row"] { border: 0; padding: 3px 0; }
+  .admin-table td::before {
+    content: attr(data-label);
+    display: inline-block;
+    min-width: 8.5rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .admin-act { text-align: left; }
+  .history-head { display: none; }
+  .history-row { display: flex; flex-direction: column; gap: 2px; }
+  .history-row > *::before {
+    content: attr(data-label);
+    display: inline-block;
+    min-width: 7.2rem;
+    margin-right: 8px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+}
