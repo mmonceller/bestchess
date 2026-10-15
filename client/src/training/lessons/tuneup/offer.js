@@ -50,7 +50,7 @@ export function tuneUpOffer({ trainer, progress, gameRecord, mastery, day }) {
       title: 'Tune-up',
       text: 'Finish a lesson and this summary will hand you one to replay, so the ideas stay fresh.',
       action: 'Browse lessons',
-      href: '#/training',
+      href: '#/training/lessons',
     };
   }
   const lesson = done[hash(day) % done.length];

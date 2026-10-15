@@ -22,7 +22,7 @@ export default function RevisitIntro({ lesson, coach, record, onReview, onBonus,
   return (
     <GlossaryProvider>
       <div className="revisit-intro card fade-in" style={{ '--coach': coach.color }}>
-        <a href="#/training" className="orb small revisit-close" aria-label="Back to training"><Icon name="close" size={18} /></a>
+        <a href="#/training/lessons" className="orb small revisit-close" aria-label="Back to lessons"><Icon name="close" size={18} /></a>
         <CoachAvatar coach={coach} size={72} />
         <h1>Welcome back!</h1>
         <h3 className="muted">{lesson.title}</h3>

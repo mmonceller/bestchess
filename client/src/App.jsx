@@ -7,6 +7,7 @@ import MoveTooltip from './components/notation/MoveTooltip.jsx';
 const PlayComputerPage = lazy(() => import('./pages/computer/PlayComputerPage.jsx'));
 const OnlinePage = lazy(() => import('./pages/online/OnlinePage.jsx'));
 const TrainingHub = lazy(() => import('./pages/training/TrainingHub.jsx'));
+const LessonsPage = lazy(() => import('./pages/training/lessons/LessonsPage.jsx'));
 const LessonPlayer = lazy(() => import('./pages/training/LessonPlayer.jsx'));
 const PatternTrainer = lazy(() => import('./pages/training/patterns/PatternTrainer.jsx'));
 const WoodpeckerPage = lazy(() => import('./pages/training/woodpecker/WoodpeckerPage.jsx'));
@@ -25,6 +26,7 @@ function Page({ route }) {
     case 'online': return <OnlinePage code={param} key={param || 'lobby'} />;
     case 'training': {
       const start = route.query.get('start');
+      if (param === 'lessons') return <LessonsPage />;
       return param ? <LessonPlayer lessonId={param} start={start} key={`${param}-${start || ''}`} /> : <TrainingHub />;
     }
     case 'puzzles':

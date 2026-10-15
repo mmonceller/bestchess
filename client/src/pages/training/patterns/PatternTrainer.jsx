@@ -62,7 +62,7 @@ export default function PatternTrainer({ focusId = null }) {
     <div className="pattern-trainer fade-in">
       {!user && <GuestBanner />}
       <header className="trainer-head">
-        <a className="orb small" href="#/training" aria-label="Back to Learn Chess"><Icon name="back" size={18} /></a>
+        <a className="back-learning" href="#/training"><Icon name="arrowLeft" size={16} /> Back to learning</a>
         <div className="trainer-stats">
           <span className="chip chip-puzzle"><Icon name="puzzle" size={16} /> <b>{trainer.rating}</b> rating</span>
           <span className="chip chip-fire"><Icon name="fire" size={16} /> <b>{trainer.streak}</b> in a row</span>

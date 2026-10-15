@@ -8,7 +8,7 @@ export default function LessonBar({ title, subtitle, segments, mistakes, hints, 
   return (
     <>
       <div className="lesson-bar">
-        <a href="#/training" className="orb small" aria-label="Back to training"><Icon name="close" size={18} /></a>
+        <a href="#/training/lessons" className="orb small" aria-label="Back to lessons"><Icon name="close" size={18} /></a>
         {onBack && <button className="orb small" onClick={onBack} aria-label="Previous step"><Icon name="arrowLeft" size={18} /></button>}
         <div className="lesson-title">
           <b>{title}</b>

@@ -5,7 +5,7 @@ import MasteryChecklist from '../mastery/MasteryChecklist.jsx';
 export default function LockedLesson({ mastery }) {
   return (
     <div className="locked-lesson fade-in">
-      <a href="#/training" className="btn ghost icon-text"><Icon name="arrowLeft" size={18} /> Back to training</a>
+      <a href="#/training/lessons" className="btn ghost icon-text"><Icon name="arrowLeft" size={18} /> Back to lessons</a>
       <MasteryChecklist mastery={mastery} />
     </div>
   );

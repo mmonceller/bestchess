@@ -34,7 +34,7 @@ export default function BonusComplete({ lesson, coach, result, onReview, onRetry
         <div className="row complete-actions">
           <button className="btn primary icon-text" onClick={onReview}><Icon name="book" size={18} /> Review my answers</button>
           <button className="btn icon-text" onClick={onRetry}><Icon name="retry" size={18} /> Bonus again</button>
-          <a className="btn ghost icon-text" href="#/training"><Icon name="map" size={18} /> Lesson map</a>
+          <a className="btn ghost icon-text" href="#/training/lessons"><Icon name="map" size={18} /> Lesson map</a>
         </div>
       </div>
     </GlossaryProvider>

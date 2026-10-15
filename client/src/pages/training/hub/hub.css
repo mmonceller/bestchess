@@ -54,7 +54,6 @@
 }
 .chip b { color: var(--text); font-size: 0.95rem; }
 .chip-fire .icon { color: #ff7a45; }
-.chip-star .icon { color: #ffc940; }
 .chip-puzzle .icon { color: var(--accent-2); }
 .hud-path { position: absolute; top: 12px; right: 14px; }
 button.link { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }

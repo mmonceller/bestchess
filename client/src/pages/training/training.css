@@ -1,6 +1,13 @@
 .small { font-size: 0.82rem; }
 .link { color: var(--accent-2); }
 
+.back-learning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font-weight: 700;
+}
 .stars { display: inline-flex; gap: 1px; color: #3c4252; line-height: 1; }
 .stars > span { display: inline-flex; }
 .stars .on { color: #ffc940; filter: drop-shadow(0 0 4px rgba(255, 201, 64, 0.5)); }

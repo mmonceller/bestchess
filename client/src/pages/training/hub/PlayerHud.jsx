@@ -1,7 +1,7 @@
 import Icon from '../../../components/icons/Icon.jsx';
 
-/* Level badge, XP bar and streak / stars / puzzle-rating chips. */
-export default function PlayerHud({ name, level, stars, maxStars, trainer, onChangePath }) {
+/* Level badge, XP bar, day streak and puzzle rating. */
+export default function PlayerHud({ name, level, trainer, onChangePath }) {
   return (
     <section className="player-hud card">
       <div className="level-badge" aria-label={`Level ${level.level}`}>
@@ -20,9 +20,6 @@ export default function PlayerHud({ name, level, stars, maxStars, trainer, onCha
       <div className="hud-chips">
         <span className="chip chip-fire" title="Days in a row you've trained">
           <Icon name="fire" size={16} /> <b>{trainer.dayStreak || 0}</b> <span>day streak</span>
-        </span>
-        <span className="chip chip-star" title="Lesson stars earned">
-          <Icon name="star" size={16} /> <b>{stars}</b> <span>/ {maxStars}</span>
         </span>
         <span className="chip chip-puzzle" title="Puzzle rating — it goes up as you solve harder puzzles">
           <Icon name="puzzle" size={16} /> <b>{trainer.rating}</b> <span>puzzle rating</span>
