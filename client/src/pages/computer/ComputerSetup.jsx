@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { LEVELS, getLevel } from '../../engine/levels.js';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { recommendedLevel } from '../../training/skill/tiers.js';
+import { levelsBelowSkill, recommendedLevel, winWontRaiseSkill } from '../../training/skill/tiers.js';
 import Icon from '../../components/icons/Icon.jsx';
+import SkillGapNote from '../../components/skill/SkillGapNote.jsx';
 import ColorPicker from '../../components/game/ColorPicker.jsx';
 import ResumeList from '../../components/resume/ResumeList.jsx';
 import { useNow } from '../../hooks/useNow.js';
@@ -63,6 +64,11 @@ export default function ComputerSetup({ onStart, onResume, onResign, saved = [],
       )}
 
       {user && <SkillNote skill={user.skill} recommended={recommended} chosen={level} />}
+      {user && winWontRaiseSkill(user.skill, level) && (
+        <SkillGapNote>
+          {getLevel(level).name} is {levelsBelowSkill(user.skill, level)} levels below your skill. A win will not add skill points. A loss may lower them.
+        </SkillGapNote>
+      )}
 
       <span className="label">Difficulty</span>
       <div className="level-grid">

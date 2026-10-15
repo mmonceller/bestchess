@@ -4,6 +4,20 @@ export const LEVEL_RATING = { 1: 400, 2: 700, 3: 1000, 4: 1300, 5: 1600, 6: 1900
 /* Rating assumed for online opponents in games recorded before opponent ratings were stored. */
 export const DEFAULT_OPPONENT_RATING = 1200;
 
+/* Bot level whose strength is closest to a rating. An equal gap keeps the lower level. */
+export function levelForRating(rating) {
+  let best = 1;
+  let bestDiff = Infinity;
+  for (const [id, strength] of Object.entries(LEVEL_RATING)) {
+    const diff = Math.abs(strength - rating);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      best = Number(id);
+    }
+  }
+  return best;
+}
+
 export function opponentRating(game) {
   if (game.mode === 'computer') return LEVEL_RATING[game.level] ?? null;
   return Number.isFinite(game.opponentRating) ? game.opponentRating : DEFAULT_OPPONENT_RATING;

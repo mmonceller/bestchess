@@ -32,8 +32,8 @@ function Case({ tone, title, icon, hero, plates }) {
   );
 }
 
-/* Two trophy cases: match record, and lessons plus puzzles on one shelf. */
-export default function ProfileStats({ user, trainer, lessonsDone, lessonsTotal, stars }) {
+/* Match record: online rating, games, and goal points. */
+export default function ProfileStats({ user }) {
   const points = useDaily()?.points;
   const { wins, losses, draws } = user.stats;
   const total = wins + losses + draws;
@@ -51,18 +51,6 @@ export default function ProfileStats({ user, trainer, lessonsDone, lessonsTotal,
           { icon: 'crown', value: `${winRate}%`, label: 'Win rate' },
           { icon: 'draw', value: `${wins}/${draws}/${losses}`, label: 'W / D / L' },
           { icon: 'star', value: points ?? '–', label: 'Goal points', href: '#/goals' },
-        ]}
-      />
-      <Case
-        tone="training"
-        title="Training"
-        icon="star"
-        hero={{ icon: 'star', value: stars, label: 'Training stars' }}
-        plates={[
-          { icon: 'book', value: `${lessonsDone}/${lessonsTotal}`, label: 'Lessons done' },
-          { icon: 'target', value: trainer?.rating ?? '–', label: 'Puzzle rating' },
-          { icon: 'check', value: trainer?.solved ?? 0, label: 'Puzzles solved' },
-          { icon: 'bolt', value: trainer?.bestStreak ?? 0, label: 'Best streak' },
         ]}
       />
     </div>

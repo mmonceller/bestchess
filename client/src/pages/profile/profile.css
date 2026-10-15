@@ -18,12 +18,9 @@
   flex: none;
 }
 .profile-stats { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 860px) { .profile-stats { grid-template-columns: 1fr 1fr; } }
 .trophy-case { display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
 .trophy-stats { background: radial-gradient(120% 90% at 0% 0%, rgba(255, 201, 64, 0.16), transparent 52%), var(--panel); }
-.trophy-training { background: radial-gradient(120% 90% at 100% 0%, rgba(124, 92, 255, 0.2), transparent 54%), var(--panel); }
 .trophy-title { margin: 0; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: #ffc940; }
-.trophy-training .trophy-title { color: #c4b5ff; }
 .trophy-layout { display: grid; grid-template-columns: 132px 1fr; gap: 12px; align-items: stretch; }
 .trophy-hero {
   display: flex;
@@ -38,10 +35,6 @@
   border: 1px solid rgba(255, 201, 64, 0.4);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
-.trophy-training .trophy-hero {
-  background: linear-gradient(180deg, rgba(124, 92, 255, 0.28), rgba(124, 92, 255, 0.06));
-  border-color: rgba(196, 181, 255, 0.45);
-}
 .trophy-medal {
   width: 52px;
   height: 52px;
@@ -52,10 +45,6 @@
   color: #3a2508;
   background: radial-gradient(circle at 35% 30%, #fff1c2, #e0a22a 55%, #a56b12);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-.trophy-training .trophy-medal {
-  color: #241456;
-  background: radial-gradient(circle at 35% 30%, #f3eeff, #b7a4ff 55%, #6d52d6);
 }
 .trophy-hero b { font-size: 1.85rem; line-height: 1; }
 .trophy-hero > span:last-child { color: var(--muted); font-size: 0.75rem; }
@@ -80,7 +69,6 @@
   color: #ffc940;
   background: rgba(255, 201, 64, 0.12);
 }
-.trophy-training .trophy-plate-icon { color: #c4b5ff; background: rgba(124, 92, 255, 0.16); }
 .trophy-plate-copy { display: flex; flex-direction: column; min-width: 0; }
 .trophy-plate b { font-size: 1.05rem; line-height: 1.15; }
 .trophy-plate-copy > span { color: var(--muted); font-size: 0.75rem; }
@@ -89,7 +77,6 @@ a.trophy-plate.is-link:hover { border-color: #ffc940; }
 @media (max-width: 520px) { .trophy-layout { grid-template-columns: 1fr; } }
 
 .profile-grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 900px) { .profile-grid { grid-template-columns: 1.4fr 1fr; } }
 
 .small-seg button { padding: 5px 10px; font-size: 0.82rem; }
 .game-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
@@ -106,23 +93,9 @@ a.trophy-plate.is-link:hover { border-color: #ffc940; }
 .game-mode { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: var(--accent-2); background: rgba(79, 209, 197, 0.12); flex: none; }
 .profile-level { margin-top: 4px; color: #ffc940; font-weight: 700; font-size: 0.9rem; }
 .star-gold { color: #ffc940; }
-.track-label { margin: 6px 0 4px; }
 .game-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .game-main b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .review-acc { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: var(--accent-2); }
 .delta { font-weight: 700; font-size: 0.85rem; }
 .delta.up { color: var(--good); }
 .delta.down { color: var(--bad); }
-
-.track-progress { margin-bottom: 12px; }
-.lesson-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 10px;
-  border-radius: 10px;
-  border-left: 3px solid var(--coach);
-  background: var(--bg-2);
-  margin-top: 5px;
-}
-.lesson-row-title { flex: 1; font-size: 0.92rem; }

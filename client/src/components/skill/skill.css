@@ -102,5 +102,17 @@ a.user-emblem:hover { transform: translateY(-1px); }
 }
 .skill-step b { color: var(--tier); font-size: 0.8rem; }
 .skill-step.current { opacity: 1; border-color: var(--tier); background: color-mix(in srgb, var(--tier) 12%, transparent); }
+.skill-gap-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 181, 71, 0.1);
+  border: 1px solid rgba(255, 181, 71, 0.45);
+}
+.skill-gap-note .icon { color: #ffb547; flex: none; margin-top: 1px; }
+.skill-gap-note span { color: var(--text); }
 .skill-progress { height: 8px; border-radius: 99px; background: var(--bg-2); overflow: hidden; margin-top: 8px; max-width: 280px; }
 .skill-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #5b8cff); }

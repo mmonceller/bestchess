@@ -16,7 +16,13 @@ function points(userId) {
   const { recent, heavy } = ratedGames(userId);
   const values = gameValues(recent);
   return {
-    games: recent.map((g, i) => ({ ...summary(g.game), opp: g.opp, value: values[i].value, capped: values[i].capped })),
+    games: recent.map((g, i) => ({
+      ...summary(g.game),
+      opp: g.opp,
+      value: values[i].value,
+      capped: values[i].capped,
+      held: values[i].held,
+    })),
     average: recent.length ? performanceRating(recent) : null,
     excluded: heavy.slice(0, 10).map((g) => ({ ...summary(g.game), hintPercent: hintPercent(g.game) })),
   };

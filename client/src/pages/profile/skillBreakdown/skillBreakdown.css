@@ -45,6 +45,7 @@
 .sb-delta-num { min-width: 38px; text-align: right; font-weight: 800; font-size: 0.85rem; }
 .sb-delta-num.up { color: var(--good); }
 .sb-delta-num.down { color: var(--bad); }
+.sb-delta-num.flat { color: var(--muted); font-weight: 700; }
 .sb-footnote { display: flex; align-items: flex-start; gap: 6px; margin: 10px 0 0; }
 .sb-excluded { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
 .sb-excluded h4 { margin: 0 0 6px; font-size: 0.85rem; color: #ffa94d; }

@@ -2,13 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { gamesApi } from '../../api/endpoints.js';
 import { useProgress } from '../../training/progressStore.js';
-import { LESSONS, TRACKS } from '../../training/lessons/index.js';
-import { getCoach } from '../../training/coaches.js';
-import Stars from '../training/components/Stars.jsx';
 import Icon from '../../components/icons/Icon.jsx';
-import CoachAvatar from '../../components/icons/CoachAvatar.jsx';
 import { useTrainer } from '../../training/trainerStore.js';
-import { evaluateMastery } from '../../training/mastery/criteria.js';
 import { levelInfo, totalXp } from '../../training/xp.js';
 import { formatDate } from '../../utils/format.js';
 import { navigate } from '../../router/router.js';
@@ -46,11 +41,6 @@ export default function ProfilePage() {
     );
   }
 
-  const stars = Object.values(progress).reduce((n, p) => n + (p.stars || 0), 0);
-  const { unlocked: masterUnlocked } = evaluateMastery({ progress, trainer, games });
-  const tracks = TRACKS.filter((t) => !t.gated || masterUnlocked);
-  const lessons = LESSONS.filter((l) => tracks.some((t) => t.id === l.track));
-  const done = lessons.filter((l) => progress[l.id]).length;
   const level = levelInfo(totalXp(progress, trainer));
   const shown = (games || []).filter((g) => filter === 'all' || g.mode === filter);
 
@@ -69,7 +59,7 @@ export default function ProfilePage() {
       <ActiveGamesCard />
       <SkillCard skill={user.skill} />
 
-      <ProfileStats user={user} trainer={trainer} lessonsDone={done} lessonsTotal={lessons.length} stars={stars} />
+      <ProfileStats user={user} />
 
       <div className="profile-grid">
         <section className="card">
@@ -100,22 +90,6 @@ export default function ProfilePage() {
               </a>
             ))}
           </div>
-        </section>
-
-        <section className="card">
-          <h2>Training lessons</h2>
-          {tracks.map((t) => (
-            <div key={t.id} className="track-progress">
-              <div className="muted small icon-text track-label"><Icon name={t.icon} size={16} /> {t.name}</div>
-              {LESSONS.filter((l) => l.track === t.id).map((l) => (
-                <a key={l.id} href={`#/training/${l.id}`} className="lesson-row" style={{ '--coach': getCoach(l.coach).color }}>
-                  <CoachAvatar coach={getCoach(l.coach)} size={28} />
-                  <span className="lesson-row-title">{l.title}</span>
-                  {progress[l.id] ? <Stars value={progress[l.id].stars} /> : <span className="muted small">Not started</span>}
-                </a>
-              ))}
-            </div>
-          ))}
         </section>
       </div>
     </div>

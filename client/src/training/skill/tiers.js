@@ -23,10 +23,37 @@ export function nextTier(skill) {
   return { id, ...TIERS[id], toGo: Math.max(0, TIERS[id].min - (skill.rating ?? 0)) };
 }
 
+/* A win this many bot levels under the player's level does not add skill. Matches FAR_BELOW on the server. */
+export const FAR_BELOW_LEVELS = 3;
+
+/* The bot level whose strength is closest to a rating. An equal gap keeps the lower level. */
+export function levelForRating(rating) {
+  if (!Number.isFinite(rating)) return null;
+  return LEVELS.reduce((best, level) => (Math.abs(level.rating - rating) < Math.abs(best.rating - rating) ? level : best)).id;
+}
+
+/* How many bot levels this opponent sits under the player's skill. Negative when the bot is stronger. */
+export function levelsBelowSkill(skill, botLevelId) {
+  const player = levelForRating(skill?.rating);
+  const bot = Number(botLevelId);
+  if (player == null || !Number.isFinite(bot)) return null;
+  return player - bot;
+}
+
+/* Winning cannot add skill when the bot is three or more levels below. A loss still can lower it. */
+export function winWontRaiseSkill(skill, botLevelId) {
+  const gap = levelsBelowSkill(skill, botLevelId);
+  return gap != null && gap >= FAR_BELOW_LEVELS;
+}
+
+export function hasEasierBots(skill) {
+  return LEVELS.some((level) => winWontRaiseSkill(skill, level.id));
+}
+
 /* The bot level whose strength is closest to the player's skill rating. */
 export function recommendedLevel(skill) {
   if (!skill?.rating) return null;
-  return LEVELS.reduce((best, l) => (Math.abs(l.rating - skill.rating) < Math.abs(best.rating - skill.rating) ? l : best)).id;
+  return levelForRating(skill.rating);
 }
 
 /* Lesson tracks that suit the player, or null when their skill isn't known yet. */
