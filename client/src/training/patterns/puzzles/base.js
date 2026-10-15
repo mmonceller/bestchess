@@ -52,7 +52,7 @@ export const BASE_PUZZLES = [
   // Pins
   { id: 'p-pawn-knight', pattern: 'pin', rating: 850, fen: '4k3/4n3/8/5P2/8/8/8/4RK2 w - - 0 1', moves: ['f5f6'] },
   { id: 'p-rook-queen', pattern: 'pin', rating: 900, fen: '4k3/6pp/8/4q3/8/8/2B3PP/R4K2 w - - 0 1', moves: ['a1e1'] },
-  { id: 'p-bishop-queen', pattern: 'pin', rating: 1000, fen: '6k1/6pp/4q3/8/8/1P6/6PP/R4BK1 w - - 0 1', moves: ['f1c4', 'e6c4', 'b3c4'] },
+  { id: 'p-bishop-queen', pattern: 'pin', rating: 1000, fen: '6k1/6pp/4q3/8/8/1P6/6PP/1R3BK1 w - - 0 1', moves: ['f1c4', 'e6c4', 'b3c4'] },
 
   // Skewers
   { id: 's-bishop', pattern: 'skewer', rating: 900, fen: '8/1r5p/8/3k3B/8/8/7P/7K w - - 0 1', moves: ['h5f3', 'd5c5', 'f3b7'] },
