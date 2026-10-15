@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import express from 'express';
 import { config } from './config.js';
-import { initStore, closeStore } from './db/store.js';
+import { initStore, closeStore, flushStore } from './db/store.js';
 import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
 import progressRoutes from './routes/progress.js';
@@ -15,10 +15,16 @@ import adminRoutes from './routes/admin.js';
 import { attachSocketServer } from './online/socketServer.js';
 import { announceGoalPoints } from './services/daily/notices.js';
 import { openPointHistory } from './services/pointLog/opening.js';
+import { reviseSkillHistory } from './services/pointLog/reviseSkill.js';
 
 const storage = await initStore();
 announceGoalPoints();
 openPointHistory();
+const skillRevision = reviseSkillHistory();
+await flushStore();
+if (skillRevision.revised) {
+  console.log(`Updated skill history for ${skillRevision.users} existing accounts (${skillRevision.rows} earned or lost).`);
+}
 
 const app = express();
 app.disable('x-powered-by');

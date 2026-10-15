@@ -8,6 +8,13 @@
   width: fit-content;
   font-weight: 700;
 }
+.lessons-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 .stars { display: inline-flex; gap: 1px; color: #3c4252; line-height: 1; }
 .stars > span { display: inline-flex; }
 .stars .on { color: #ffc940; filter: drop-shadow(0 0 4px rgba(255, 201, 64, 0.5)); }

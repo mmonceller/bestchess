@@ -55,7 +55,6 @@
 .chip b { color: var(--text); font-size: 0.95rem; }
 .chip-fire .icon { color: #ff7a45; }
 .chip-puzzle .icon { color: var(--accent-2); }
-.hud-path { position: absolute; top: 12px; right: 14px; }
 button.link { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
 
 /* ---------- Puzzle card ---------- */
@@ -339,7 +338,6 @@ a.puzzle-card-cta { padding: 4px 2px 4px 8px; }
 .sheet-best { display: flex; align-items: center; justify-content: space-between; }
 
 @media (max-width: 560px) {
-  .hud-path { position: static; grid-column: 1 / -1; justify-self: start; }
   .puzzle-card-cta { display: none; }
   .woodpecker-card .puzzle-card-cta { display: flex; }
 }

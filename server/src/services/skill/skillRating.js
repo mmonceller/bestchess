@@ -50,7 +50,7 @@ export function gameValues(games) {
       const oppLevel = opponentLevel(games[i]);
       const farBelow = oppLevel != null && levelForRating(floor) - oppLevel >= FAR_BELOW;
       if (farBelow && values[i] < floor) {
-        values[i] = floor;
+        values[i] = Math.round(floor);
         changed = true;
       }
     }
@@ -64,7 +64,7 @@ export function gameValues(games) {
     return { value: held ? Math.round(values[i]) : raw, held };
   });
   const positive = settled.filter(Boolean).map((v) => v.value);
-  const base = positive.length ? positive.reduce((a, b) => a + b, 0) / positive.length : NO_WINS_BASE;
+  const base = positive.length ? Math.round(positive.reduce((a, b) => a + b, 0) / positive.length) : NO_WINS_BASE;
 
   return games.map((g, i) => {
     if (g.score > 0) return { value: settled[i].value, held: settled[i].held, capped: false };
@@ -86,11 +86,26 @@ export const tierFor = (rating) => TIERS.find((t) => rating >= t.min).id;
  * that do count (at most RECENT_GAMES), `heavy` the recent ones left out for using too many hints.
  * Each entry keeps the stored game record as `game`.
  */
+function rateRow(game) {
+  return { game, opp: opponentRating(game), score: SCORE[game.result], heavy: tooManyHints(game) };
+}
+
+/* Skill rating the new formula gives a set of stored games, or null before five can count. */
+export function skillFromRecords(records) {
+  const recent = records
+    .map(rateRow)
+    .filter((g) => g.opp != null && g.score != null && !g.heavy)
+    .sort((a, b) => b.game.date - a.game.date)
+    .slice(0, RECENT_GAMES);
+  if (recent.length < MIN_GAMES) return null;
+  return performanceRating(recent);
+}
+
 export function ratedGames(userId) {
   const finished = db.games
     .filter((g) => g.userId === userId)
     .sort((a, b) => b.date - a.date)
-    .map((g) => ({ game: g, opp: opponentRating(g), score: SCORE[g.result], heavy: tooManyHints(g) }))
+    .map(rateRow)
     .filter((g) => g.opp != null && g.score != null);
   return {
     recent: finished.filter((g) => !g.heavy).slice(0, RECENT_GAMES),

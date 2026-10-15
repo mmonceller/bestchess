@@ -1,7 +1,7 @@
 import Icon from '../../../components/icons/Icon.jsx';
 
 /* Level badge, XP bar, day streak and puzzle rating. */
-export default function PlayerHud({ name, level, trainer, onChangePath }) {
+export default function PlayerHud({ name, level, trainer }) {
   return (
     <section className="player-hud card">
       <div className="level-badge" aria-label={`Level ${level.level}`}>
@@ -25,9 +25,6 @@ export default function PlayerHud({ name, level, trainer, onChangePath }) {
           <Icon name="puzzle" size={16} /> <b>{trainer.rating}</b> <span>puzzle rating</span>
         </span>
       </div>
-      {onChangePath && (
-        <button className="link small hud-path" onClick={onChangePath}>Change starting point</button>
-      )}
     </section>
   );
 }

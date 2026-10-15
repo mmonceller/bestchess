@@ -20,7 +20,7 @@ function trim(userId) {
 }
 
 /* Adds one history row. Callers that batch rows save once themselves. */
-export function appendPointRow(row) {
+export function appendPointRow(row, options = {}) {
   if (!Array.isArray(db.pointLog)) db.pointLog = [];
   db.pointLog.push({
     id: crypto.randomUUID(),
@@ -32,7 +32,7 @@ export function appendPointRow(row) {
     note: String(row.note || '').slice(0, 240),
     ...(row.opening ? { opening: true } : {}),
   });
-  trim(row.userId);
+  if (options.trim !== false) trim(row.userId);
 }
 
 /* Skips a row when the number did not move. */

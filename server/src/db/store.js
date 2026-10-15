@@ -50,6 +50,16 @@ export function save() {
   schedule(250);
 }
 
+/* Writes pending changes now. Startup work calls this before the server accepts traffic. */
+export async function flushStore() {
+  clearTimeout(timer);
+  timer = null;
+  if (writing) await writing;
+  clearTimeout(timer);
+  timer = null;
+  await flush();
+}
+
 /* Writes any pending changes and disconnects. Used on shutdown. */
 export async function closeStore() {
   clearTimeout(timer);

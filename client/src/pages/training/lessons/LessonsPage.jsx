@@ -1,12 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TRACKS, lessonsInTrack } from '../../../training/lessons/index.js';
 import { useProgress } from '../../../training/progressStore.js';
 import { PATHS, useTrainer } from '../../../training/trainerStore.js';
+import { guestStorage } from '../../../training/guestStorage.js';
 import { useMastery } from '../../../training/mastery/useMastery.js';
 import { useAuth } from '../../../context/AuthContext.jsx';
 import { tracksForSkill } from '../../../training/skill/tiers.js';
 import Icon from '../../../components/icons/Icon.jsx';
 import GuestBanner from '../hub/GuestBanner.jsx';
+import WelcomeSheet from '../hub/WelcomeSheet.jsx';
 import LessonPath from '../hub/LessonPath.jsx';
 import LessonSheet from '../hub/LessonSheet.jsx';
 import CoachRoster from '../hub/CoachRoster.jsx';
@@ -16,6 +18,7 @@ import '../training.css';
 import '../hub/hub.css';
 
 const MAX_TABS_PER_ROW = 7;
+const WELCOME_SEEN = 'bc.welcomeSeen';
 
 function recommendedTrack(startTrack, progress, tracks, lessonsFor) {
   const start = Math.max(0, tracks.findIndex((t) => t.id === startTrack));
@@ -27,10 +30,25 @@ function recommendedTrack(startTrack, progress, tracks, lessonsFor) {
 export default function LessonsPage() {
   const { user } = useAuth();
   const { progress, loading: progressLoading } = useProgress();
-  const { trainer } = useTrainer();
+  const { trainer, update } = useTrainer();
   const mastery = useMastery(progress, trainer);
   const [trackId, setTrackId] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [welcome, setWelcome] = useState(false);
+
+  useEffect(() => {
+    if (trainer && !trainer.path && !guestStorage.read(WELCOME_SEEN, false)) setWelcome(true);
+  }, [trainer]);
+
+  function closeWelcome() {
+    guestStorage.write(WELCOME_SEEN, true);
+    setWelcome(false);
+  }
+
+  function pickPath(id) {
+    update((t) => ({ ...t, path: id, rating: t.games ? t.rating : PATHS[id].rating }));
+    closeWelcome();
+  }
 
   const lessonsFor = lessonsInTrack;
   const tracks = TRACKS.filter((t) => !t.gated || mastery.visible);
@@ -51,7 +69,10 @@ export default function LessonsPage() {
 
   return (
     <div className="training-hub fade-in">
-      <a className="back-learning" href="#/training"><Icon name="arrowLeft" size={16} /> Back to learning</a>
+      <div className="lessons-toolbar">
+        <a className="back-learning" href="#/training"><Icon name="arrowLeft" size={16} /> Back to learning</a>
+        <button type="button" className="link small" onClick={() => setWelcome(true)}>Change starting point</button>
+      </div>
       {!user && <GuestBanner />}
 
       <section className="worlds">
@@ -102,6 +123,7 @@ export default function LessonsPage() {
 
       <CoachRoster />
       {preview && <LessonSheet lesson={preview} progress={progress} onClose={() => setPreview(null)} />}
+      {welcome && <WelcomeSheet isGuest={!user} current={trainer.path} onPick={pickPath} onClose={closeWelcome} />}
     </div>
   );
 }
