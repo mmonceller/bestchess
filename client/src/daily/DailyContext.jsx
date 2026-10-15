@@ -26,7 +26,7 @@ export function DailyProvider({ children }) {
     const id = ++request.current;
     const day = localDay();
     return dailyApi.today(day, localMidnight(day)).then((next) => {
-      if (id === request.current) setData(next);
+      if (id === request.current) setData({ ...next, fetchedAt: Date.now() });
       return next;
     }).catch(() => null);
   }, [user]);
@@ -34,9 +34,7 @@ export function DailyProvider({ children }) {
   useEffect(() => { refresh(); }, [refresh]);
 
   useEffect(() => {
-    const onChange = () => {
-      if (user && !location.hash.startsWith('#/messages')) refresh();
-    };
+    const onChange = () => { if (user) refresh(); };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
   }, [user, refresh]);

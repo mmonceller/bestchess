@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useDaily } from '../../daily/DailyContext.jsx';
 import { usePendingGames } from '../../messages/usePendingGames.js';
@@ -9,11 +10,26 @@ import PinnedGoals from './PinnedGoals.jsx';
 import MessageRow from './MessageRow.jsx';
 import './messages.css';
 
+const REFRESH_MS = 5000;
+
 export default function MessagesPage() {
   const { user, ready } = useAuth();
   const daily = useDaily();
   const pending = usePendingGames();
   useGameReadVersion();
+  const refresh = daily?.refresh;
+
+  useEffect(() => {
+    if (!user || !refresh) return undefined;
+    refresh();
+    const timer = setInterval(refresh, REFRESH_MS);
+    const onVisible = () => { if (document.visibilityState === 'visible') refresh(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [user, refresh]);
 
   if (!ready) return null;
   if (!user) {
@@ -28,7 +44,6 @@ export default function MessagesPage() {
   if (!daily?.data) return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>;
 
   const messages = daily.data.messages || [];
-  const goalsNote = messages.find((message) => message.title === "Today's goals") || null;
   const games = pending.map((game) => ({ ...game, read: gameIsRead(game.id) }));
   const feed = [
     ...games.map((game) => ({ kind: 'game', at: game.at || 0, game })),
@@ -39,7 +54,7 @@ export default function MessagesPage() {
   return (
     <div className="messages fade-in">
       <h1>Messages</h1>
-      <PinnedGoals goals={daily.data.goals} at={goalsNote?.at} when={when} />
+      <PinnedGoals goals={daily.data.goals} />
       <div className="message-list">
         {!feed.length && !daily.data.goals?.length && <p className="muted">No messages yet. A note arrives when the day's goals are added, and again when you finish one.</p>}
         {feed.map((item) => item.kind === 'game' ? (

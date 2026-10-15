@@ -1,11 +1,21 @@
-/* The live goal list, kept above the inbox. Each line is one of today's goals. */
-export default function PinnedGoals({ goals, at, when }) {
+import { useEffect, useState } from 'react';
+import { formatDateTime } from '../../utils/format.js';
+
+/* The live goal list, kept above the inbox. The clock is the current time, not when the note was first sent. */
+export default function PinnedGoals({ goals }) {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   if (!goals?.length) return null;
   return (
     <article className="card message pinned">
       <div className="message-top">
         <h2><a href="#/goals">Today's goals</a></h2>
-        {at ? <time className="message-when" dateTime={new Date(at).toISOString()}>{when(at)}</time> : null}
+        <time className="message-when" dateTime={new Date(now).toISOString()}>{formatDateTime(now, { seconds: true, date: 'always' })}</time>
       </div>
       <ul className="pin-goals">
         {goals.map((goal) => {
