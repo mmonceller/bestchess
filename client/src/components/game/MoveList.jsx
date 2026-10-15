@@ -9,8 +9,10 @@ import { scrollWithin } from '../../utils/scrollWithin.js';
  * SAN move list in numbered pairs. When there's room, pairs fill down the left column
  * then the right (1 over 2 over 3, then 4 over 5 over 6), not left-to-right.
  * `current` highlights a ply (0-based); onSelect makes it clickable.
- * `marks` optionally maps a ply to a review grade, shown as a coloured dot.
+ * `marks` optionally maps a ply to a notation mark (!, !!, !?, ?!, ?, ??), drawn in the guide colours.
  */
+const ANNOTATION = /^[!?]{1,2}$/;
+
 export default function MoveList({ moves, current = moves.length - 1, onSelect, marks, startFen = START_FEN }) {
   const ref = useRef(null);
   const line = useMemo(() => replayLine(startFen, moves), [startFen, moves]);
@@ -30,19 +32,15 @@ export default function MoveList({ moves, current = moves.length - 1, onSelect, 
         {[i, i + 1].map((ply) => {
           const m = line[ply];
           if (!m) return <span key={ply} />;
-          const tip = describeMove(m.san, m.ctx) || m.san;
-          const mark = marks?.[ply];
+          const mark = ANNOTATION.test(marks?.[ply] || '') ? marks[ply] : '';
+          const san = mark ? `${m.san}${mark}` : m.san;
+          const tip = describeMove(san, m.ctx) || san;
           const props = {
-            className: `mv${ply === current ? ' current' : ''}${mark ? ' marked' : ''}`,
-            'data-move-tip': mark ? `${tip} (${mark})` : tip,
+            className: `mv${ply === current ? ' current' : ''}`,
+            'data-move-tip': tip,
             'aria-label': tip,
           };
-          const body = (
-            <>
-              {mark && <span className={`mv-mark mark-${mark}`} />}
-              <Move san={m.san} tip={props['data-move-tip']} />
-            </>
-          );
+          const body = <Move san={san} tip={tip} />;
           return onSelect
             ? <button key={ply} type="button" {...props} onClick={() => onSelect(ply)}>{body}</button>
             : <span key={ply} tabIndex={0} {...props}>{body}</span>;

@@ -15,6 +15,8 @@ import { replayPgn } from '../../review/analyzeGame.js';
 import { gamePhases } from '../../chess/phase.js';
 import { useGameReview } from './useGameReview.js';
 import { useSteppedPly } from '../../components/game/replay/useSteppedPly.js';
+import { useAutoplay } from '../../components/game/replay/useAutoplay.js';
+import { annotationFor } from '../../review/annotation.js';
 import ReviewSummary from './components/ReviewSummary.jsx';
 import MoveComment from './components/MoveComment.jsx';
 import OpponentReview from './components/OpponentReview.jsx';
@@ -52,9 +54,12 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
     [review, showOpponent],
   );
   const byPly = useMemo(() => new Map(reviewed.map((m) => [m.ply, m])), [reviewed]);
-  const marks = useMemo(() => Object.fromEntries(reviewed.map((m) => [m.ply, m.kind])), [reviewed]);
+  const marks = useMemo(() => Object.fromEntries(
+    reviewed.map((m) => [m.ply, annotationFor(m)]).filter(([, mark]) => mark),
+  ), [reviewed]);
   const hinted = useMemo(() => new Set(game?.hintPlies || []), [game]);
   const last = replay ? replay.moves.length - 1 : -1;
+  const play = useAutoplay({ ply, last, shown, setPly, jump });
 
   useEffect(() => {
     if (!replay || autoStart) return;
@@ -68,12 +73,12 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
   useEffect(() => {
     if (!replay) return undefined;
     const onKey = (e) => {
-      if (e.key === 'ArrowLeft') setPly((p) => Math.max(-1, p - 1));
-      if (e.key === 'ArrowRight') setPly((p) => Math.min(last, p + 1));
+      if (e.key === 'ArrowLeft') { play.pause(); setPly((p) => Math.max(-1, p - 1)); }
+      if (e.key === 'ArrowRight') { play.pause(); setPly((p) => Math.min(last, p + 1)); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [replay, last]);
+  }, [replay, last, play.pause]);
 
   if (error && !game) return <div className="card center" style={{ maxWidth: 420, margin: '30px auto' }}><p>{error}</p><a className="btn" href={user ? '#/profile' : '#/'}>Back</a></div>;
   if (!game || !replay) return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>;
@@ -102,7 +107,7 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
   const nextSlip = () => {
     const slips = review.moves.filter((m) => SLIPS.has(m.kind));
     const next = slips.find((m) => m.ply > ply) || slips[0];
-    if (next) setPly(next.ply);
+    if (next) { play.pause(); setPly(next.ply); }
   };
   const playerMoves = replay.moves.filter((m) => m.color === game.color).length;
   const colorOfPly = (p) => (p % 2 ? 'b' : 'w');
@@ -125,10 +130,13 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
           sideBar={settings.evalBar ? <EvalBar fen={fen} orientation={orientation} playerColor={game.color} /> : null}
         />
         <div className="replay-controls">
-          <button className="btn" onClick={() => setPly(-1)} disabled={ply < 0} aria-label="First move"><Icon name="first" size={18} /></button>
-          <button className="btn" onClick={() => setPly((p) => Math.max(-1, p - 1))} disabled={ply < 0} aria-label="Previous move"><Icon name="prev" size={18} /></button>
-          <button className="btn" onClick={() => setPly((p) => Math.min(last, p + 1))} disabled={ply >= last} aria-label="Next move"><Icon name="next" size={18} /></button>
-          <button className="btn" onClick={() => setPly(last)} disabled={ply >= last} aria-label="Last move"><Icon name="last" size={18} /></button>
+          <button className="btn" onClick={() => { play.pause(); setPly(-1); }} disabled={ply < 0} aria-label="First move"><Icon name="first" size={18} /></button>
+          <button className="btn" onClick={() => { play.pause(); setPly((p) => Math.max(-1, p - 1)); }} disabled={ply < 0} aria-label="Previous move"><Icon name="prev" size={18} /></button>
+          <button className="btn" onClick={play.togglePlay} disabled={last < 0} aria-label={play.playing ? 'Pause' : play.atEnd ? 'Replay all moves' : 'Play all moves'}>
+            <Icon name={play.playing ? 'pause' : play.atEnd ? 'retry' : 'play'} size={18} />
+          </button>
+          <button className="btn" onClick={() => { play.pause(); setPly((p) => Math.min(last, p + 1)); }} disabled={ply >= last} aria-label="Next move"><Icon name="next" size={18} /></button>
+          <button className="btn" onClick={() => { play.pause(); setPly(last); }} disabled={ply >= last} aria-label="Last move"><Icon name="last" size={18} /></button>
           <button className="btn" onClick={() => setFlipped((f) => !f)} aria-label="Flip board"><Icon name="flip" size={18} /></button>
         </div>
       </div>
@@ -206,7 +214,7 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
 
           {review && ply >= 0 && (
             <div className="row review-nav">
-              <button className="btn small icon-text" onClick={() => setPly(-1)}><Icon name="trophy" size={16} /> Summary</button>
+              <button className="btn small icon-text" onClick={() => { play.pause(); setPly(-1); }}><Icon name="trophy" size={16} /> Summary</button>
               {review.summary.counts && (review.summary.counts.inaccuracy + review.summary.counts.mistake + review.summary.counts.blunder) > 0 && (
                 <button className="btn small icon-text" onClick={nextSlip}><Icon name="target" size={16} /> Next slip</button>
               )}
@@ -218,7 +226,7 @@ export default function GameReviewPage({ gameId, autoStart, initialPly = null })
         <div className="card moves-card">
           <h3>Moves</h3>
           <div className="moves-body">
-            <MoveList moves={replay.moves.map((m) => m.san)} current={ply} onSelect={setPly} marks={marks} />
+            <MoveList moves={replay.moves.map((m) => m.san)} current={ply} onSelect={(p) => { play.pause(); setPly(p); }} marks={marks} />
           </div>
         </div>
       </aside>
