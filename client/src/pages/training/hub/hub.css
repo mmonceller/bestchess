@@ -161,6 +161,22 @@ a.puzzle-card-cta { padding: 4px 2px 4px 8px; }
 }
 .world-name { font-weight: 800; font-size: 0.85rem; text-align: center; line-height: 1.15; }
 .world-count { font-size: 0.75rem; }
+.world-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 99px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  background: var(--track, var(--accent));
+  color: #111;
+}
+.world-tab .world-new { position: absolute; top: 4px; left: 4px; }
+.world-head h2 { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.lesson-sheet h2 { display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
 .world-pin {
   position: absolute;
   top: 7px;
@@ -285,6 +301,8 @@ a.puzzle-card-cta { padding: 4px 2px 4px 8px; }
   font-weight: 800;
 }
 .node-tag.updated::after { border-top-color: color-mix(in srgb, var(--accent) 75%, #111); }
+.node-tag.new { background: #7dffb3; color: #10281a; }
+.node-tag.new::after { border-top-color: #7dffb3; }
 .node-label { margin-top: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1px; }
 .node-label b { font-size: 0.82rem; line-height: 1.2; }
 

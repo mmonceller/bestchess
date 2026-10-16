@@ -5,6 +5,7 @@ import Stars from '../components/Stars.jsx';
 import { getCoach } from '../../../training/coaches.js';
 import { lessonXp } from '../../../training/xp.js';
 import { lessonUpdate } from '../../../training/progress/lessonFresh.js';
+import { TRACKS } from '../../../training/lessons/index.js';
 import UpdatedNote from './UpdatedNote.jsx';
 
 const FEATURES = [
@@ -21,6 +22,7 @@ export default function LessonSheet({ lesson, progress, onClose }) {
   const coach = getCoach(lesson.coach);
   const p = progress[lesson.id];
   const update = lessonUpdate(p, lesson);
+  const isNew = !p && TRACKS.find((t) => t.id === lesson.track)?.fresh;
   const features = FEATURES.filter((f) => lesson.steps.some((s) => s.type === f.type)).slice(0, 4);
   return (
     <Modal onClose={onClose}>
@@ -34,7 +36,7 @@ export default function LessonSheet({ lesson, progress, onClose }) {
           </div>
         </div>
         <p className="sheet-intro">“{coach.intro}”</p>
-        <h2>{lesson.title}</h2>
+        <h2>{lesson.title}{isNew && <span className="world-new">New</span>}</h2>
         <p className="muted">{lesson.summary}</p>
         <div className="sheet-meta">
           <span className="chip"><Icon name="clock" size={15} /> {lesson.minutes} min</span>

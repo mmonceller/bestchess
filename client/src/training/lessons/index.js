@@ -6,6 +6,8 @@ import { strategyLessons } from './strategy.js';
 import { endgameLessons } from './endgame.js';
 import { masterLessons } from './master.js';
 import { masterThinkingLessons } from './masterThinking.js';
+import { studyLessons } from './study.js';
+import { antibookLessons } from './antibook.js';
 import { tacticsLessons } from './tactics/index.js';
 import { BONUS } from './bonus/index.js';
 
@@ -18,11 +20,12 @@ export const TRACKS = [
   { id: 'advanced', name: 'Level Up', blurb: 'Endgame know-how, pawn structures and match psychology.', icon: 'mountain', color: '#ffb547' },
   { id: 'strategy', name: 'Strategy Lab', blurb: 'Read any position like a master: imbalances, good and bad pieces, weak pawns, space and passed pawns.', icon: 'mind', color: '#4f9dff' },
   { id: 'endgame', name: 'Endgame School', blurb: 'Win the won games and save the lost ones: king races, zugzwang, fortresses, queen vs. pawn and rook endgames.', icon: 'king', color: '#3fbfa0' },
+  { id: 'study', name: 'Advanced Study', blurb: 'Harder lessons for players who already play: prophylaxis, pawn structures, practical choices and deep endgames.', icon: 'mind', color: '#c084fc', supplement: true, fresh: true },
   { id: 'master', name: 'Master Class', blurb: 'For players who have outgrown the basics: calculation, prophylaxis and tournament technique.', icon: 'crown', color: '#ff5c8a', gated: true },
 ];
 
 /* Bump `rev` (or `bonusRev`) when you add steps, so old completions show Updated. */
-export const LESSONS = [...firstStepsLessons, ...beginnerLessons, ...intermediateLessons, ...tacticsLessons, ...advancedLessons, ...strategyLessons, ...endgameLessons, ...masterLessons, ...masterThinkingLessons]
+export const LESSONS = [...firstStepsLessons, ...beginnerLessons, ...intermediateLessons, ...tacticsLessons, ...advancedLessons, ...strategyLessons, ...endgameLessons, ...studyLessons, ...antibookLessons, ...masterLessons, ...masterThinkingLessons]
   .map((lesson) => ({ ...lesson, bonus: BONUS[lesson.id] || [] }));
 
 const trackOf = (id) => TRACKS.find((t) => t.id === id);

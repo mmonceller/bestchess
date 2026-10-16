@@ -22,7 +22,7 @@ function trail(count) {
   return d;
 }
 
-export default function LessonPath({ lessons, progress, nextId, color, onOpen }) {
+export default function LessonPath({ lessons, progress, nextId, color, markNew, onOpen }) {
   const height = yAt(lessons.length - 1) + BELOW_LAST;
   const doneCount = lessons.filter((l) => progress[l.id]).length;
   return (
@@ -39,8 +39,9 @@ export default function LessonPath({ lessons, progress, nextId, color, onOpen })
         return (
           <div key={l.id} className={`path-node ${state}`} style={{ left: xAt(i), top: yAt(i), '--coach': coach.color, '--i': i }}>
             {state === 'next' && <span className="node-tag">Start here</span>}
+            {markNew && !p && state !== 'next' && <span className="node-tag new">New</span>}
             {update.stale && state !== 'next' && <span className="node-tag updated">Updated</span>}
-            <button className="node-btn" onClick={() => onOpen(l)} aria-label={`${l.title} with ${coach.name}${update.stale ? ', updated' : ''}`}>
+            <button className="node-btn" onClick={() => onOpen(l)} aria-label={`${l.title} with ${coach.name}${markNew && !p ? ', new' : ''}${update.stale ? ', updated' : ''}`}>
               <CoachAvatar coach={coach} size={56} />
               {p && <span className="node-check"><Icon name="check" size={14} /></span>}
               {p && !p.bonusStars && l.bonus.length > 0 && <span className="node-bonus" title="Bonus round available"><Icon name="gem" size={13} /></span>}

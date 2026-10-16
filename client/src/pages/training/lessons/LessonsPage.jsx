@@ -13,6 +13,7 @@ import LessonPath from '../hub/LessonPath.jsx';
 import LessonSheet from '../hub/LessonSheet.jsx';
 import CoachRoster from '../hub/CoachRoster.jsx';
 import MasteryChecklist from '../mastery/MasteryChecklist.jsx';
+import MasteryModal from '../mastery/MasteryModal.jsx';
 import MasteryUnlocked from '../mastery/MasteryUnlocked.jsx';
 import '../training.css';
 import '../hub/hub.css';
@@ -35,6 +36,7 @@ export default function LessonsPage() {
   const [trackId, setTrackId] = useState(null);
   const [preview, setPreview] = useState(null);
   const [welcome, setWelcome] = useState(false);
+  const [gate, setGate] = useState(false);
 
   useEffect(() => {
     if (trainer && !trainer.path && !guestStorage.read(WELCOME_SEEN, false)) setWelcome(true);
@@ -47,6 +49,7 @@ export default function LessonsPage() {
 
   function pickPath(id) {
     update((t) => ({ ...t, path: id, rating: t.games ? t.rating : PATHS[id].rating }));
+    setTrackId(PATHS[id].track);
     closeWelcome();
   }
 
@@ -54,7 +57,11 @@ export default function LessonsPage() {
   const tracks = TRACKS.filter((t) => !t.gated || mastery.visible);
   const playable = TRACKS.filter((t) => !t.gated || mastery.unlocked);
   const skillTracks = tracksForSkill(user?.skill);
-  const startTrack = skillTracks?.find((id) => playable.some((t) => t.id === id)) || PATHS[trainer?.path]?.track;
+  const pathTrack = PATHS[trainer?.path]?.track;
+  const pathHasWork = pathTrack && lessonsFor(pathTrack).some((l) => !progress[l.id]);
+  const startTrack = (pathHasWork && playable.some((t) => t.id === pathTrack))
+    ? pathTrack
+    : (skillTracks?.find((id) => playable.some((t) => t.id === id)) || pathTrack);
   const recommended = useMemo(
     () => (trainer && !progressLoading ? recommendedTrack(startTrack, progress, playable, lessonsFor) : null),
     [trainer, progress, progressLoading, playable.length, startTrack], // eslint-disable-line react-hooks/exhaustive-deps
@@ -81,6 +88,7 @@ export default function LessonsPage() {
             const list = lessonsFor(t.id);
             const done = list.filter((l) => progress[l.id]).length;
             const isLocked = t.gated && !mastery.unlocked;
+            const isNew = t.fresh && !isLocked && done < list.length;
             return (
               <button
                 key={t.id}
@@ -90,6 +98,7 @@ export default function LessonsPage() {
                 style={{ '--track': t.color }}
                 onClick={() => setTrackId(t.id)}
               >
+                {isNew && <span className="world-new">New</span>}
                 <span className="world-icon"><Icon name={isLocked ? 'lock' : t.icon} size={22} /></span>
                 <span className="world-name">{t.name}</span>
                 <span className="world-count">{isLocked ? 'Locked' : `${done}/${list.length}`}</span>
@@ -98,8 +107,13 @@ export default function LessonsPage() {
             );
           })}
         </div>
+        {!mastery.unlocked && (
+          <button type="button" className="link small unlock-master" onClick={() => setGate(true)}>
+            Unlock Master Class course
+          </button>
+        )}
         <div className="world-head" style={{ '--track': track.color }}>
-          <h2>{track.name}</h2>
+          <h2>{track.name}{track.fresh && nextId && <span className="world-new">New</span>}</h2>
           <p className="muted">{track.blurb}</p>
         </div>
         {locked ? (
@@ -107,7 +121,7 @@ export default function LessonsPage() {
         ) : (
           <>
             {track.gated && !lessons.some((l) => progress[l.id]) && <MasteryUnlocked />}
-            <LessonPath lessons={lessons} progress={progress} nextId={nextId} color={track.color} onOpen={setPreview} />
+            <LessonPath lessons={lessons} progress={progress} nextId={nextId} color={track.color} markNew={track.fresh} onOpen={setPreview} />
             {!nextId && (
               <div className="world-done card">
                 <Icon name="trophy" size={28} />
@@ -124,6 +138,7 @@ export default function LessonsPage() {
       <CoachRoster />
       {preview && <LessonSheet lesson={preview} progress={progress} onClose={() => setPreview(null)} />}
       {welcome && <WelcomeSheet isGuest={!user} current={trainer.path} onPick={pickPath} onClose={closeWelcome} />}
+      {gate && <MasteryModal mastery={mastery} onClose={() => setGate(false)} />}
     </div>
   );
 }

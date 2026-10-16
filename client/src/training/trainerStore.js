@@ -14,6 +14,7 @@ export const PATHS = {
   new: { label: 'I\'m brand new to chess', blurb: 'Learn how the pieces move, step by step.', icon: 'seedling', rating: 400, track: 'first' },
   knows: { label: 'I know how the pieces move', blurb: 'Build habits that win games.', icon: 'knight', rating: 800, track: 'beginner' },
   improve: { label: 'I play and want to level up', blurb: 'Sharpen tactics, plans and endgames.', icon: 'mountain', rating: 1200, track: 'intermediate' },
+  advanced: { label: 'I am looking for advanced lessons', blurb: 'Harder plans, structures and practical decisions.', icon: 'crown', rating: 1600, track: 'study' },
 };
 
 export const defaultTrainer = () => ({
@@ -64,10 +65,10 @@ export function useTrainer() {
   }, [user]);
 
   const flush = useCallback(() => {
-    if (!saveTimer.current) return;
+    if (!saveTimer.current) return undefined;
     clearTimeout(saveTimer.current);
     saveTimer.current = null;
-    trainerApi.save(current.current).catch(() => {});
+    return trainerApi.save(current.current).catch(() => {});
   }, []);
 
   useEffect(() => flush, [flush]);
@@ -82,7 +83,7 @@ export function useTrainer() {
     saveTimer.current = setTimeout(flush, 400);
   }, [user, flush]);
 
-  return { trainer, loading: !trainer, update };
+  return { trainer, loading: !trainer, update, flush };
 }
 
 /* After logging in, folds this session's guest training into the account. */
