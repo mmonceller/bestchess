@@ -95,6 +95,14 @@ export default function PuzzlePlay({ puzzle, onResult, onNext }) {
       return;
     }
 
+    /* A promotion puzzle is about the pawn. A different piece that also wins does not count. */
+    if (expected.length > 4 && !mv.promotion) {
+      settle(false, 'bad', `[[${mv.san}]] misses the promotion. ${failArrow(named)}`);
+      setBusy(true);
+      later(() => { game.undo(); setBusy(false); }, 700);
+      return;
+    }
+
     setBusy(true);
     setNote({ tone: 'ok', text: 'Checking your idea…' });
     let graded = null;

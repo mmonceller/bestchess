@@ -18,6 +18,7 @@
     "test:lessons": "node scripts/validateLessons.js",
     "test:terms": "node scripts/validateTerms.js",
     "test:rematch": "node scripts/smokeRematch.js",
+    "check:goals": "node scripts/dev/goalPlanCheck.js",
     "check:endgames": "node scripts/checkEndgames.js",
     "test:puzzles": "node scripts/validatePuzzles.js",
     "puzzles:variants": "node scripts/patterns/buildVariants.js",
