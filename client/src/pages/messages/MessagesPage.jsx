@@ -10,7 +10,7 @@ import PinnedGoals from './PinnedGoals.jsx';
 import MessageRow from './MessageRow.jsx';
 import './messages.css';
 
-const REFRESH_MS = 5000;
+const REFRESH_MS = 20_000;
 
 export default function MessagesPage() {
   const { user, ready } = useAuth();
@@ -21,13 +21,13 @@ export default function MessagesPage() {
 
   useEffect(() => {
     if (!user || !refresh) return undefined;
-    refresh();
-    const timer = setInterval(refresh, REFRESH_MS);
-    const onVisible = () => { if (document.visibilityState === 'visible') refresh(); };
-    document.addEventListener('visibilitychange', onVisible);
+    const tick = () => { if (document.visibilityState === 'visible') refresh(); };
+    tick();
+    const timer = setInterval(tick, REFRESH_MS);
+    document.addEventListener('visibilitychange', tick);
     return () => {
       clearInterval(timer);
-      document.removeEventListener('visibilitychange', onVisible);
+      document.removeEventListener('visibilitychange', tick);
     };
   }, [user, refresh]);
 
@@ -41,9 +41,10 @@ export default function MessagesPage() {
       </div>
     );
   }
-  if (!daily?.data) return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>;
+  const loaded = Boolean(daily?.data);
+  if (!loaded && !daily?.failed) return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>;
 
-  const messages = daily.data.messages || [];
+  const messages = daily?.data?.messages || [];
   const games = pending.map((game) => ({ ...game, read: gameIsRead(game.id) }));
   const feed = [
     ...games.map((game) => ({ kind: 'game', at: game.at || 0, game })),
@@ -54,9 +55,16 @@ export default function MessagesPage() {
   return (
     <div className="messages fade-in">
       <h1>Messages</h1>
-      <PinnedGoals goals={daily.data.goals} />
+      {loaded && <PinnedGoals goals={daily.data.goals} />}
       <div className="message-list">
-        {!feed.length && !daily.data.goals?.length && <p className="muted">No messages yet. A note arrives when the day's goals are added, and again when you finish one.</p>}
+        {!loaded && (
+          <div className="card message">
+            <h2>Messages didn't load</h2>
+            <p>The server didn't answer.</p>
+            <button type="button" className="btn small" onClick={() => refresh()}>Try again</button>
+          </div>
+        )}
+        {loaded && !feed.length && !daily.data.goals?.length && <p className="muted">No messages yet. A note arrives when the day's goals are added, and again when you finish one.</p>}
         {feed.map((item) => item.kind === 'game' ? (
           <MessageRow key={item.game.id} title={item.game.title} read={item.game.read} onRead={() => markGameRead(item.game.id)}>
             {item.game.at ? <time className="message-when" dateTime={new Date(item.game.at).toISOString()}>{when(item.game.at)}</time> : null}

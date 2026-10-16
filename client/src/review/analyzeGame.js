@@ -5,6 +5,7 @@ import { classify, moveAccuracy, KIND_ORDER } from './classify.js';
 import { buildComment } from './commentary.js';
 import { dangerNote, dangerState } from './dangerNotes.js';
 import { threatensMate } from '../chess/danger/mateThreat.js';
+import { tradeLesson } from '../training/hints/tradeLesson.js';
 
 export const REVIEW_VERSION = 1;
 
@@ -43,7 +44,10 @@ export async function analyzeGame(pgn, color, { onProgress, isCancelled, timeMs 
     const bestLineSan = showBest ? uciLineToSan(Chess, m.before, r.bestLine || [r.best]) : [];
     const replySan = r.reply ? uciLineToSan(Chess, m.after, [r.reply.uci])[0] : null;
     const comment = buildComment(kind, r, { bestSan: bestLineSan[0] || null, replySan });
-    const bestExp = r.bestExplanation || r.played;
+    const trade = tradeLesson(r.played, { loss: r.loss });
+    const bestExp = trade
+      ? { tags: trade.tags, piece: r.played?.piece || null }
+      : (r.bestExplanation || r.played);
     const note = danger ? dangerNote(r, { threat: threatensMate(m.before, opponent), prev: prevDanger }) : null;
     prevDanger = dangerState(r);
 

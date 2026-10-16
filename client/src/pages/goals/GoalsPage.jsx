@@ -33,7 +33,16 @@ export default function GoalsPage() {
       </div>
     );
   }
-  if (!daily?.data) return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>;
+  if (!daily?.data && !daily?.failed) return <div className="center muted" style={{ padding: 40 }}><span className="spinner" /></div>;
+  if (!daily?.data) {
+    return (
+      <div className="card center" style={{ maxWidth: 420, margin: '30px auto' }}>
+        <h2>Today's goals</h2>
+        <p className="muted">The server didn't answer.</p>
+        <button type="button" className="btn small" onClick={() => daily.refresh()}>Try again</button>
+      </div>
+    );
+  }
 
   const { goals, report, points } = daily.data;
   return (

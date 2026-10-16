@@ -32,7 +32,7 @@ function SaveNote({ state }) {
   if (state === 'saving') return <p className="small muted">Saving review…</p>;
   if (state === 'error') return <p className="small error-text">Could not save this review. It is still shown here until you leave.</p>;
   if (state === 'guest') return <p className="small muted">You are playing as a guest, so this review disappears when you leave. <a className="link" href="#/login">Log in</a> to keep your reviews.</p>;
-  if (state === 'unsaved') return <p className="small muted">This game was not saved to your account, so the review is only shown here.</p>;
+  if (state === 'unsaved') return <p className="small muted">This game didn't reach your account. A copy is still in this browser, and it will be saved when the server answers.</p>;
   return null;
 }
 

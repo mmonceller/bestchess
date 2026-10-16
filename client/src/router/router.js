@@ -20,6 +20,12 @@ export function useRoute() {
   return route;
 }
 
-export function navigate(to) {
-  location.hash = to.startsWith('#') ? to : `#${to}`;
+export function navigate(to, { replace = false } = {}) {
+  const hash = to.startsWith('#') ? to : `#${to}`;
+  if (!replace) {
+    location.hash = hash;
+    return;
+  }
+  history.replaceState(null, '', `${location.pathname}${location.search}${hash}`);
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
 }

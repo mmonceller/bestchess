@@ -30,8 +30,12 @@ function summary(room, color) {
 export function activeGamesFor({ userId = null, saved = [] }) {
   const found = new Map();
   const add = (room, color) => {
-    room?.expireInvite();
-    if (room && color && room.status !== 'expired' && !found.has(room.code)) found.set(room.code, summary(room, color));
+    try {
+      room?.expireInvite();
+      if (room && color && room.status !== 'expired' && !found.has(room.code)) found.set(room.code, summary(room, color));
+    } catch {
+      /* One broken room should not fail the whole inbox request. */
+    }
   };
   if (userId) {
     for (const room of allRooms()) {

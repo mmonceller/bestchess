@@ -94,6 +94,7 @@ export function gradeMove(fen, uci, { timeMs = 1200, maxDepth = 6, preferred = n
     moveScore: entry.score,
     bestScore: best.score,
     best: bestUci,
+    played: explainMove(fen, uci, entry.score),
     explanation: explainMove(fen, bestUci, best.score),
   };
 }

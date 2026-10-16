@@ -255,7 +255,14 @@ export function explainMove(fen, uci, score = 0) {
   const attackedAfter = pos.isAttacked(to, them);
   const defendedAfter = pos.isAttacked(to, us);
 
-  if (capturedType) {
+  if (capturedType && mover === KING && capturedType !== KING) {
+    const cap = NAMES[capturedType];
+    const safe = !attackedAfter || defendedAfter;
+    add('trade', context.includes('ahead')
+      ? `Takes the ${cap} with the king while you're ahead — trading pieces makes your extra material count more.`
+      : `Takes the ${cap} with the king.`);
+    if (context.includes('ahead') && !safe) tags.push('tradeBad');
+  } else if (capturedType) {
     const cap = NAMES[capturedType];
     if (moverWasHanging && attackedAfter && value(capturedType) < value(mover)) {
       add('desperado', `Your ${piece} was lost anyway, so it grabs a ${cap} on the way out.`);

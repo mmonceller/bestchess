@@ -3,6 +3,7 @@ import { useAuth } from '../../../context/AuthContext.jsx';
 import { gamesApi } from '../../../api/endpoints.js';
 import { getLevel } from '../../../engine/levels.js';
 import { loadSavedGames, clearSavedGame } from '../savedGame.js';
+import { clearStashedGame, readStashedGame, stashGame } from '../../../review/pendingReview.js';
 import { isExpired, expiredRecord } from './inactivity.js';
 
 const NOTE_KEY = 'bc.computerExpired';
@@ -32,7 +33,14 @@ export function useExpiredGame() {
     if (!expired.length) return;
     const added = expired.map((saved) => {
       clearSavedGame(saved.id);
-      if (user) gamesApi.saveComputerGame(expiredRecord(saved)).then(refresh).catch(() => {});
+      if (user) {
+        const record = { ...expiredRecord(saved), mode: 'computer' };
+        stashGame(record, { durable: true });
+        gamesApi.saveComputerGame(record).then(() => {
+          if (readStashedGame()?.pgn === record.pgn) clearStashedGame();
+          refresh();
+        }).catch(() => {});
+      }
       return { level: getLevel(saved.level).name, movedAt: saved.movedAt, recorded: Boolean(user) };
     });
     const next = [...loadNotes(), ...added];

@@ -22,6 +22,8 @@ export const TAG_LESSONS = {
     { lesson: 'b-loose-pieces', say: 'Look for pieces that are attacked more times than they are defended.' },
   ],
   trade: [
+    { lesson: 'i-trade-logic', when: (t) => t.includes('ahead') && t.includes('tradeBad'), say: 'A trade can be wrong even when you\'re ahead, if it leaves them active pieces or a dangerous pawn. Picture the position after the swap.' },
+    { lesson: 'i-trade-logic', when: (t) => t.includes('materialDown'), say: 'You are behind, so keep pieces on and make it messy. Trading usually makes their win easier.' },
     { lesson: 'i-trade-logic', when: (t) => t.includes('ahead'), say: 'You are ahead, so trading pieces makes your extra material count even more.' },
   ],
   desperado: [
@@ -91,4 +93,4 @@ export const TAG_LESSONS = {
 };
 
 /* Tags checked first: concrete tactics beat techniques, which beat opening principles. */
-export const PRIORITY_TAGS = ['mate', 'fork', 'pin', 'skewer', 'desperado', 'freePiece', 'winMaterial', 'promotion', 'rookBehindPasser', 'cutOff', 'opposition', 'blockade', 'outpost'];
+export const PRIORITY_TAGS = ['mate', 'fork', 'pin', 'skewer', 'desperado', 'freePiece', 'winMaterial', 'promotion', 'trade', 'rookBehindPasser', 'cutOff', 'opposition', 'blockade', 'outpost'];

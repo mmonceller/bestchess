@@ -26,7 +26,7 @@ import { moveFeedback } from './moveFeedback.js';
 import LessonReminder from '../../components/game/LessonReminder.jsx';
 import BrowsingNotice from '../../components/game/replay/BrowsingNotice.jsx';
 import { useHistoryView } from '../../components/game/replay/useHistoryView.js';
-import { stashGame } from '../../review/pendingReview.js';
+import { clearStashedGame, stashGame } from '../../review/pendingReview.js';
 import { navigate } from '../../router/router.js';
 import '../../components/game/game.css';
 import './computer.css';
@@ -91,39 +91,51 @@ export default function ComputerGame({ gameId, color, level, initialPgn, initial
     if (game.history.length) saveGame({ id: gameId, pgn: c.pgn(), color, level, hints: hintLog.plies() });
   }, [game.fen, over, hintLog.count]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  function finishedRecord() {
+    const outcome = result.winner === null ? 'draw' : result.winner === color ? 'win' : 'loss';
+    const c = game.chess;
+    c.setHeader('Result', result.winner === 'w' ? '1-0' : result.winner === 'b' ? '0-1' : '1/2-1/2');
+    return {
+      pgn: c.pgn(),
+      color,
+      opponent: `${lvl.name} (Lv ${lvl.id})`,
+      result: outcome,
+      reason: result.reason,
+      mode: 'computer',
+      date: Date.now(),
+      moves: game.history.length,
+      hintPlies: hintLog.plies(game.history.length),
+      level,
+    };
+  }
+
   useEffect(() => {
     if (!over || savedRef.current) return;
     savedRef.current = true;
     sounds.end();
     setShowEnd(true);
     clearSavedGame(gameId);
+    const record = finishedRecord();
+    stashGame(record, { durable: Boolean(user) });
     if (!user) { setSaveState('guest'); return; }
-    const c = game.chess;
-    const outcome = result.winner === null ? 'draw' : result.winner === color ? 'win' : 'loss';
-    c.setHeader('Result', result.winner === 'w' ? '1-0' : result.winner === 'b' ? '0-1' : '1/2-1/2');
     setSaveState('saving');
-    gamesApi.saveComputerGame({
-      opponent: `${lvl.name} (Lv ${lvl.id})`,
-      color,
-      result: outcome,
-      reason: result.reason,
-      pgn: c.pgn(),
-      moves: game.history.length,
-      hintPlies: hintLog.plies(game.history.length),
-      level,
-    }).then((d) => { setSavedId(d.game?.id || null); setSaveState('saved'); refresh(); }).catch(() => setSaveState('error'));
+    gamesApi.saveComputerGame(record).then((d) => {
+      const id = d.game?.id;
+      if (!id) { setSaveState('error'); return; }
+      setSavedId(id);
+      setSaveState('saved');
+      clearStashedGame();
+      refresh();
+    }).catch(() => setSaveState('error'));
   }, [over]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function openReview() {
-    const outcome = result.winner === null ? 'draw' : result.winner === color ? 'win' : 'loss';
-    stashGame({
-      pgn: game.chess.pgn(), color, opponent: `${lvl.name} (Lv ${lvl.id})`, result: outcome, reason: result.reason, mode: 'computer', date: Date.now(),
-      moves: game.history.length, hintPlies: hintLog.plies(game.history.length),
-    });
+    if (!savedId) stashGame(finishedRecord(), { durable: Boolean(user) });
     navigate(savedId ? `/review/${savedId}?start=1` : '/review?start=1');
   }
+  const saveSettled = !user || saveState === 'saved' || saveState === 'error' || saveState === 'guest';
   const reviewButton = (
-    <button className="btn good icon-text" onClick={openReview} disabled={saveState === 'saving' || !userMoves}>
+    <button className="btn good icon-text" onClick={openReview} disabled={!saveSettled || !userMoves}>
       <Icon name="target" size={18} /> Game review
     </button>
   );

@@ -1,13 +1,37 @@
 /*
- * The game a player just finished, kept for this browser tab so it can be reviewed
- * even when it was not saved to an account (guests, or a failed save).
+ * The game a player just finished. sessionStorage keeps it for this tab.
+ * localStorage keeps a logged-in player's game when the account save has not
+ * succeeded yet, so closing the tab does not drop it.
  */
 const KEY = 'bc.pendingReview';
 
-export function stashGame(game) {
-  try { sessionStorage.setItem(KEY, JSON.stringify(game)); } catch { /* storage full or blocked */ }
+function write(storage, game) {
+  try { storage.setItem(KEY, JSON.stringify(game)); } catch { /* storage full or blocked */ }
+}
+
+function read(storage) {
+  try {
+    const game = JSON.parse(storage.getItem(KEY));
+    return game?.pgn ? game : null;
+  } catch {
+    return null;
+  }
+}
+
+export function stashGame(game, { durable = false } = {}) {
+  write(sessionStorage, game);
+  if (durable) write(localStorage, game);
 }
 
 export function readStashedGame() {
-  try { return JSON.parse(sessionStorage.getItem(KEY)); } catch { return null; }
+  return read(sessionStorage) || read(localStorage);
+}
+
+export function clearDurableStash() {
+  localStorage.removeItem(KEY);
+}
+
+export function clearStashedGame() {
+  sessionStorage.removeItem(KEY);
+  clearDurableStash();
 }

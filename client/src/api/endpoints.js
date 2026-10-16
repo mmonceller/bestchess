@@ -26,7 +26,7 @@ export const progressApi = {
 };
 
 export const onlineApi = {
-  active: (saved) => api('/online/active', { method: 'POST', body: { saved } }),
+  active: (saved) => api('/online/active', { method: 'POST', body: { saved }, timeoutMs: 20_000 }),
   resign: (code, saved) => api('/online/resign', { method: 'POST', body: { code, saved } }),
   acceptResign: (code, saved) => api('/online/resign-accept', { method: 'POST', body: { code, saved } }),
   declineResign: (code, saved) => api('/online/resign-decline', { method: 'POST', body: { code, saved } }),
@@ -34,7 +34,7 @@ export const onlineApi = {
 };
 
 export const dailyApi = {
-  today: (day, since) => api(`/daily?day=${day}&since=${since}`),
+  today: (day, since) => api(`/daily?day=${day}&since=${since}`, { timeoutMs: 45_000 }),
   read: (id) => api('/daily/read', { method: 'POST', body: { id } }),
 };
 

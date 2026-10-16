@@ -9,11 +9,16 @@ const router = Router();
 
 /* Works for guests too: they send the seats their browser remembered. */
 router.post('/active', (req, res) => {
-  const user = userFromToken(bearerToken(req));
-  const saved = Array.isArray(req.body?.saved)
-    ? req.body.saved.map((s) => ({ code: String(s?.code || '').slice(0, 8), key: String(s?.key || '').slice(0, 64) }))
-    : [];
-  res.json({ games: activeGamesFor({ userId: user?.id ?? null, saved }) });
+  try {
+    const user = userFromToken(bearerToken(req));
+    const saved = Array.isArray(req.body?.saved)
+      ? req.body.saved.map((s) => ({ code: String(s?.code || '').slice(0, 8), key: String(s?.key || '').slice(0, 64) }))
+      : [];
+    res.json({ games: activeGamesFor({ userId: user?.id ?? null, saved }) });
+  } catch (err) {
+    console.error('active games', err);
+    res.json({ games: [] });
+  }
 });
 
 function act(req, res, run) {
