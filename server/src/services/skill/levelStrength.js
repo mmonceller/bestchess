@@ -18,7 +18,23 @@ export function levelForRating(rating) {
   return best;
 }
 
+/* "Casual (Lv 3)" still names the bot when a saved game has no level number. */
+export function levelFromLabel(name) {
+  const match = String(name || '').match(/\(Lv\s*(\d+)\)/i);
+  const level = match ? Number(match[1]) : null;
+  return LEVEL_RATING[level] ? level : null;
+}
+
+export function computerLevel(game) {
+  const level = Number(game?.level);
+  if (LEVEL_RATING[level]) return level;
+  return levelFromLabel(game?.opponent);
+}
+
 export function opponentRating(game) {
-  if (game.mode === 'computer') return LEVEL_RATING[game.level] ?? null;
+  if (game.mode === 'computer') {
+    const level = computerLevel(game);
+    return level == null ? null : LEVEL_RATING[level];
+  }
   return Number.isFinite(game.opponentRating) ? game.opponentRating : DEFAULT_OPPONENT_RATING;
 }

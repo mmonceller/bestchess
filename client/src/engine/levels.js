@@ -15,3 +15,10 @@ export const LEVELS = [
 ];
 
 export const getLevel = (id) => LEVELS.find((l) => l.id === id) || LEVELS[2];
+
+/* "Casual (Lv 3)" still names the bot when a saved game has no level number. */
+export function levelFromLabel(name) {
+  const match = String(name || '').match(/\(Lv\s*(\d+)\)/i);
+  const level = match ? Number(match[1]) : null;
+  return LEVELS.some((l) => l.id === level) ? level : null;
+}

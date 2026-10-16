@@ -1,4 +1,5 @@
 import { gamesApi } from '../api/endpoints.js';
+import { levelFromLabel } from '../engine/levels.js';
 import { clearDurableStash, clearStashedGame, stashGame } from './pendingReview.js';
 
 /* The body POST /games accepts for a finished bot game. */
@@ -11,7 +12,7 @@ export function finishedRecord(game) {
     pgn: game.pgn,
     moves: game.moves,
     hintPlies: game.hintPlies,
-    level: game.level ?? null,
+    level: game.level ?? levelFromLabel(game.opponent),
     mode: 'computer',
   };
 }

@@ -1,5 +1,5 @@
 import { db } from '../../db/store.js';
-import { LEVEL_RATING, levelForRating, opponentRating } from './levelStrength.js';
+import { computerLevel, levelForRating, opponentRating } from './levelStrength.js';
 import { HINT_LIMIT_PERCENT, tooManyHints } from './hintUsage.js';
 
 export const MIN_GAMES = 5;
@@ -24,8 +24,10 @@ const rawScore = (g) => g.opp + (g.score === 1 ? SPREAD : g.score > 0 ? 0 : -SPR
 
 function opponentLevel(g) {
   const stored = g.game || g;
-  const level = stored.level ?? g.level;
-  if ((stored.mode || g.mode) === 'computer' && LEVEL_RATING[level]) return Number(level);
+  if ((stored.mode || g.mode) === 'computer') {
+    const level = computerLevel(stored);
+    if (level != null) return level;
+  }
   return Number.isFinite(g.opp) ? levelForRating(g.opp) : null;
 }
 

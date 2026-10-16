@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { db, save, findUserById } from '../db/store.js';
 import { sanitizeHintPlies } from './skill/hintUsage.js';
+import { computerLevel } from './skill/levelStrength.js';
 import { skillFor } from './skill/skillRating.js';
 import { logGamePoints } from './pointLog/track.js';
 
@@ -21,7 +22,7 @@ export function recordGame(userId, game) {
     color,
     result: ['win', 'loss', 'draw'].includes(game.result) ? game.result : 'draw',
     reason: String(game.reason || '').slice(0, 40),
-    level: game.level ?? null,
+    level: game.mode === 'computer' ? computerLevel(game) : (game.level ?? null),
     pgn: String(game.pgn || '').slice(0, 20000),
     moves,
     hintPlies: sanitizeHintPlies(game.hintPlies, moves, color),
